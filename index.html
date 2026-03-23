@@ -148,7 +148,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
         <th style="width:60px">보험나이</th>
         <th style="width:106px">연락처</th>
         <th style="width:74px">상태</th>
-        <th style="width:180px">최근 메모</th>
         <th style="width:80px">DB등록일</th>
         <th style="width:50px">계약</th>
       </tr></thead>
@@ -377,7 +376,8 @@ function renderList(){
     const sc=SC[c.status]||{bg:'#F3F4F6',c:'#374151'};
     const ms=memos.filter(m=>(m.custId||m.cust_id)===c.id).sort((a,b)=>b.datetime.localeCompare(a.datetime));
     const rm=ms[0];const age=calcInsAge(c.birth||'');
-    return`<tr onclick="openDetail(${c.id})">
+    const memoRow=rm?`<tr onclick="openDetail(${c.id})" style="cursor:pointer"><td colspan="10" style="padding:2px 7px 7px 36px;border-bottom:1px solid #e5e7eb;background:#fafafa"><span style="font-size:11px;color:#6b7280">[${rm.datetime.slice(0,16)}]&nbsp;&nbsp;${rm.text}</span></td></tr>`:'';
+    return`<tr onclick="openDetail(${c.id})" style="border-bottom:${rm?'none':''}">
       <td><input type="checkbox" onclick="event.stopPropagation()"></td>
       <td style="color:#9ca3af">${i+1}</td>
       <td>${c.channel||''}</td>
@@ -386,10 +386,9 @@ function renderList(){
       <td>${age!==null?age+'세':''}</td>
       <td>${c.phone||''}</td>
       <td><span class="badge" style="background:${sc.bg};color:${sc.c}">${c.status}</span></td>
-      <td>${rm?`<span style="font-size:11px;overflow:hidden;text-overflow:ellipsis;display:block;white-space:nowrap;color:#9ca3af">${rm.datetime.slice(0,16)} ${rm.text}</span>`:'<span style="color:#d1d5db;font-size:11px">-</span>'}</td>
       <td style="color:#9ca3af;font-size:11px">${c.regdate||''}</td>
       <td style="text-align:center">${(c.insurances||[]).length?`<span style="font-weight:500;color:#1D4ED8;font-size:12px">${c.insurances.length}건</span>`:'-'}</td>
-    </tr>`;
+    </tr>${memoRow}`;
   }).join('');
 }
 
