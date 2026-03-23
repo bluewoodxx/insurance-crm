@@ -93,6 +93,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 .toast.show{opacity:1}
 .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.6s linear infinite;vertical-align:middle;margin-right:6px}
 @keyframes spin{to{transform:rotate(360deg)}}
+.phone-prefix{font-size:12px;padding:3px 8px;border:1px solid #d1d5db;border-radius:4px;background:#f9fafb;color:#6b7280}
 @media(max-width:600px){.board{grid-template-columns:repeat(2,1fr)}.claim-input-row{grid-template-columns:1fr 1fr}}
 </style>
 </head>
@@ -104,9 +105,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
   <span class="ntab on" id="nav-list" onclick="showPage('list')">고객관리</span>
   <span class="ntab" id="nav-reg" onclick="navToReg()">신규등록</span>
   <span class="ntab" id="nav-board" onclick="showPage('board')">현황판</span>
-  <div class="nav-right">
-    <span id="save-msg" style="opacity:0;transition:opacity 0.4s"></span>
-  </div>
+  <div class="nav-right"><span id="save-msg" style="opacity:0;transition:opacity 0.4s"></span></div>
 </div>
 <div class="toast" id="toast"></div>
 
@@ -143,14 +142,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
       <thead><tr>
         <th style="width:26px"><input type="checkbox"></th>
         <th style="width:26px">번호</th>
+        <th style="width:70px">경로</th>
         <th style="width:66px">이름</th>
         <th style="width:110px">생년월일</th>
         <th style="width:60px">보험나이</th>
-        <th style="width:70px">경로</th>
         <th style="width:106px">연락처</th>
-        <th style="width:54px">담당자</th>
         <th style="width:74px">상태</th>
-        <th style="width:160px">최근 메모</th>
+        <th style="width:180px">최근 메모</th>
         <th style="width:80px">DB등록일</th>
         <th style="width:50px">계약</th>
       </tr></thead>
@@ -204,9 +202,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
       <td class="lb">휴대폰번호</td>
       <td>
         <div style="display:flex;align-items:center;gap:4px">
-          <select class="fs" style="width:54px"><option>010</option><option>011</option><option>016</option></select>
-          <span>-</span><input class="fi" id="f-p1" style="width:60px" maxlength="4">
-          <span>-</span><input class="fi" id="f-p2" style="width:60px" maxlength="4">
+          <span class="phone-prefix">010</span>
+          <span>-</span><input class="fi" id="f-p1" style="width:70px" maxlength="4">
+          <span>-</span><input class="fi" id="f-p2" style="width:70px" maxlength="4">
         </div>
       </td>
     </tr>
@@ -216,8 +214,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
       <td class="lb">명의 / 통신사</td>
       <td>
         <div style="display:flex;gap:5px">
-          <select class="fs" id="f-myname"><option>본인</option><option>배우자</option><option>자녀</option><option>부모</option></select>
-          <select class="fs" id="f-carrier"><option>통신사</option><option>SKT</option><option>KT</option><option>LGU+</option><option>알뜰폰</option></select>
+          <select class="fs"><option>본인</option><option>배우자</option><option>자녀</option><option>부모</option></select>
+          <select class="fs"><option>통신사</option><option>SKT</option><option>KT</option><option>LGU+</option><option>알뜰폰</option></select>
         </div>
       </td>
     </tr>
@@ -241,7 +239,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
     </tr>
   </table>
 
-  <!-- 보험금 청구이력 -->
   <div class="sh" style="margin-top:3px">
     <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="2" width="11" height="9" rx="1.5"/><line x1="4" y1="5.5" x2="9" y2="5.5"/><line x1="4" y1="8" x2="7" y2="8"/><path d="M9 0.5v3M4 0.5v3"/></svg>
     보험금 청구이력
@@ -259,7 +256,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
     <div id="claim-wrap"><div style="font-size:12px;color:#9ca3af;padding:8px 0 2px">청구이력이 없습니다.</div></div>
   </div>
 
-  <!-- 보유 보험 -->
   <div style="padding:7px 16px;border-top:1px solid #e5e7eb">
     <div class="sh" style="padding:5px 0;border-bottom:none;margin-bottom:6px">
       보유 보험
@@ -269,7 +265,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
   </div>
 
   <div class="ffooter">
-    <button class="btn p" id="submit-btn2" onclick="submitForm()">작성완료</button>
+    <button class="btn p" onclick="submitForm()">작성완료</button>
     <button class="btn" onclick="showPage('list')">취소</button>
   </div>
 
@@ -293,7 +289,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
   <div class="board" id="board-content"></div>
 </div>
 
-<!-- MODAL: 보험 추가 -->
 <div class="modal-bg" id="modal-ins" onclick="if(event.target===this)closeIns()">
   <div class="modal">
     <div class="modal-title">보험 추가</div>
@@ -322,31 +317,18 @@ let editId=null, statusFilter='', searchOpen=false;
 let formIns=[], formClaims=[];
 let homeOwn='';
 
-// ── API 헬퍼
-function setLoading(on){
-  const bar=document.getElementById('loading-bar');
-  bar.style.width=on?'70%':'100%';
-  if(!on)setTimeout(()=>bar.style.width='0%',400);
-}
-async function api(method, path, body){
+function setLoading(on){const bar=document.getElementById('loading-bar');bar.style.width=on?'70%':'100%';if(!on)setTimeout(()=>bar.style.width='0%',400);}
+async function api(method,path,body){
   setLoading(true);
-  try{
-    const res=await fetch('/api/'+path,{
-      method,
-      headers:{'Content-Type':'application/json'},
-      body:body?JSON.stringify(body):undefined
-    });
-    return await res.json();
-  }finally{setLoading(false);}
+  try{const res=await fetch('/api/'+path,{method,headers:{'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});return await res.json();}
+  finally{setLoading(false);}
 }
-
 function gv(id){const e=document.getElementById(id);return e?e.value.trim():'';}
 function sv(id,v){const e=document.getElementById(id);if(!e)return;e.tagName==='SELECT'?e.value=v:e.value=v;}
 function showErr(id,show){const e=document.getElementById(id);if(e)e.className='errmsg'+(show?' show':'');}
 function markErr(id,has){const e=document.getElementById(id);if(e)e.className='fi'+(has?' err':'');}
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show';setTimeout(()=>t.className='toast',2500);}
 function showSave(){const el=document.getElementById('save-msg');el.textContent='저장됨 '+new Date().toLocaleTimeString('ko',{hour:'2-digit',minute:'2-digit'});el.style.opacity=1;setTimeout(()=>el.style.opacity=0,2200);}
-
 function today(){return new Date().toISOString().slice(0,10);}
 function nowStr(){const d=new Date();return[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')+' '+[d.getHours(),d.getMinutes(),d.getSeconds()].map(n=>String(n).padStart(2,'0')).join(':');}
 
@@ -362,26 +344,23 @@ function calcInsAge(b){
 }
 function updateInsAge(){const age=calcInsAge(gv('f-birth'));document.getElementById('ins-age-display').textContent=age!==null?'보험나이 '+age+'세':'';}
 function birthDisplay(b,idback){return b?(idback?b+'-'+idback:b):'';}
-
 function setOwn(v){homeOwn=(homeOwn===v)?'':v;document.getElementById('own-rent').className='own-btn'+(homeOwn==='임차'?' on':'');document.getElementById('own-own').className='own-btn'+(homeOwn==='자가'?' on':'');}
 function applyOwn(v){homeOwn=v||'';document.getElementById('own-rent').className='own-btn'+(homeOwn==='임차'?' on':'');document.getElementById('own-own').className='own-btn'+(homeOwn==='자가'?' on':'');}
 
-// ── 데이터 로드
 async function loadList(){
   const data=await api('GET','customers');
   customers=Array.isArray(data)?data:[];
-  // 메모도 전체 로드
   const mdata=await api('GET','memos');
   memos=Array.isArray(mdata)?mdata:[];
   renderList();
 }
 
-// ── 목록
 function buildSpills(){
   document.getElementById('spill-bar').innerHTML=[{label:'전체',v:''},...STATUSES.map(s=>({label:s,v:s}))].map(({label,v})=>{const sc=SC[v]||{bg:'#F3F4F6',c:'#374151'};return`<span class="spill${statusFilter===v?' on':''}" style="background:${sc.bg};color:${sc.c}" onclick="sfilt('${v}')">${label}</span>`;}).join('');
 }
 function sfilt(v){statusFilter=v;buildSpills();renderList();}
 function toggleSearch(){searchOpen=!searchOpen;document.getElementById('search-box').style.display=searchOpen?'block':'none';}
+
 function renderList(){
   buildSpills();
   let list=[...customers];
@@ -393,30 +372,40 @@ function renderList(){
   if(ch)list=list.filter(c=>c.channel===ch);
   document.getElementById('tc').textContent=list.length;
   const tb=document.getElementById('list-body');
-  if(!list.length){tb.innerHTML='<tr><td colspan="12" class="empty">등록된 고객이 없습니다.</td></tr>';return;}
+  if(!list.length){tb.innerHTML='<tr><td colspan="11" class="empty">등록된 고객이 없습니다.</td></tr>';return;}
   tb.innerHTML=list.map((c,i)=>{
     const sc=SC[c.status]||{bg:'#F3F4F6',c:'#374151'};
-    const ms=memos.filter(m=>m.custId===c.id||m.cust_id===c.id).sort((a,b)=>b.datetime.localeCompare(a.datetime));
+    const ms=memos.filter(m=>(m.custId||m.cust_id)===c.id).sort((a,b)=>b.datetime.localeCompare(a.datetime));
     const rm=ms[0];const age=calcInsAge(c.birth||'');
-    return`<tr onclick="openDetail(${c.id})"><td><input type="checkbox" onclick="event.stopPropagation()"></td><td style="color:#9ca3af">${i+1}</td><td style="font-weight:500">${c.name}</td><td>${birthDisplay(c.birth,c.idback)}</td><td>${age!==null?age+'세':''}</td><td>${c.channel||''}</td><td>${c.phone||''}</td><td>${c.manager||''}</td><td><span class="badge" style="background:${sc.bg};color:${sc.c}">${c.status}</span></td><td>${rm?`<span style="font-size:11px;overflow:hidden;text-overflow:ellipsis;display:block;white-space:nowrap;color:#9ca3af">${rm.datetime.slice(0,16)} ${rm.text}</span>`:'<span style="color:#d1d5db;font-size:11px">-</span>'}</td><td style="color:#9ca3af;font-size:11px">${c.regdate||''}</td><td style="text-align:center">${(c.insurances||[]).length?`<span style="font-weight:500;color:#1D4ED8;font-size:12px">${c.insurances.length}건</span>`:'-'}</td></tr>`;
+    return`<tr onclick="openDetail(${c.id})">
+      <td><input type="checkbox" onclick="event.stopPropagation()"></td>
+      <td style="color:#9ca3af">${i+1}</td>
+      <td>${c.channel||''}</td>
+      <td style="font-weight:500">${c.name}</td>
+      <td>${birthDisplay(c.birth,c.idback)}</td>
+      <td>${age!==null?age+'세':''}</td>
+      <td>${c.phone||''}</td>
+      <td><span class="badge" style="background:${sc.bg};color:${sc.c}">${c.status}</span></td>
+      <td>${rm?`<span style="font-size:11px;overflow:hidden;text-overflow:ellipsis;display:block;white-space:nowrap;color:#9ca3af">${rm.datetime.slice(0,16)} ${rm.text}</span>`:'<span style="color:#d1d5db;font-size:11px">-</span>'}</td>
+      <td style="color:#9ca3af;font-size:11px">${c.regdate||''}</td>
+      <td style="text-align:center">${(c.insurances||[]).length?`<span style="font-weight:500;color:#1D4ED8;font-size:12px">${c.insurances.length}건</span>`:'-'}</td>
+    </tr>`;
   }).join('');
 }
 
-// ── 상세
 async function openDetail(id){
   editId=id;
-  const c=customers.find(x=>x.id===id);
-  if(!c)return;
+  const c=customers.find(x=>x.id===id);if(!c)return;
   document.getElementById('form-bc').textContent='고객관리 / '+c.name;
   document.getElementById('form-title').textContent='고객관리';
   document.getElementById('del-btn').style.display='';
   sv('f-ch',c.channel||'');sv('f-status',c.status||'');sv('f-name',c.name||'');
   sv('f-regdate',c.regdate||'');sv('f-birth',c.birth||'');
   sv('f-bizaddr',c.bizaddr||'');sv('f-homeaddr',c.homeaddr||'');
-  sv('f-job',c.job||'');sv('f-mgr',c.manager||'');
+  sv('f-job',c.job||'');
   sv('f-consult-type',c.consultType||c.consult_type||'');
   document.getElementById('f-idback').value=c.idback||'';
-  const pm=(c.phone||'').match(/010-(\d{4})-(\d{4})/);
+  const pm=(c.phone||'').match(/\d{3}-(\d{4})-(\d{4})/);
   document.getElementById('f-p1').value=pm?pm[1]:'';
   document.getElementById('f-p2').value=pm?pm[2]:'';
   applyOwn(c.homeOwn||c.home_own||'');
@@ -424,18 +413,16 @@ async function openDetail(id){
   formClaims=[...(c.claims||[])];renderClaims();
   formIns=[...(c.insurances||[])];renderIns();
   showPage('reg');
-  // 메모 로드
   const mdata=await api('GET','memos?custId='+id);
   memos=memos.filter(m=>(m.custId||m.cust_id)!==id).concat(Array.isArray(mdata)?mdata:[]);
   renderTL(id);
 }
 
-// ── 폼 초기화
 function clearForm(){
   document.getElementById('form-bc').textContent='신규고객등록';
   document.getElementById('form-title').textContent='신규고객등록';
   document.getElementById('del-btn').style.display='none';
-  ['f-ch','f-status','f-name','f-birth','f-bizaddr','f-homeaddr','f-job','f-p1','f-p2','f-mgr','f-consult-type'].forEach(id=>sv(id,''));
+  ['f-ch','f-status','f-name','f-birth','f-bizaddr','f-homeaddr','f-job','f-p1','f-p2','f-consult-type'].forEach(id=>sv(id,''));
   document.getElementById('f-idback').value='';
   sv('f-regdate',today());
   document.getElementById('ins-age-display').textContent='';
@@ -447,7 +434,6 @@ function clearForm(){
   ['err-name','err-claim','err-prog'].forEach(id=>showErr(id,false));
 }
 
-// ── 작성완료
 async function submitForm(){
   const name=gv('f-name');
   if(!name){markErr('f-name',true);showErr('err-name',true);document.getElementById('f-name').focus();return;}
@@ -458,23 +444,17 @@ async function submitForm(){
   const obj={
     name,phone:p1&&p2?'010-'+p1+'-'+p2:'',
     birth:gv('f-birth'),idback:document.getElementById('f-idback').value.trim(),
-    channel:gv('f-ch'),manager:gv('f-mgr'),
+    channel:gv('f-ch'),
     status:gv('f-status')||'통화요청',regdate:gv('f-regdate')||today(),
     job:gv('f-job'),consultType:gv('f-consult-type'),
     bizaddr:gv('f-bizaddr'),homeaddr:gv('f-homeaddr'),
     homeOwn,claims:formClaims,insurances:formIns,modifiedAt:today()
   };
   try{
-    if(editId!==null){
-      await api('PUT','customers/'+editId,obj);
-    } else {
-      const res=await api('POST','customers',obj);
-      editId=res.id;
-    }
-    showSave();
-    toast('저장되었습니다');
-    await loadList();
-    editId=null;
+    if(editId!==null){await api('PUT','customers/'+editId,obj);}
+    else{const res=await api('POST','customers',obj);editId=res.id;}
+    showSave();toast('저장되었습니다');
+    await loadList();editId=null;
     setTimeout(()=>showPage('list'),400);
   }catch(e){toast('저장 실패: '+e.message);}
   finally{btn.innerHTML='작성완료';btn.disabled=false;}
@@ -484,29 +464,22 @@ async function deleteCust(){
   const c=customers.find(x=>x.id===editId);if(!c)return;
   if(!confirm(`'${c.name}' 고객을 삭제할까요?`))return;
   await api('DELETE','customers/'+editId);
-  toast('삭제되었습니다');
-  await loadList();
-  editId=null;showPage('list');
+  toast('삭제되었습니다');await loadList();editId=null;showPage('list');
 }
 
-// ── 청구이력
 function addClaim(){
   const content=gv('cl-content');
   if(!content){showErr('err-claim',true);setTimeout(()=>showErr('err-claim',false),2000);return;}
   formClaims.push({date:gv('cl-date'),content,company:gv('cl-company'),amount:gv('cl-amount'),result:gv('cl-result')});
-  renderClaims();
-  ['cl-date','cl-content','cl-company','cl-amount'].forEach(id=>sv(id,''));sv('cl-result','');
+  renderClaims();['cl-date','cl-content','cl-company','cl-amount'].forEach(id=>sv(id,''));sv('cl-result','');
 }
 function removeClaim(i){formClaims.splice(i,1);renderClaims();}
 function renderClaims(){
   const w=document.getElementById('claim-wrap');
   if(!formClaims.length){w.innerHTML='<div style="font-size:12px;color:#9ca3af;padding:8px 0 2px">청구이력이 없습니다.</div>';return;}
-  w.innerHTML=`<table class="claim-table"><thead><tr><th style="width:90px">청구일</th><th>청구 내용</th><th style="width:80px">보험사</th><th style="width:80px">청구금액</th><th style="width:70px">결과</th><th style="width:32px"></th></tr></thead><tbody>${
-    formClaims.map((c,i)=>{const sc=CLAIM_SC[c.result]||{bg:'#F3F4F6',c:'#374151'};return`<tr><td style="color:#9ca3af">${c.date||'-'}</td><td style="font-weight:500">${c.content}</td><td style="color:#9ca3af">${c.company||'-'}</td><td>${c.amount||'-'}</td><td>${c.result?`<span class="badge" style="background:${sc.bg};color:${sc.c}">${c.result}</span>`:'-'}</td><td><button class="cdel" onclick="removeClaim(${i})">삭제</button></td></tr>`;}).join('')
-  }</tbody></table>`;
+  w.innerHTML=`<table class="claim-table"><thead><tr><th style="width:90px">청구일</th><th>청구 내용</th><th style="width:80px">보험사</th><th style="width:80px">청구금액</th><th style="width:70px">결과</th><th style="width:32px"></th></tr></thead><tbody>${formClaims.map((c,i)=>{const sc=CLAIM_SC[c.result]||{bg:'#F3F4F6',c:'#374151'};return`<tr><td style="color:#9ca3af">${c.date||'-'}</td><td style="font-weight:500">${c.content}</td><td style="color:#9ca3af">${c.company||'-'}</td><td>${c.amount||'-'}</td><td>${c.result?`<span class="badge" style="background:${sc.bg};color:${sc.c}">${c.result}</span>`:'-'}</td><td><button class="cdel" onclick="removeClaim(${i})">삭제</button></td></tr>`;}).join('')}</tbody></table>`;
 }
 
-// ── 보험
 function openInsModal(){showErr('err-ins',false);document.getElementById('modal-ins').classList.add('on');}
 function closeIns(){document.getElementById('modal-ins').classList.remove('on');}
 function saveIns(){
@@ -522,29 +495,24 @@ function renderIns(){
 }
 function rmIns(i){formIns.splice(i,1);renderIns();}
 
-// ── 진행과정
 async function addProg(){
   const text=gv('f-prog');
   if(!text){showErr('err-prog',true);setTimeout(()=>showErr('err-prog',false),2000);return;}
-  const author=gv('f-mgr')||'담당자';
-  const entry={custId:editId,datetime:nowStr(),author,text};
+  const entry={custId:editId,datetime:nowStr(),author:'',text};
   if(editId!==null){
     const res=await api('POST','memos',entry);
     memos.push({...entry,id:res.id});
-    renderTL(editId);
-    showSave();
+    renderTL(editId);showSave();
   }
   sv('f-prog','');
 }
 
 function tlItemHtml(m,editStart,editSave,editCancel,delFn){
-  const mid=m.id;
-  return`<div class="tl-item" id="tl-${mid}">
+  return`<div class="tl-item" id="tl-${m.id}">
     <div class="tl-meta"><div>${m.datetime.slice(0,10)}</div><div>${m.datetime.slice(11,19)}</div>${m.editedAt||m.edited_at?`<div style="font-size:10px;color:#d1d5db">수정됨</div>`:''}</div>
     <div class="tl-body">
       <div class="tl-text">${m.text.replace(/\n/g,'<br>')}</div>
-      <div class="tl-edit-area">
-        <textarea rows="3"></textarea>
+      <div class="tl-edit-area"><textarea rows="3"></textarea>
         <div class="tl-edit-btns">
           <button class="btn" style="font-size:11px;padding:3px 10px" onclick="${editCancel}">취소</button>
           <button class="btn p" style="font-size:11px;padding:3px 10px" onclick="${editSave}">저장</button>
@@ -568,35 +536,27 @@ function startEdit(id){
   const el=document.getElementById('tl-'+id);if(!el)return;
   el.querySelector('.tl-text').style.display='none';
   const ea=el.querySelector('.tl-edit-area');
-  ea.querySelector('textarea').value=m.text;
-  ea.style.display='block';ea.querySelector('textarea').focus();
+  ea.querySelector('textarea').value=m.text;ea.style.display='block';ea.querySelector('textarea').focus();
 }
 async function saveEdit(id){
   const el=document.getElementById('tl-'+id);if(!el)return;
-  const newText=el.querySelector('.tl-edit-area textarea').value.trim();
-  if(!newText)return;
+  const newText=el.querySelector('.tl-edit-area textarea').value.trim();if(!newText)return;
   const editedAt=nowStr();
   await api('PUT','memos/'+id,{text:newText,editedAt});
-  const m=memos.find(x=>x.id===id);
-  if(m){m.text=newText;m.editedAt=editedAt;}
+  const m=memos.find(x=>x.id===id);if(m){m.text=newText;m.editedAt=editedAt;}
   renderTL(editId);showSave();
 }
 function cancelEdit(id){
   const el=document.getElementById('tl-'+id);if(!el)return;
-  el.querySelector('.tl-text').style.display='';
-  el.querySelector('.tl-edit-area').style.display='none';
+  el.querySelector('.tl-text').style.display='';el.querySelector('.tl-edit-area').style.display='none';
 }
 async function delMemo(id){
-  await api('DELETE','memos/'+id);
-  memos=memos.filter(m=>m.id!==id);
-  renderTL(editId);showSave();
+  await api('DELETE','memos/'+id);memos=memos.filter(m=>m.id!==id);renderTL(editId);showSave();
 }
 
-// ── 현황판
 function renderBoard(){
   document.getElementById('board-content').innerHTML=STATUSES.map(s=>{
-    const list=customers.filter(c=>c.status===s);
-    const sc=SC[s]||{bg:'#F3F4F6',c:'#374151'};
+    const list=customers.filter(c=>c.status===s);const sc=SC[s]||{bg:'#F3F4F6',c:'#374151'};
     return`<div class="board-col"><div class="board-head" style="background:${sc.bg}"><span style="color:${sc.c}">${s}</span><span style="color:${sc.c}">${list.length}</span></div><div class="board-body">${list.length?list.map(c=>`<div class="board-card" onclick="openDetail(${c.id})">${c.name} <span style="color:#9ca3af">${c.phone||''}</span></div>`).join(''):'<div style="font-size:11px;color:#9ca3af;padding:2px 4px">없음</div>'}</div></div>`;
   }).join('');
 }
