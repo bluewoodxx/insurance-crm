@@ -410,9 +410,10 @@ async function openDetail(id){
   updateInsAge();
   formClaims=[...(c.claims||[])];renderClaims();
   formIns=[...(c.insurances||[])];renderIns();
-  showPage('reg');
   const mdata=await api('GET','memos?custId='+id);
   memos=memos.filter(m=>Number(m.custId||m.cust_id)!==Number(id)).concat(Array.isArray(mdata)?mdata:[]);
+  showPage('reg');
+  sv('f-prog','');
   renderTL(id);
 }
 
