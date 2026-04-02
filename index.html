@@ -460,14 +460,7 @@ async function submitForm(){
     if(editId!==null){await api('PUT','customers/'+editId,obj);}
     else{const res=await api('POST','customers',obj);editId=res.id;}
     showSave();toast('저장되었습니다');
-    await 
-let _rowMDx=0,_rowMDy=0;
-function rowMD(e){_rowMDx=e.clientX;_rowMDy=e.clientY;}
-function rowMU(e,id){
-  if(Math.abs(e.clientX-_rowMDx)<5&&Math.abs(e.clientY-_rowMDy)<5) openDetail(id);
-}
-
-loadList();editId=null;
+    await loadList();editId=null;
     setTimeout(()=>showPage('list'),400);
   }catch(e){toast('저장 실패: '+e.message);}
   finally{btn.innerHTML='작성완료';btn.disabled=false;}
@@ -597,6 +590,11 @@ function showPage(p){
 }
 function navToReg(){editId=null;clearForm();showPage('reg');}
 
+let _rowMDx=0,_rowMDy=0;
+function rowMD(e){_rowMDx=e.clientX;_rowMDy=e.clientY;}
+function rowMU(e,id){
+  if(Math.abs(e.clientX-_rowMDx)<5&&Math.abs(e.clientY-_rowMDy)<5) openDetail(id);
+}
 loadList();
 </script>
 </body>
