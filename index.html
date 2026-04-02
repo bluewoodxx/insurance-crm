@@ -348,7 +348,6 @@ function applyOwn(v){homeOwn=v||'';document.getElementById('own-rent').className
 async function loadList(){
   const data=await api('GET','customers');
   customers=Array.isArray(data)?data:[];
-  customers.sort((a,b)=>(b.regdate||'').localeCompare(a.regdate||''));
   const mdata=await api('GET','memos');
   memos=Array.isArray(mdata)?mdata:[];
   renderList();
@@ -362,7 +361,7 @@ function toggleSearch(){searchOpen=!searchOpen;document.getElementById('search-b
 
 function renderList(){
   buildSpills();
-  let list=[...customers];
+  let list=[...customers].sort((a,b)=>(b.regdate||'').localeCompare(a.regdate||''));
   if(statusFilter)list=list.filter(c=>c.status===statusFilter);
   const n=gv('sf-name'),ph=gv('sf-phone'),st=gv('sf-status'),ch=gv('sf-ch');
   if(n)list=list.filter(c=>c.name.includes(n));
@@ -371,10 +370,10 @@ function renderList(){
   if(ch)list=list.filter(c=>c.channel===ch);
   document.getElementById('tc').textContent=list.length;
   const tb=document.getElementById('list-body');
-  if(!list.length){tb.innerHTML='<tr><td colspan="11" class="empty">등록된 고객이 없습니다.</td></tr>';return;}
+  if(!list.length){tb.innerHTML='<tr><td colspan="10" class="empty">등록된 고객이 없습니다.</td></tr>';return;}
   tb.innerHTML=list.map((c,i)=>{
     const sc=SC[c.status]||{bg:'#F3F4F6',c:'#374151'};
-    const ms=memos.filter(m=>(m.custId||m.cust_id)===c.id).sort((a,b)=>b.datetime.localeCompare(a.datetime));
+    const ms=memos.filter(m=>Number(m.custId||m.cust_id)===Number(c.id)).sort((a,b)=>b.datetime.localeCompare(a.datetime));
     const rm=ms[0];const age=calcInsAge(c.birth||'');
     const memoRow=rm?`<tr onmousedown="rowMD(event)" onmouseup="rowMU(event,${c.id})" style="cursor:pointer"><td colspan="10" style="padding:2px 7px 7px 36px;border-bottom:1px solid #e5e7eb;background:#fafafa"><span style="font-size:11px;color:#6b7280">[${rm.datetime.slice(0,16)}]&nbsp;&nbsp;${rm.text}</span></td></tr>`:'';
     return`<tr onmousedown="rowMD(event)" onmouseup="rowMU(event,${c.id})" style="border-bottom:${rm?'none':''};cursor:pointer">
@@ -413,7 +412,7 @@ async function openDetail(id){
   formIns=[...(c.insurances||[])];renderIns();
   showPage('reg');
   const mdata=await api('GET','memos?custId='+id);
-  memos=memos.filter(m=>(m.custId||m.cust_id)!==id).concat(Array.isArray(mdata)?mdata:[]);
+  memos=memos.filter(m=>Number(m.custId||m.cust_id)!==Number(id)).concat(Array.isArray(mdata)?mdata:[]);
   renderTL(id);
 }
 
@@ -555,7 +554,7 @@ function tlItemHtml(m,editStart,editSave,editCancel,delFn){
 }
 
 function renderTL(id){
-  const ms=memos.filter(m=>(m.custId||m.cust_id)===id).sort((a,b)=>b.datetime.localeCompare(a.datetime));
+  const ms=memos.filter(m=>Number(m.custId||m.cust_id)===Number(id)).sort((a,b)=>b.datetime.localeCompare(a.datetime));
   const el=document.getElementById('tl-area');
   el.innerHTML=ms.length?ms.map(m=>tlItemHtml(m,`startEdit(${m.id})`,`saveEdit(${m.id})`,`cancelEdit(${m.id})`,`delMemo(${m.id})`)).join(''):'<div class="empty">진행 내역이 없습니다.</div>';
 }
