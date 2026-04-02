@@ -28,7 +28,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 .lt{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed}
 .lt th{padding:5px 7px;border-bottom:1px solid #e5e7eb;color:#6b7280;font-weight:500;font-size:11px;text-align:left;background:#f9fafb;white-space:nowrap}
 .lt td{padding:6px 7px;border-bottom:1px solid #f3f4f6;vertical-align:top;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.lt tr:hover td{background:#f9fafb;cursor:pointer}
+.lt tr:hover td{background:#f9fafb}.lt tr td{cursor:default}.lt tr td.click-cell{cursor:pointer}
 .badge{display:inline-block;padding:2px 7px;border-radius:9px;font-size:11px;font-weight:500}
 .ph{display:flex;align-items:center;gap:6px;padding:9px 16px;border-bottom:1px solid #e5e7eb;font-size:14px;font-weight:500}
 .sh{display:flex;align-items:center;gap:5px;padding:7px 16px;font-size:12px;font-weight:500;color:#1a3a5c;border-bottom:1px solid #e5e7eb;background:#f0f4f8}
@@ -144,9 +144,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
         <th style="width:26px">번호</th>
         <th style="width:70px">경로</th>
         <th style="width:66px">이름</th>
+        <th style="width:106px">연락처</th>
         <th style="width:110px">생년월일</th>
         <th style="width:60px">보험나이</th>
-        <th style="width:106px">연락처</th>
         <th style="width:74px">상태</th>
         <th style="width:80px">DB등록일</th>
         <th style="width:50px">계약</th>
@@ -263,11 +263,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
     <div id="ins-list"><div style="font-size:12px;color:#9ca3af">등록된 보험이 없습니다.</div></div>
   </div>
 
-  <div class="ffooter">
-    <button class="btn p" onclick="submitForm()">작성완료</button>
-    <button class="btn" onclick="showPage('list')">취소</button>
-  </div>
-
   <div class="sh" style="border-top:2px solid #e5e7eb">
     <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1.5" width="11" height="10" rx="1.5"/><line x1="3.5" y1="5" x2="9.5" y2="5"/><line x1="3.5" y1="7.5" x2="7.5" y2="7.5"/></svg>
     진행과정
@@ -279,6 +274,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
     </div>
     <div class="errmsg" id="err-prog">내용을 입력해주세요</div>
     <div id="tl-area"><div class="empty">진행 내역이 없습니다.</div></div>
+  </div>
+  <div class="ffooter" style="margin-top:8px">
+    <button class="btn p" onclick="submitForm()">작성완료</button>
+    <button class="btn" onclick="showPage('list')">취소</button>
   </div>
 </div>
 
@@ -349,6 +348,7 @@ function applyOwn(v){homeOwn=v||'';document.getElementById('own-rent').className
 async function loadList(){
   const data=await api('GET','customers');
   customers=Array.isArray(data)?data:[];
+  customers.sort((a,b)=>(b.regdate||'').localeCompare(a.regdate||''));
   const mdata=await api('GET','memos');
   memos=Array.isArray(mdata)?mdata:[];
   renderList();
@@ -376,15 +376,15 @@ function renderList(){
     const sc=SC[c.status]||{bg:'#F3F4F6',c:'#374151'};
     const ms=memos.filter(m=>(m.custId||m.cust_id)===c.id).sort((a,b)=>b.datetime.localeCompare(a.datetime));
     const rm=ms[0];const age=calcInsAge(c.birth||'');
-    const memoRow=rm?`<tr onclick="openDetail(${c.id})" style="cursor:pointer"><td colspan="10" style="padding:2px 7px 7px 36px;border-bottom:1px solid #e5e7eb;background:#fafafa"><span style="font-size:11px;color:#6b7280">[${rm.datetime.slice(0,16)}]&nbsp;&nbsp;${rm.text}</span></td></tr>`:'';
-    return`<tr onclick="openDetail(${c.id})" style="border-bottom:${rm?'none':''}">
+    const memoRow=rm?`<tr onmousedown="rowMD(event)" onmouseup="rowMU(event,${c.id})" style="cursor:pointer"><td colspan="10" style="padding:2px 7px 7px 36px;border-bottom:1px solid #e5e7eb;background:#fafafa"><span style="font-size:11px;color:#6b7280">[${rm.datetime.slice(0,16)}]&nbsp;&nbsp;${rm.text}</span></td></tr>`:'';
+    return`<tr onmousedown="rowMD(event)" onmouseup="rowMU(event,${c.id})" style="border-bottom:${rm?'none':''};cursor:pointer">
       <td><input type="checkbox" onclick="event.stopPropagation()"></td>
       <td style="color:#9ca3af">${i+1}</td>
       <td>${c.channel||''}</td>
-      <td style="font-weight:500">${c.name}</td>
-      <td>${birthDisplay(c.birth,c.idback)}</td>
+      <td style="font-weight:500;user-select:text">${c.name}</td>
+      <td style="user-select:text">${c.phone||''}</td>
+      <td style="user-select:text">${birthDisplay(c.birth,c.idback)}</td>
       <td>${age!==null?age+'세':''}</td>
-      <td>${c.phone||''}</td>
       <td><span class="badge" style="background:${sc.bg};color:${sc.c}">${c.status}</span></td>
       <td style="color:#9ca3af;font-size:11px">${c.regdate||''}</td>
       <td style="text-align:center">${(c.insurances||[]).length?`<span style="font-weight:500;color:#1D4ED8;font-size:12px">${c.insurances.length}건</span>`:'-'}</td>
@@ -440,6 +440,14 @@ async function submitForm(){
   const p1=gv('f-p1'),p2=gv('f-p2');
   const btn=document.getElementById('submit-btn');
   btn.innerHTML='<span class="spinner"></span>저장 중...';btn.disabled=true;
+  // 진행과정 입력 내용이 있으면 먼저 처리
+  const progText=gv('f-prog');
+  if(progText&&editId!==null){
+    const entry={custId:editId,datetime:nowStr(),author:'',text:progText};
+    const res=await api('POST','memos',entry);
+    memos.push({...entry,id:res.id});
+    sv('f-prog','');
+  }
   const obj={
     name,phone:p1&&p2?'010-'+p1+'-'+p2:'',
     birth:gv('f-birth'),idback:document.getElementById('f-idback').value.trim(),
@@ -453,7 +461,14 @@ async function submitForm(){
     if(editId!==null){await api('PUT','customers/'+editId,obj);}
     else{const res=await api('POST','customers',obj);editId=res.id;}
     showSave();toast('저장되었습니다');
-    await loadList();editId=null;
+    await 
+let _rowMDx=0,_rowMDy=0;
+function rowMD(e){_rowMDx=e.clientX;_rowMDy=e.clientY;}
+function rowMU(e,id){
+  if(Math.abs(e.clientX-_rowMDx)<5&&Math.abs(e.clientY-_rowMDy)<5) openDetail(id);
+}
+
+loadList();editId=null;
     setTimeout(()=>showPage('list'),400);
   }catch(e){toast('저장 실패: '+e.message);}
   finally{btn.innerHTML='작성완료';btn.disabled=false;}
@@ -461,7 +476,21 @@ async function submitForm(){
 
 async function deleteCust(){
   const c=customers.find(x=>x.id===editId);if(!c)return;
-  if(!confirm(`'${c.name}' 고객을 삭제할까요?`))return;
+  showDeleteConfirm(c.name);
+}
+function showDeleteConfirm(name){
+  const existing=document.getElementById('delete-confirm-bar');
+  if(existing)existing.remove();
+  const bar=document.createElement('div');
+  bar.id='delete-confirm-bar';
+  bar.style.cssText='position:fixed;bottom:0;left:0;right:0;background:#1a1a1a;color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:center;gap:12px;z-index:400;font-size:13px';
+  bar.innerHTML=`<span>정말로 <strong>${name}</strong> 고객을 삭제할까요? 복구할 수 없습니다.</span>
+    <button onclick="confirmDelete()" style="background:#dc2626;color:#fff;border:none;border-radius:6px;padding:6px 16px;font-size:13px;cursor:pointer;font-family:inherit">삭제</button>
+    <button onclick="document.getElementById('delete-confirm-bar').remove()" style="background:#6b7280;color:#fff;border:none;border-radius:6px;padding:6px 16px;font-size:13px;cursor:pointer;font-family:inherit">취소</button>`;
+  document.body.appendChild(bar);
+}
+async function confirmDelete(){
+  const bar=document.getElementById('delete-confirm-bar');if(bar)bar.remove();
   await api('DELETE','customers/'+editId);
   toast('삭제되었습니다');await loadList();editId=null;showPage('list');
 }
