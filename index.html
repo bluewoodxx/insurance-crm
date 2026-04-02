@@ -439,14 +439,7 @@ async function submitForm(){
   const p1=gv('f-p1'),p2=gv('f-p2');
   const btn=document.getElementById('submit-btn');
   btn.innerHTML='<span class="spinner"></span>저장 중...';btn.disabled=true;
-  // 진행과정 입력 내용이 있으면 먼저 처리
   const progText=gv('f-prog');
-  if(progText&&editId!==null){
-    const entry={custId:editId,datetime:nowStr(),author:'',text:progText};
-    const res=await api('POST','memos',entry);
-    memos.push({...entry,id:res.id});
-    sv('f-prog','');
-  }
   const obj={
     name,phone:p1&&p2?'010-'+p1+'-'+p2:'',
     birth:gv('f-birth'),idback:document.getElementById('f-idback').value.trim(),
@@ -457,8 +450,19 @@ async function submitForm(){
     homeOwn,claims:formClaims,insurances:formIns,modifiedAt:today()
   };
   try{
-    if(editId!==null){await api('PUT','customers/'+editId,obj);}
-    else{const res=await api('POST','customers',obj);editId=res.id;}
+    if(editId!==null){
+      await api('PUT','customers/'+editId,obj);
+    } else {
+      const res=await api('POST','customers',obj);
+      editId=res.id;
+    }
+    // 진행과정 내용이 있으면 고객 저장 후 메모 저장 (신규/수정 모두)
+    if(progText&&editId!==null){
+      const entry={custId:editId,datetime:nowStr(),author:'',text:progText};
+      const res=await api('POST','memos',entry);
+      memos.push({...entry,id:res.id});
+      sv('f-prog','');
+    }
     showSave();toast('저장되었습니다');
     await loadList();editId=null;
     setTimeout(()=>showPage('list'),400);
