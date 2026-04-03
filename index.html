@@ -112,7 +112,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 <!-- LIST -->
 <div class="page on" id="page-list">
   <div class="tbar">
-    <button class="btn p" onclick="navToReg()">+ 신규등록</button>
+    <button class="btn p" onclick="navToReg()">신규등록</button>
     <button class="btn" onclick="loadList()">새로고침</button>
     <button class="btn" onclick="toggleSearch()">상세검색</button>
     <span style="font-size:11px;color:#6b7280;margin-left:4px">전체 <span id="tc" style="font-weight:500;color:#1a1a1a">0</span>건</span>
@@ -189,7 +189,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
       <td><input class="fi" id="f-regdate" type="date" style="width:140px"></td>
     </tr>
     <tr>
-      <td class="lb">생년월일</td>
+      <td class="lb">주민번호</td>
       <td>
         <div class="idnum-wrap">
           <input class="fi" id="f-birth" style="width:72px" maxlength="6" oninput="updateInsAge()">
@@ -247,20 +247,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
       <input class="fi" id="cl-date" type="date">
       <input class="fi" id="cl-content" placeholder="청구 내용 (상해, 질병명 등)">
       <input class="fi" id="cl-company" placeholder="보험사">
-      <input class="fi" id="cl-amount" placeholder="청구금액">
-      <select class="fs" id="cl-result" style="width:100%"><option value="">결과</option><option>지급</option><option>일부지급</option><option>부지급</option><option>심사중</option></select>
-      <button class="cadd" onclick="addClaim()">+ 추가</button>
+      <button class="btn p" id="cadd-btn" onclick="addClaim()" style="padding:4px 10px;font-size:12px;white-space:nowrap">입력</button>
     </div>
-    <div class="errmsg" id="err-claim">청구 내용을 입력해주세요</div>
+    <input type="hidden" id="cl-edit-idx" value=""><div class="errmsg" id="err-claim">청구 내용을 입력해주세요</div>
     <div id="claim-wrap"><div style="font-size:12px;color:#9ca3af;padding:8px 0 2px">청구이력이 없습니다.</div></div>
   </div>
 
   <div style="padding:7px 16px;border-top:1px solid #e5e7eb">
     <div class="sh" style="padding:5px 0;border-bottom:none;margin-bottom:6px">
-      보유 보험
-      <button class="btn" style="font-size:11px;padding:2px 8px;margin-left:8px" onclick="openInsModal()">+ 추가</button>
+      계약 정보
+      <button class="btn" style="font-size:11px;padding:2px 8px;margin-left:8px" onclick="openInsModal()">+ 입력</button>
     </div>
-    <div id="ins-list"><div style="font-size:12px;color:#9ca3af">등록된 보험이 없습니다.</div></div>
+    <div id="ins-list"><div style="font-size:12px;color:#9ca3af">등록된 계약이 없습니다.</div></div>
   </div>
 
   <div class="sh" style="border-top:2px solid #e5e7eb">
@@ -289,12 +287,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 
 <div class="modal-bg" id="modal-ins" onclick="if(event.target===this)closeIns()">
   <div class="modal">
-    <div class="modal-title">보험 추가</div>
-    <div class="mf"><div class="mlb">보험 종류 *</div><input class="fi" id="mi-type" placeholder="종신보험, 암보험 등"></div>
+    <div class="modal-title" id="ins-modal-title">계약 추가</div><input type="hidden" id="modal-ins-edit-idx" value="">
+    <div class="mf"><div class="mlb">상품명 *</div><input class="fi" id="mi-type" placeholder="종신보험, 암보험, 실손보험 등"></div>
     <div class="mf"><div class="mlb">보험사</div><input class="fi" id="mi-co" placeholder="삼성생명, 교보생명 등"></div>
-    <div class="mf"><div class="mlb">월 보험료 (만원)</div><input class="fi" id="mi-amt" type="number" placeholder="10"></div>
+    <div class="mf"><div class="mlb">월 보험료 (원)</div><input class="fi" id="mi-amt" type="number" placeholder="100000"></div>
     <div class="mf"><div class="mlb">만기일</div><input class="fi" id="mi-exp" type="date"></div>
-    <div class="mf"><div class="mlb">상태</div><select class="fs" id="mi-st" style="width:100%"><option>유지중</option><option>갱신필요</option><option>해지</option></select></div>
+    <div class="mf"><div class="mlb">상태</div><select class="fs" id="mi-st" style="width:100%"><option>신규</option><option>유지중</option><option>갱신필요</option><option>해지</option></select></div>
     <div class="errmsg" id="err-ins">보험 종류를 입력해주세요</div>
     <div class="modal-foot">
       <button class="btn" onclick="closeIns()">취소</button>
@@ -307,7 +305,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 <script>
 const STATUSES=['통화요청','부재','장기부재','상담거절','방문예정','1차방문','2차방문','계약완료'];
 const SC={'통화요청':{bg:'#EFF6FF',c:'#1D4ED8'},'부재':{bg:'#FFFBEB',c:'#92400E'},'장기부재':{bg:'#FEF3C7',c:'#78350F'},'상담거절':{bg:'#FEF2F2',c:'#991B1B'},'방문예정':{bg:'#F0FDF4',c:'#15803D'},'1차방문':{bg:'#ECFDF5',c:'#065F46'},'2차방문':{bg:'#D1FAE5',c:'#064E3B'},'계약완료':{bg:'#EDE9FE',c:'#4C1D95'}};
-const INS_SC={유지중:{bg:'#D1FAE5',c:'#065F46'},갱신필요:{bg:'#FEF3C7',c:'#92400E'},해지:{bg:'#FEE2E2',c:'#991B1B'}};
+const INS_SC={신규:{bg:'#DBEAFE',c:'#1E40AF'},유지중:{bg:'#D1FAE5',c:'#065F46'},갱신필요:{bg:'#FEF3C7',c:'#92400E'},해지:{bg:'#FEE2E2',c:'#991B1B'}};
 const CLAIM_SC={지급:{bg:'#D1FAE5',c:'#065F46'},일부지급:{bg:'#CFFAFE',c:'#155E75'},부지급:{bg:'#FEE2E2',c:'#991B1B'},심사중:{bg:'#DBEAFE',c:'#1E40AF'}};
 
 let customers=[], memos=[];
@@ -318,8 +316,16 @@ let homeOwn='';
 function setLoading(on){const bar=document.getElementById('loading-bar');bar.style.width=on?'70%':'100%';if(!on)setTimeout(()=>bar.style.width='0%',400);}
 async function api(method,path,body){
   setLoading(true);
-  try{const res=await fetch('/api/'+path,{method,headers:{'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});return await res.json();}
-  finally{setLoading(false);}
+  try{
+    const res=await fetch('/api/'+path,{method,headers:{'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});
+    const text=await res.text();
+    if(!text||text.trim()===''){return {};}
+    try{return JSON.parse(text);}
+    catch(e){
+      console.error('API 응답 오류 ('+method+' /api/'+path+'):', text.slice(0,200));
+      throw new Error('서버 응답 오류: '+text.slice(0,100));
+    }
+  }finally{setLoading(false);}
 }
 function gv(id){const e=document.getElementById(id);return e?e.value.trim():'';}
 function sv(id,v){const e=document.getElementById(id);if(!e)return;e.tagName==='SELECT'?e.value=v:e.value=v;}
@@ -386,7 +392,7 @@ function renderList(){
       <td>${age!==null?age+'세':''}</td>
       <td><span class="badge" style="background:${sc.bg};color:${sc.c}">${c.status}</span></td>
       <td style="color:#9ca3af;font-size:11px">${c.regdate||''}</td>
-      <td style="text-align:center">${(c.insurances||[]).length?`<span style="font-weight:500;color:#1D4ED8;font-size:12px">${c.insurances.length}건</span>`:'-'}</td>
+      <td style="text-align:center;white-space:normal;min-width:80px">${(c.insurances||[]).length?`<span style="font-size:11px;color:#1D4ED8;font-weight:500">${c.insurances.length}건</span><br><span style="font-size:10px;color:#6b7280">${c.insurances.slice(0,2).map(x=>x.co||x.type).join(', ')}</span>`:'-'}</td>
     </tr>${memoRow}`;
   }).join('');
 }
@@ -394,6 +400,8 @@ function renderList(){
 async function openDetail(id){
   editId=id;
   const c=customers.find(x=>x.id===id);if(!c)return;
+  // 페이지 먼저 전환 후 DOM 요소 접근
+  showPage('reg');
   document.getElementById('form-bc').textContent='고객관리 / '+c.name;
   document.getElementById('form-title').textContent='고객관리';
   document.getElementById('del-btn').style.display='';
@@ -410,10 +418,9 @@ async function openDetail(id){
   updateInsAge();
   formClaims=[...(c.claims||[])];renderClaims();
   formIns=[...(c.insurances||[])];renderIns();
+  sv('f-prog','');
   const mdata=await api('GET','memos?custId='+id);
   memos=memos.filter(m=>Number(m.custId||m.cust_id)!==Number(id)).concat(Array.isArray(mdata)?mdata:[]);
-  showPage('reg');
-  sv('f-prog','');
   renderTL(id);
 }
 
@@ -428,6 +435,7 @@ function clearForm(){
   homeOwn='';setTimeout(()=>applyOwn(''),0);
   formClaims=[];renderClaims();
   formIns=[];renderIns();
+  memos=memos.filter(m=>!m._temp);
   document.getElementById('tl-area').innerHTML='<div class="empty">진행 내역이 없습니다.</div>';
   sv('f-prog','');
   ['err-name','err-claim','err-prog'].forEach(id=>showErr(id,false));
@@ -457,13 +465,20 @@ async function submitForm(){
       const res=await api('POST','customers',obj);
       editId=res.id;
     }
-    // 진행과정 내용이 있으면 고객 저장 후 메모 저장 (신규/수정 모두)
+    // 진행과정 - 입력창 내용 저장
     if(progText&&editId!==null){
       const entry={custId:editId,datetime:nowStr(),author:'',text:progText};
       const res=await api('POST','memos',entry);
       memos.push({...entry,id:res.id});
       sv('f-prog','');
     }
+    // 임시 저장된 메모들 저장
+    const temps=memos.filter(m=>m._temp);
+    for(const m of temps){
+      const entry={custId:editId,datetime:m.datetime,author:'',text:m.text};
+      await api('POST','memos',entry);
+    }
+    memos=memos.filter(m=>!m._temp);
     showSave();toast('저장되었습니다');
     await loadList();editId=null;
     setTimeout(()=>showPage('list'),400);
@@ -480,11 +495,11 @@ function showDeleteConfirm(name){
   if(existing)existing.remove();
   const bar=document.createElement('div');
   bar.id='delete-confirm-bar';
-  bar.style.cssText='position:fixed;bottom:0;left:0;right:0;background:#1a1a1a;color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:center;gap:12px;z-index:400;font-size:13px';
+  bar.style.cssText='position:fixed;bottom:0;left:50%;transform:translateX(-50%);max-width:1200px;width:100%;background:#1a1a1a;color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:center;gap:12px;z-index:9999;font-size:13px;box-shadow:0 -4px 12px rgba(0,0,0,0.3)';
   bar.innerHTML=`<span>정말로 <strong>${name}</strong> 고객을 삭제할까요? 복구할 수 없습니다.</span>
     <button onclick="confirmDelete()" style="background:#dc2626;color:#fff;border:none;border-radius:6px;padding:6px 16px;font-size:13px;cursor:pointer;font-family:inherit">삭제</button>
     <button onclick="document.getElementById('delete-confirm-bar').remove()" style="background:#6b7280;color:#fff;border:none;border-radius:6px;padding:6px 16px;font-size:13px;cursor:pointer;font-family:inherit">취소</button>`;
-  document.body.appendChild(bar);
+  (document.querySelector('.app')||document.body).appendChild(bar);
 }
 async function confirmDelete(){
   const bar=document.getElementById('delete-confirm-bar');if(bar)bar.remove();
@@ -495,41 +510,150 @@ async function confirmDelete(){
 function addClaim(){
   const content=gv('cl-content');
   if(!content){showErr('err-claim',true);setTimeout(()=>showErr('err-claim',false),2000);return;}
-  formClaims.push({date:gv('cl-date'),content,company:gv('cl-company'),amount:gv('cl-amount'),result:gv('cl-result')});
-  renderClaims();['cl-date','cl-content','cl-company','cl-amount'].forEach(id=>sv(id,''));sv('cl-result','');
+  const idxEl=document.getElementById('cl-edit-idx');const idx=idxEl?idxEl.value:'';
+  const obj={date:gv('cl-date'),content,company:gv('cl-company')};
+  if(idx!==''){formClaims[parseInt(idx)]=obj;}
+  else{formClaims.push(obj);}
+  const clei=document.getElementById('cl-edit-idx');if(clei)clei.value='';
+  const cb1=document.getElementById('cadd-btn');if(cb1)cb1.textContent='입력';
+  renderClaims();
+  ['cl-date','cl-content','cl-company'].forEach(id=>sv(id,''));
+}
+function editClaim(i){
+  const c=formClaims[i];
+  sv('cl-date',c.date||'');
+  sv('cl-content',c.content||'');
+  sv('cl-company',c.company||'');
+  const clei2=document.getElementById('cl-edit-idx');if(clei2)clei2.value=i;
+  const cb2=document.getElementById('cadd-btn');if(cb2)cb2.textContent='수정저장';
+  document.getElementById('cl-content').focus();
 }
 function removeClaim(i){formClaims.splice(i,1);renderClaims();}
 function renderClaims(){
   const w=document.getElementById('claim-wrap');
   if(!formClaims.length){w.innerHTML='<div style="font-size:12px;color:#9ca3af;padding:8px 0 2px">청구이력이 없습니다.</div>';return;}
-  w.innerHTML=`<table class="claim-table"><thead><tr><th style="width:90px">청구일</th><th>청구 내용</th><th style="width:80px">보험사</th><th style="width:80px">청구금액</th><th style="width:70px">결과</th><th style="width:32px"></th></tr></thead><tbody>${formClaims.map((c,i)=>{const sc=CLAIM_SC[c.result]||{bg:'#F3F4F6',c:'#374151'};return`<tr><td style="color:#9ca3af">${c.date||'-'}</td><td style="font-weight:500">${c.content}</td><td style="color:#9ca3af">${c.company||'-'}</td><td>${c.amount||'-'}</td><td>${c.result?`<span class="badge" style="background:${sc.bg};color:${sc.c}">${c.result}</span>`:'-'}</td><td><button class="cdel" onclick="removeClaim(${i})">삭제</button></td></tr>`;}).join('')}</tbody></table>`;
+  const TH='padding:5px 8px;border:1px solid #e5e7eb;text-align:left;color:#6b7280;font-weight:500;font-size:11px';
+  const TD='padding:6px 8px;border:1px solid #f3f4f6;font-size:12px';
+  let rows='';
+  formClaims.forEach(function(c,i){
+    rows+='<tr>'
+      +'<td style="'+TD+';color:#6b7280;width:90px">'+( c.date||'-')+'</td>'
+      +'<td style="'+TD+';font-weight:500">'+c.content+'</td>'
+      +'<td style="'+TD+';color:#6b7280;width:80px">'+( c.company||'-')+'</td>'
+      +'<td style="'+TD+';width:90px;text-align:center">'
+        +'<button onclick="editClaim('+i+')" style="border:1px solid #B5D4F4;background:none;font-size:11px;color:#185FA5;cursor:pointer;font-family:inherit;border-radius:3px;padding:1px 6px;margin-right:3px">수정</button>'
+        +'<button onclick="removeClaim('+i+')" style="border:1px solid #fca5a5;background:none;font-size:11px;color:#dc2626;cursor:pointer;font-family:inherit;border-radius:3px;padding:1px 6px">삭제</button>'
+      +'</td>'
+      +'</tr>';
+  });
+  w.innerHTML='<table style="width:100%;border-collapse:collapse;margin-top:6px">'
+    +'<thead><tr style="background:#f9fafb">'
+    +'<th style="'+TH+';width:90px">청구일</th>'
+    +'<th style="'+TH+'">청구 내용</th>'
+    +'<th style="'+TH+';width:80px">보험사</th>'
+    +'<th style="'+TH+';width:90px"></th>'
+    +'</tr></thead>'
+    +'<tbody>'+rows+'</tbody>'
+    +'</table>';
 }
 
-function openInsModal(){showErr('err-ins',false);document.getElementById('modal-ins').classList.add('on');}
+function openInsModal(){showErr('err-ins',false);const midxEl2=document.getElementById('modal-ins-edit-idx');if(midxEl2)midxEl2.value='';const t1=document.getElementById('ins-modal-title');if(t1)t1.textContent='계약 추가';document.getElementById('modal-ins').classList.add('on');}
 function closeIns(){document.getElementById('modal-ins').classList.remove('on');}
 function saveIns(){
   const t=gv('mi-type');if(!t){showErr('err-ins',true);return;}
-  formIns.push({type:t,co:gv('mi-co'),amt:Number(document.getElementById('mi-amt').value)||0,exp:gv('mi-exp'),st:gv('mi-st')||'유지중'});
+  const obj={type:t,co:gv('mi-co'),amt:Number(document.getElementById('mi-amt').value)||0,exp:gv('mi-exp'),st:gv('mi-st')||'신규'};
+  const midxEl=document.getElementById('modal-ins-edit-idx');const editIdx=midxEl?midxEl.value:'';
+  if(editIdx!==''){formIns[parseInt(editIdx)]=obj;}
+  else{formIns.push(obj);}
   renderIns();closeIns();
   ['mi-type','mi-co','mi-amt','mi-exp'].forEach(id=>sv(id,''));sv('mi-st','유지중');
+  const midxEl2=document.getElementById('modal-ins-edit-idx');if(midxEl2)midxEl2.value='';
 }
 function renderIns(){
   const el=document.getElementById('ins-list');
-  if(!formIns.length){el.innerHTML='<div style="font-size:12px;color:#9ca3af">등록된 보험이 없습니다.</div>';return;}
-  el.innerHTML=formIns.map((ins,i)=>{const sc=INS_SC[ins.st]||INS_SC['유지중'];return`<div class="ins-row"><span style="font-weight:500;min-width:80px">${ins.type}</span><span style="color:#9ca3af;min-width:80px">${ins.co}</span><span style="min-width:60px">${ins.amt}만원/월</span>${ins.exp?`<span style="font-size:11px;color:#9ca3af;min-width:80px">만기: ${ins.exp}</span>`:'<span style="min-width:80px"></span>'}<span class="badge" style="background:${sc.bg};color:${sc.c}">${ins.st}</span><button onclick="rmIns(${i})" style="margin-left:auto;border:none;background:none;font-size:11px;color:#dc2626;cursor:pointer;font-family:inherit">삭제</button></div>`;}).join('');
+  if(!formIns.length){el.innerHTML='<div style="font-size:12px;color:#9ca3af">등록된 계약이 없습니다.</div>';return;}
+  const TH='padding:5px 8px;border:1px solid #e5e7eb;text-align:left;color:#6b7280;font-weight:500;font-size:11px';
+  const TD='padding:6px 8px;border:1px solid #f3f4f6;font-size:12px';
+  let rows='';
+  formIns.forEach(function(ins,i){
+    const sc=INS_SC[ins.st]||INS_SC['유지중'];
+    const amt=ins.amt?Number(ins.amt).toLocaleString()+'원':'-';
+    rows+='<tr>'
+      +'<td style="'+TD+';font-weight:500">'+( ins.co||'-')+'</td>'
+      +'<td style="'+TD+'">'+( ins.type||'-')+'</td>'
+      +'<td style="'+TD+'">'+amt+'</td>'
+      +'<td style="'+TD+';color:#6b7280">'+( ins.exp||'-')+'</td>'
+      +'<td style="'+TD+'"><span class="badge" style="background:'+sc.bg+';color:'+sc.c+'">'+ins.st+'</span></td>'
+      +'<td style="'+TD+';text-align:center">'
+        +'<button onclick="editIns('+i+')" style="border:1px solid #B5D4F4;background:none;font-size:11px;color:#185FA5;cursor:pointer;font-family:inherit;border-radius:3px;padding:1px 6px;margin-right:3px">수정</button>'
+        +'<button onclick="rmIns('+i+')" style="border:1px solid #fca5a5;background:none;font-size:11px;color:#dc2626;cursor:pointer;font-family:inherit;border-radius:3px;padding:1px 6px">삭제</button>'
+      +'</td>'
+      +'</tr>';
+  });
+  el.innerHTML='<table style="width:100%;border-collapse:collapse;font-size:12px">'
+    +'<thead><tr style="background:#f9fafb">'
+    +'<th style="'+TH+'">보험사</th>'
+    +'<th style="'+TH+'">상품명</th>'
+    +'<th style="'+TH+'">월 보험료</th>'
+    +'<th style="'+TH+'">만기일</th>'
+    +'<th style="'+TH+'">상태</th>'
+    +'<th style="padding:5px 8px;border:1px solid #e5e7eb;width:90px"></th>'
+    +'</tr></thead>'
+    +'<tbody>'+rows+'</tbody>'
+    +'</table>';
+}
+function editIns(i){
+  const ins=formIns[i];
+  document.getElementById('mi-type').value=ins.type||'';
+  document.getElementById('mi-co').value=ins.co||'';
+  document.getElementById('mi-amt').value=ins.amt||'';
+  document.getElementById('mi-exp').value=ins.exp||'';
+  document.getElementById('mi-st').value=ins.st||'유지중';
+  const midxEl3=document.getElementById('modal-ins-edit-idx');if(midxEl3)midxEl3.value=i;
+  const t2=document.getElementById('ins-modal-title');if(t2)t2.textContent='계약 수정';
+  document.getElementById('modal-ins').classList.add('on');
 }
 function rmIns(i){formIns.splice(i,1);renderIns();}
 
 async function addProg(){
   const text=gv('f-prog');
   if(!text){showErr('err-prog',true);setTimeout(()=>showErr('err-prog',false),2000);return;}
-  const entry={custId:editId,datetime:nowStr(),author:'',text};
-  if(editId!==null){
-    const res=await api('POST','memos',entry);
-    memos.push({...entry,id:res.id});
-    renderTL(editId);showSave();
+  if(editId===null){
+    // 신규등록 중 - 임시 목록에 보관 (작성완료 시 저장됨)
+    const entry={id:'tmp_'+Date.now(),custId:null,datetime:nowStr(),author:'',text,_temp:true};
+    memos.push(entry);
+    renderTempTL();
+    sv('f-prog','');
+    return;
   }
+  const entry={custId:editId,datetime:nowStr(),author:'',text};
+  const res=await api('POST','memos',entry);
+  memos.push({...entry,id:res.id});
+  renderTL(editId);
+  showSave();
   sv('f-prog','');
+}
+
+function renderTempTL(){
+  var temps=memos.filter(function(m){return m._temp;});
+  var el=document.getElementById('tl-area');
+  if(!temps.length){el.innerHTML='<div class="empty">진행 내역이 없습니다.</div>';return;}
+  var html='';
+  var br='<br>';
+  temps.forEach(function(m){
+    var txt=m.text.split('\n').join(br);
+    html+='<div class="tl-item">';
+    html+='<div class="tl-meta"><div>'+m.datetime.slice(0,10)+'</div><div>'+m.datetime.slice(11,19)+'</div></div>';
+    html+='<div class="tl-body"><div class="tl-text">'+txt+'</div></div>';
+    html+='<div class="tl-actions"><button class="tl-act-btn del" onclick="rmTempTL(this)" data-id="'+m.id+'">삭제</button></div>';
+    html+='</div>';
+  });
+  el.innerHTML=html;
+}
+function rmTempTL(btn){
+  const id=btn.getAttribute('data-id');
+  memos=memos.filter(function(m){return m.id!==id;});
+  renderTempTL();
 }
 
 function tlItemHtml(m,editStart,editSave,editCancel,delFn){
@@ -593,7 +717,7 @@ function showPage(p){
   document.getElementById('nav-'+p).classList.add('on');
   if(p==='board')renderBoard();
 }
-function navToReg(){editId=null;clearForm();showPage('reg');}
+function navToReg(){editId=null;showPage('reg');clearForm();}
 
 let _rowMDx=0,_rowMDy=0;
 function rowMD(e){_rowMDx=e.clientX;_rowMDy=e.clientY;}
