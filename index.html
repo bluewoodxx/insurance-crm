@@ -304,6 +304,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 </div>
 
 <script>
+const FI='padding:3px 6px;border:1px solid #1a3a5c;border-radius:4px;font-size:12px;font-family:inherit;color:#1a1a1a;background:#f0f4f8;width:100%';
 const STATUSES=['통화요청','부재','장기부재','상담거절','방문예정','1차방문','2차방문','계약완료'];
 const SC={'통화요청':{bg:'#EFF6FF',c:'#1D4ED8'},'부재':{bg:'#FFFBEB',c:'#92400E'},'장기부재':{bg:'#FEF3C7',c:'#78350F'},'상담거절':{bg:'#FEF2F2',c:'#991B1B'},'방문예정':{bg:'#F0FDF4',c:'#15803D'},'1차방문':{bg:'#ECFDF5',c:'#065F46'},'2차방문':{bg:'#D1FAE5',c:'#064E3B'},'계약완료':{bg:'#EDE9FE',c:'#4C1D95'}};
 const INS_SC={신규:{bg:'#DBEAFE',c:'#1E40AF'},유지중:{bg:'#D1FAE5',c:'#065F46'},갱신필요:{bg:'#FEF3C7',c:'#92400E'},해지:{bg:'#FEE2E2',c:'#991B1B'}};
@@ -546,7 +547,6 @@ function renderClaims(){
   if(!formClaims.length){w.innerHTML='<div style="font-size:12px;color:#9ca3af;padding:8px 0 2px">청구이력이 없습니다.</div>';return;}
   const TH='padding:5px 8px;border:1px solid #e5e7eb;text-align:left;color:#6b7280;font-weight:500;font-size:11px';
   const TD='padding:6px 8px;border:1px solid #f3f4f6;font-size:12px';
-  const FI='padding:3px 6px;border:1px solid #1a3a5c;border-radius:4px;font-size:12px;font-family:inherit;color:#1a1a1a;background:#f0f4f8;width:100%';
   let rows='';
   formClaims.forEach(function(c,i){
     rows+='<tr id="crow-'+i+'">'
