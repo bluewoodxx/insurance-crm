@@ -93,11 +93,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 .toast.show{opacity:1}
 .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.6s linear infinite;vertical-align:middle;margin-right:6px}
 @keyframes spin{to{transform:rotate(360deg)}}
-.dtab-bar{display:flex;border-bottom:2px solid #e5e7eb;background:#fff;padding:0 16px}
-.dtab{padding:8px 16px;font-size:12px;font-weight:500;color:#6b7280;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all 0.15s;white-space:nowrap}
-.dtab:hover{color:#1a3a5c}
-.dtab.on{color:#1a3a5c;border-bottom-color:#1a3a5c}
-.dsec{display:none}.dsec.on{display:block}
 .phone-prefix{font-size:12px;padding:3px 8px;border:1px solid #d1d5db;border-radius:4px;background:#f9fafb;color:#6b7280}
 @media(max-width:600px){.board{grid-template-columns:repeat(2,1fr)}.claim-input-row{grid-template-columns:1fr 1fr}}
 </style>
@@ -124,17 +119,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
   </div>
   <div id="search-box" style="display:block;padding:8px 14px;border-bottom:1px solid #e5e7eb;background:#f9fafb">
     <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px">
-      <span style="font-size:11px;color:#6b7280">이름</span><input class="fi" id="sf-name" style="width:80px" oninput="renderList()">
-      <span style="font-size:11px;color:#6b7280">연락처</span><input class="fi" id="sf-phone" style="width:100px" oninput="renderList()">
+      <span style="font-size:11px;color:#6b7280">이름</span><input class="fi" id="sf-name" style="width:80px" oninput="currentPage=1;renderList()">
+      <span style="font-size:11px;color:#6b7280">연락처</span><input class="fi" id="sf-phone" style="width:100px" oninput="currentPage=1;renderList()">
       <span style="font-size:11px;color:#6b7280">상태</span>
-      <select class="fs" id="sf-status" onchange="renderList()">
+      <select class="fs" id="sf-status" onchange="currentPage=1;renderList()">
         <option value="">전체</option>
         <option>통화요청</option><option>부재</option><option>장기부재</option>
         <option>상담거절</option><option>방문예정</option><option>1차방문</option><option>2차방문</option>
         <option>계약완료</option>
       </select>
       <span style="font-size:11px;color:#6b7280">경로</span>
-      <select class="fs" id="sf-ch" onchange="renderList()">
+      <select class="fs" id="sf-ch" onchange="currentPage=1;renderList()">
         <option value="">전체</option>
         <option>퍼미션A</option><option>퍼미션B</option><option>퍼미션C</option>
         <option>외부DB</option><option>인포머셜</option><option>인포머셜실버</option><option>소개</option>
@@ -160,6 +155,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
       <tbody id="list-body"></tbody>
     </table>
   </div>
+  <div id="pagination" style="display:flex;align-items:center;justify-content:center;padding:12px 14px;border-top:1px solid #e5e7eb;flex-wrap:wrap;gap:4px"></div>
 </div>
 
 <!-- REGISTER / DETAIL -->
@@ -177,12 +173,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="1" width="11" height="12" rx="1.5"/><line x1="4" y1="5" x2="10" y2="5"/><line x1="4" y1="7.5" x2="10" y2="7.5"/><line x1="4" y1="10" x2="8" y2="10"/></svg>
     <span id="form-title">신규고객등록</span>
   </div>
-  <div class="dtab-bar">
-    <span class="dtab on" onclick="showDTab(0)">기본정보</span>
-    <span class="dtab" onclick="showDTab(1)">청구/계약</span>
-    <span class="dtab" onclick="showDTab(2)">진행과정</span>
-  </div>
-  <div class="dsec on" id="dsec-0">
+
   <div class="sh">
     <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 11.5s0-3 5.5-3 5.5 3 5.5 3"/><circle cx="6.5" cy="4.5" r="2.5"/></svg>
     상담정보
@@ -250,8 +241,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
     </tr>
   </table>
 
-  </div><!-- /dsec-0 -->
-  <div class="dsec" id="dsec-1">
+
   <div class="sh" style="margin-top:3px">
     <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="2" width="11" height="9" rx="1.5"/><line x1="4" y1="5.5" x2="9" y2="5.5"/><line x1="4" y1="8" x2="7" y2="8"/><path d="M9 0.5v3M4 0.5v3"/></svg>
     보험금 청구이력
@@ -275,9 +265,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
     <div id="ins-list"><div style="font-size:12px;color:#9ca3af">등록된 계약이 없습니다.</div></div>
   </div>
 
-  </div><!-- /dsec-1 -->
-  <div class="dsec" id="dsec-2">
-  <div class="sh">
+
+  <div class="sh" style="border-top:2px solid #e5e7eb">
     <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1.5" width="11" height="10" rx="1.5"/><line x1="3.5" y1="5" x2="9.5" y2="5"/><line x1="3.5" y1="7.5" x2="7.5" y2="7.5"/></svg>
     진행과정
   </div>
@@ -289,7 +278,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
     <div class="errmsg" id="err-prog">내용을 입력해주세요</div>
     <div id="tl-area"><div class="empty">진행 내역이 없습니다.</div></div>
   </div>
-  </div><!-- /dsec-2 -->
   <div class="ffooter" style="margin-top:8px">
     <button class="btn p" onclick="submitForm()">작성완료</button>
     <button class="btn" onclick="showPage('list')">취소</button>
@@ -328,7 +316,7 @@ const INS_SC={신규:{bg:'#DBEAFE',c:'#1E40AF'},유지중:{bg:'#D1FAE5',c:'#065F
 const CLAIM_SC={지급:{bg:'#D1FAE5',c:'#065F46'},일부지급:{bg:'#CFFAFE',c:'#155E75'},부지급:{bg:'#FEE2E2',c:'#991B1B'},심사중:{bg:'#DBEAFE',c:'#1E40AF'}};
 
 let customers=[], memos=[];
-let editId=null, statusFilter='', searchOpen=true;
+let editId=null, statusFilter='', searchOpen=true, currentPage=1;
 let formIns=[], formClaims=[];
 let homeOwn='';
 
@@ -389,13 +377,35 @@ function safeParseJSON(str,def){
   try{return JSON.parse(str);}catch(e){return def;}
 }
 
+function renderPagination(totalPages,total,start){
+  const el=document.getElementById('pagination');
+  if(!el)return;
+  const end=Math.min(start+15,total);
+  let html='<span style="font-size:12px;color:#6b7280;margin-right:10px">'+(start+1)+'-'+end+' / 전체 '+total+'건</span>';
+  // 이전
+  html+='<button onclick="renderList('+(currentPage-1)+')" style="'+pbtn(currentPage<=1)+'" '+(currentPage<=1?'disabled':'')+'>&#8592;</button>';
+  // 페이지 번호
+  let s=Math.max(1,currentPage-2), e=Math.min(totalPages,s+4);
+  if(e-s<4)s=Math.max(1,e-4);
+  if(s>1)html+='<button onclick="renderList(1)" style="'+pbtn(false)+'">1</button>';
+  if(s>2)html+='<span style="padding:0 4px;color:#9ca3af">…</span>';
+  for(let i=s;i<=e;i++){html+='<button onclick="renderList('+i+')" style="'+pbtn(false,i===currentPage)+'">'+i+'</button>';}
+  if(e<totalPages-1)html+='<span style="padding:0 4px;color:#9ca3af">…</span>';
+  if(e<totalPages)html+='<button onclick="renderList('+totalPages+')" style="'+pbtn(false)+'">'+totalPages+'</button>';
+  // 다음
+  html+='<button onclick="renderList('+(currentPage+1)+')" style="'+pbtn(currentPage>=totalPages)+'" '+(currentPage>=totalPages?'disabled':'')+'>&#8594;</button>';
+  el.innerHTML=html;
+}
+function pbtn(disabled,active){
+  return 'border:1px solid '+(active?'#1a3a5c':'#d1d5db')+';background:'+(active?'#1a3a5c':'#fff')+';color:'+(active?'#fff':(disabled?'#d1d5db':'#374151'))+';border-radius:4px;padding:3px 8px;font-size:12px;cursor:'+(disabled?'default':'pointer')+';margin:0 2px;font-family:inherit';
+}
 function buildSpills(){
   document.getElementById('spill-bar').innerHTML=[{label:'전체',v:''},...STATUSES.map(s=>({label:s,v:s}))].map(({label,v})=>{const sc=SC[v]||{bg:'#F3F4F6',c:'#374151'};return`<span class="spill${statusFilter===v?' on':''}" style="background:${sc.bg};color:${sc.c}" onclick="sfilt('${v}')">${label}</span>`;}).join('');
 }
-function sfilt(v){statusFilter=v;buildSpills();renderList();}
+function sfilt(v){statusFilter=v;currentPage=1;buildSpills();renderList();}
 function toggleSearch(){searchOpen=!searchOpen;document.getElementById('search-box').style.display=searchOpen?'block':'none';}
 
-function renderList(){
+function renderList(pg){
   buildSpills();
   let list=[...customers].sort((a,b)=>(b.regdate||'').localeCompare(a.regdate||''));
   if(statusFilter)list=list.filter(c=>c.status===statusFilter);
@@ -404,17 +414,25 @@ function renderList(){
   if(ph)list=list.filter(c=>(c.phone||'').includes(ph));
   if(st)list=list.filter(c=>c.status===st);
   if(ch)list=list.filter(c=>c.channel===ch);
+  const PAGE_SIZE=15;
+  const totalPages=Math.ceil(list.length/PAGE_SIZE)||1;
+  if(pg!==undefined)currentPage=pg;
+  if(currentPage>totalPages)currentPage=totalPages;
+  if(currentPage<1)currentPage=1;
+  const start=(currentPage-1)*PAGE_SIZE;
+  const pageList=list.slice(start,start+PAGE_SIZE);
   document.getElementById('tc').textContent=list.length;
+  renderPagination(totalPages,list.length,start);
   const tb=document.getElementById('list-body');
   if(!list.length){tb.innerHTML='<tr><td colspan="10" class="empty">등록된 고객이 없습니다.</td></tr>';return;}
-  tb.innerHTML=list.map((c,i)=>{
+  tb.innerHTML=pageList.map((c,i)=>{
     const sc=SC[c.status]||{bg:'#F3F4F6',c:'#374151'};
     const ms=memos.filter(m=>Number(m.custId||m.cust_id)===Number(c.id)).sort((a,b)=>b.datetime.localeCompare(a.datetime));
     const rm=ms[0];const age=calcInsAge(c.birth||'');
     const memoRow=rm?`<tr onmousedown="rowMD(event)" onmouseup="rowMU(event,${c.id})" style="cursor:pointer"><td colspan="10" style="padding:2px 7px 7px 36px;border-bottom:1px solid #e5e7eb;background:#fafafa"><span style="font-size:11px;color:#6b7280">[${rm.datetime.slice(0,16)}]&nbsp;&nbsp;${rm.text}</span></td></tr>`:'';
     return`<tr onmousedown="rowMD(event)" onmouseup="rowMU(event,${c.id})" style="border-bottom:${rm?'none':''};cursor:pointer">
       <td><input type="checkbox" onclick="event.stopPropagation()"></td>
-      <td style="color:#9ca3af">${list.length-i}</td>
+      <td style="color:#9ca3af">${list.length-start-i}</td>
       <td>${c.channel||''}</td>
       <td style="font-weight:500;user-select:text">${c.name}</td>
       <td style="user-select:text">${c.phone||''}</td>
@@ -649,6 +667,7 @@ function renderIns(){
       +'<td style="'+TD+';font-weight:500">'+( ins.co||'-')+'</td>'
       +'<td style="'+TD+'">'+( ins.type||'-')+'</td>'
       +'<td style="'+TD+'">'+amt+'</td>'
+      +'<td style="'+TD+';color:#6b7280">'+( ins.start||'-')+'</td>'
       +'<td style="'+TD+';color:#6b7280">'+( ins.exp||'-')+'</td>'
       +'<td style="'+TD+'"><span class="badge" style="background:'+sc.bg+';color:'+sc.c+'">'+ins.st+'</span></td>'
       +'<td style="'+TD+';text-align:center">'
@@ -657,7 +676,7 @@ function renderIns(){
       +'</td>'
       +'</tr>'
       +'<tr id="iedit-'+i+'" style="display:none;background:#f8fafc">'
-      +'<td colspan="6" style="padding:8px 10px;border:1px solid #e5e7eb">'
+      +'<td colspan="7" style="padding:8px 10px;border:1px solid #e5e7eb">'
         +'<div style="display:grid;grid-template-columns:1fr 1fr 100px 110px 110px auto auto auto;gap:5px;align-items:center">'
           +'<input id="ie-co-'+i+'" style="'+FI+'" placeholder="보험사" value="'+(ins.co||'')+'">'
           +'<input id="ie-type-'+i+'" style="'+FI+'" placeholder="상품명" value="'+(ins.type||'')+'">'
@@ -814,10 +833,6 @@ function showPage(p){
 }
 function navToReg(){editId=null;showPage('reg');clearForm();}
 
-function showDTab(n){
-  document.querySelectorAll('.dtab').forEach(function(t,i){t.className='dtab'+(i===n?' on':'');});
-  document.querySelectorAll('.dsec').forEach(function(s,i){s.className='dsec'+(i===n?' on':'');});
-}
 let _rowMDx=0,_rowMDy=0;
 function rowMD(e){_rowMDx=e.clientX;_rowMDy=e.clientY;}
 function rowMU(e,id){
