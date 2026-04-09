@@ -440,7 +440,7 @@ function renderList(pg){
       <td>${age!==null?age+'세':''}</td>
       <td><span class="badge" style="background:${sc.bg};color:${sc.c}">${c.status}</span></td>
       <td style="color:#9ca3af;font-size:11px">${c.regdate||''}</td>
-      <td style="text-align:center;white-space:normal;min-width:80px">${(c.insurances||[]).length?`<span style="font-size:11px;color:#1D4ED8;font-weight:500">${c.insurances.length}건</span><br><span style="font-size:10px;color:#6b7280">${c.insurances.slice(0,2).map(x=>x.co||x.type).join(', ')}</span>`:'-'}</td>
+      <td style="text-align:center">${(c.insurances||[]).length?`<span style="font-size:12px;color:#1D4ED8;font-weight:500">${c.insurances.length}건</span>`:'-'}</td>
     </tr>${memoRow}`;
   }).join('');
 }
