@@ -117,7 +117,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
     <button class="btn" onclick="toggleSearch()">상세검색</button>
     <span style="font-size:11px;color:#6b7280;margin-left:4px">전체 <span id="tc" style="font-weight:500;color:#1a1a1a">0</span>건</span>
   </div>
-  <div id="search-box" style="display:none;padding:8px 14px;border-bottom:1px solid #e5e7eb;background:#f9fafb">
+  <div id="search-box" style="display:block;padding:8px 14px;border-bottom:1px solid #e5e7eb;background:#f9fafb">
     <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px">
       <span style="font-size:11px;color:#6b7280">이름</span><input class="fi" id="sf-name" style="width:80px" oninput="renderList()">
       <span style="font-size:11px;color:#6b7280">연락처</span><input class="fi" id="sf-phone" style="width:100px" oninput="renderList()">
@@ -311,7 +311,7 @@ const INS_SC={신규:{bg:'#DBEAFE',c:'#1E40AF'},유지중:{bg:'#D1FAE5',c:'#065F
 const CLAIM_SC={지급:{bg:'#D1FAE5',c:'#065F46'},일부지급:{bg:'#CFFAFE',c:'#155E75'},부지급:{bg:'#FEE2E2',c:'#991B1B'},심사중:{bg:'#DBEAFE',c:'#1E40AF'}};
 
 let customers=[], memos=[];
-let editId=null, statusFilter='', searchOpen=false;
+let editId=null, statusFilter='', searchOpen=true;
 let formIns=[], formClaims=[];
 let homeOwn='';
 
@@ -613,11 +613,11 @@ function saveIns(){
   const midxEl=document.getElementById('modal-ins-edit-idx');const editIdx=midxEl?midxEl.value:'';
   if(editIdx!==''){formIns[parseInt(editIdx)]=obj;}
   else{formIns.push(obj);}
+  renderIns();
+  toast('계약 정보가 추가되었습니다. 작성완료를 눌러 저장하세요.');
   closeIns();
   ['mi-type','mi-co','mi-amt','mi-exp'].forEach(id=>sv(id,''));sv('mi-st','신규');
   const midxEl2=document.getElementById('modal-ins-edit-idx');if(midxEl2)midxEl2.value='';
-  renderIns();
-  toast('계약 정보가 추가되었습니다. 작성완료를 눌러 저장하세요.');
 }
 function renderIns(){
   const el=document.getElementById('ins-list');
