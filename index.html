@@ -677,11 +677,12 @@ function renderIns(){
       +'</tr>'
       +'<tr id="iedit-'+i+'" style="display:none;background:#f8fafc">'
       +'<td colspan="7" style="padding:8px 10px;border:1px solid #e5e7eb">'
-        +'<div style="display:grid;grid-template-columns:1fr 1fr 100px 110px 110px auto auto auto;gap:5px;align-items:center">'
+        +'<div style="display:grid;grid-template-columns:1fr 1fr 90px 100px 100px auto auto auto;gap:5px;align-items:center">'
           +'<input id="ie-co-'+i+'" style="'+FI+'" placeholder="보험사" value="'+(ins.co||'')+'">'
           +'<input id="ie-type-'+i+'" style="'+FI+'" placeholder="상품명" value="'+(ins.type||'')+'">'
           +'<input id="ie-amt-'+i+'" type="number" style="'+FI+'" placeholder="보험료" value="'+(ins.amt||'')+'">'
-          +'<input id="ie-exp-'+i+'" type="date" style="'+FI+'" value="'+(ins.exp||'')+'">'
+          +'<input id="ie-start-'+i+'" type="date" style="'+FI+'" placeholder="가입일" value="'+(ins.start||'')+'">'
+          +'<input id="ie-exp-'+i+'" type="date" style="'+FI+'" placeholder="만기일" value="'+(ins.exp||'')+'">'
           +'<select id="ie-st-'+i+'" style="'+FI+'">'
             +'<option'+(ins.st==='신규'?' selected':'')+'>신규</option>'
             +'<option'+(ins.st==='유지중'?' selected':'')+'>유지중</option>'
@@ -718,10 +719,10 @@ function saveInsEdit(i){
   var tp=document.getElementById('ie-type-'+i);
   var am=document.getElementById('ie-amt-'+i);
   var ex=document.getElementById('ie-exp-'+i);
+  var sr=document.getElementById('ie-start-'+i);
   var st=document.getElementById('ie-st-'+i);
   if(!tp||!tp.value.trim())return;
-  var st2=document.getElementById('ie-st-'+i);var sr=document.getElementById('ie-start-'+i);
-  formIns[i]={co:co?co.value.trim():'',type:tp.value.trim(),amt:Number(am?am.value:0)||0,start:sr?sr.value:'',exp:ex?ex.value:'',st:st2?st2.value:'신규'};
+  formIns[i]={co:co?co.value.trim():'',type:tp.value.trim(),amt:Number(am?am.value:0)||0,start:sr?sr.value:'',exp:ex?ex.value:'',st:st?st.value:'신규'};
   renderIns();
 }
 function cancelInsEdit(i){
