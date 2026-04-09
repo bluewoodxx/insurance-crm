@@ -93,6 +93,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 .toast.show{opacity:1}
 .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.6s linear infinite;vertical-align:middle;margin-right:6px}
 @keyframes spin{to{transform:rotate(360deg)}}
+.dtab-bar{display:flex;border-bottom:2px solid #e5e7eb;background:#fff;padding:0 16px}
+.dtab{padding:8px 16px;font-size:12px;font-weight:500;color:#6b7280;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all 0.15s;white-space:nowrap}
+.dtab:hover{color:#1a3a5c}
+.dtab.on{color:#1a3a5c;border-bottom-color:#1a3a5c}
+.dsec{display:none}.dsec.on{display:block}
 .phone-prefix{font-size:12px;padding:3px 8px;border:1px solid #d1d5db;border-radius:4px;background:#f9fafb;color:#6b7280}
 @media(max-width:600px){.board{grid-template-columns:repeat(2,1fr)}.claim-input-row{grid-template-columns:1fr 1fr}}
 </style>
@@ -172,6 +177,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="1" width="11" height="12" rx="1.5"/><line x1="4" y1="5" x2="10" y2="5"/><line x1="4" y1="7.5" x2="10" y2="7.5"/><line x1="4" y1="10" x2="8" y2="10"/></svg>
     <span id="form-title">신규고객등록</span>
   </div>
+  <div class="dtab-bar">
+    <span class="dtab on" onclick="showDTab(0)">기본정보</span>
+    <span class="dtab" onclick="showDTab(1)">청구/계약</span>
+    <span class="dtab" onclick="showDTab(2)">진행과정</span>
+  </div>
+  <div class="dsec on" id="dsec-0">
   <div class="sh">
     <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 11.5s0-3 5.5-3 5.5 3 5.5 3"/><circle cx="6.5" cy="4.5" r="2.5"/></svg>
     상담정보
@@ -239,6 +250,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
     </tr>
   </table>
 
+  </div><!-- /dsec-0 -->
+  <div class="dsec" id="dsec-1">
   <div class="sh" style="margin-top:3px">
     <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="2" width="11" height="9" rx="1.5"/><line x1="4" y1="5.5" x2="9" y2="5.5"/><line x1="4" y1="8" x2="7" y2="8"/><path d="M9 0.5v3M4 0.5v3"/></svg>
     보험금 청구이력
@@ -262,7 +275,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
     <div id="ins-list"><div style="font-size:12px;color:#9ca3af">등록된 계약이 없습니다.</div></div>
   </div>
 
-  <div class="sh" style="border-top:2px solid #e5e7eb">
+  </div><!-- /dsec-1 -->
+  <div class="dsec" id="dsec-2">
+  <div class="sh">
     <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1.5" width="11" height="10" rx="1.5"/><line x1="3.5" y1="5" x2="9.5" y2="5"/><line x1="3.5" y1="7.5" x2="7.5" y2="7.5"/></svg>
     진행과정
   </div>
@@ -274,6 +289,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
     <div class="errmsg" id="err-prog">내용을 입력해주세요</div>
     <div id="tl-area"><div class="empty">진행 내역이 없습니다.</div></div>
   </div>
+  </div><!-- /dsec-2 -->
   <div class="ffooter" style="margin-top:8px">
     <button class="btn p" onclick="submitForm()">작성완료</button>
     <button class="btn" onclick="showPage('list')">취소</button>
@@ -292,6 +308,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
     <div class="mf"><div class="mlb">상품명 *</div><input class="fi" id="mi-type" placeholder="종신보험, 암보험, 실손보험 등"></div>
     <div class="mf"><div class="mlb">보험사</div><input class="fi" id="mi-co" placeholder="삼성생명, 교보생명 등"></div>
     <div class="mf"><div class="mlb">월 보험료 (원)</div><input class="fi" id="mi-amt" type="number" placeholder="100000"></div>
+    <div class="mf"><div class="mlb">가입일</div><input class="fi" id="mi-start" type="date"></div>
     <div class="mf"><div class="mlb">만기일</div><input class="fi" id="mi-exp" type="date"></div>
     <div class="mf"><div class="mlb">상태</div><select class="fs" id="mi-st" style="width:100%"><option>신규</option><option>유지중</option><option>갱신필요</option><option>해지</option></select></div>
     <div class="errmsg" id="err-ins">보험 종류를 입력해주세요</div>
@@ -609,14 +626,14 @@ function openInsModal(){showErr('err-ins',false);const midxEl2=document.getEleme
 function closeIns(){document.getElementById('modal-ins').classList.remove('on');}
 function saveIns(){
   const t=gv('mi-type');if(!t){showErr('err-ins',true);return;}
-  const obj={type:t,co:gv('mi-co'),amt:Number(document.getElementById('mi-amt').value)||0,exp:gv('mi-exp'),st:gv('mi-st')||'신규'};
+  const obj={type:t,co:gv('mi-co'),amt:Number(document.getElementById('mi-amt').value)||0,start:gv('mi-start'),exp:gv('mi-exp'),st:gv('mi-st')||'신규'};
   const midxEl=document.getElementById('modal-ins-edit-idx');const editIdx=midxEl?midxEl.value:'';
   if(editIdx!==''){formIns[parseInt(editIdx)]=obj;}
   else{formIns.push(obj);}
   renderIns();
   toast('계약 정보가 추가되었습니다. 작성완료를 눌러 저장하세요.');
   closeIns();
-  ['mi-type','mi-co','mi-amt','mi-exp'].forEach(id=>sv(id,''));sv('mi-st','신규');
+  ['mi-type','mi-co','mi-amt','mi-start','mi-exp'].forEach(id=>sv(id,''));sv('mi-st','신규');
   const midxEl2=document.getElementById('modal-ins-edit-idx');if(midxEl2)midxEl2.value='';
 }
 function renderIns(){
@@ -641,7 +658,7 @@ function renderIns(){
       +'</tr>'
       +'<tr id="iedit-'+i+'" style="display:none;background:#f8fafc">'
       +'<td colspan="6" style="padding:8px 10px;border:1px solid #e5e7eb">'
-        +'<div style="display:grid;grid-template-columns:1fr 1fr 100px 110px auto auto auto;gap:5px;align-items:center">'
+        +'<div style="display:grid;grid-template-columns:1fr 1fr 100px 110px 110px auto auto auto;gap:5px;align-items:center">'
           +'<input id="ie-co-'+i+'" style="'+FI+'" placeholder="보험사" value="'+(ins.co||'')+'">'
           +'<input id="ie-type-'+i+'" style="'+FI+'" placeholder="상품명" value="'+(ins.type||'')+'">'
           +'<input id="ie-amt-'+i+'" type="number" style="'+FI+'" placeholder="보험료" value="'+(ins.amt||'')+'">'
@@ -663,6 +680,7 @@ function renderIns(){
     +'<th style="'+TH+'">보험사</th>'
     +'<th style="'+TH+'">상품명</th>'
     +'<th style="'+TH+'">월 보험료</th>'
+    +'<th style="'+TH+'">가입일</th>'
     +'<th style="'+TH+'">만기일</th>'
     +'<th style="'+TH+'">상태</th>'
     +'<th style="padding:5px 8px;border:1px solid #e5e7eb;width:90px"></th>'
@@ -683,7 +701,8 @@ function saveInsEdit(i){
   var ex=document.getElementById('ie-exp-'+i);
   var st=document.getElementById('ie-st-'+i);
   if(!tp||!tp.value.trim())return;
-  formIns[i]={co:co?co.value.trim():'',type:tp.value.trim(),amt:Number(am?am.value:0)||0,exp:ex?ex.value:'',st:st?st.value:'신규'};
+  var st2=document.getElementById('ie-st-'+i);var sr=document.getElementById('ie-start-'+i);
+  formIns[i]={co:co?co.value.trim():'',type:tp.value.trim(),amt:Number(am?am.value:0)||0,start:sr?sr.value:'',exp:ex?ex.value:'',st:st2?st2.value:'신규'};
   renderIns();
 }
 function cancelInsEdit(i){
@@ -795,6 +814,10 @@ function showPage(p){
 }
 function navToReg(){editId=null;showPage('reg');clearForm();}
 
+function showDTab(n){
+  document.querySelectorAll('.dtab').forEach(function(t,i){t.className='dtab'+(i===n?' on':'');});
+  document.querySelectorAll('.dsec').forEach(function(s,i){s.className='dsec'+(i===n?' on':'');});
+}
 let _rowMDx=0,_rowMDy=0;
 function rowMD(e){_rowMDx=e.clientX;_rowMDy=e.clientY;}
 function rowMU(e,id){
