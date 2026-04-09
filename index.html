@@ -655,43 +655,25 @@ function saveIns(){
   const midxEl2=document.getElementById('modal-ins-edit-idx');if(midxEl2)midxEl2.value='';
 }
 function renderIns(){
-  const el=document.getElementById('ins-list');
+  var el=document.getElementById('ins-list');
+  if(!el)return;
   if(!formIns.length){el.innerHTML='<div style="font-size:12px;color:#9ca3af">등록된 계약이 없습니다.</div>';return;}
-  const TH='padding:5px 8px;border:1px solid #e5e7eb;text-align:left;color:#6b7280;font-weight:500;font-size:11px';
-  const TD='padding:6px 8px;border:1px solid #f3f4f6;font-size:12px';
-  let rows='';
+  var TH='padding:5px 8px;border:1px solid #e5e7eb;text-align:left;color:#6b7280;font-weight:500;font-size:11px';
+  var TD='padding:6px 8px;border:1px solid #f3f4f6;font-size:12px;vertical-align:middle';
+  var rows='';
   formIns.forEach(function(ins,i){
-    const sc=INS_SC[ins.st]||INS_SC['유지중'];
-    const amt=ins.amt?Number(ins.amt).toLocaleString()+'원':'-';
-    rows+='<tr>'
+    var sc=INS_SC[ins.st]||INS_SC['유지중'];
+    var amt=ins.amt?Number(ins.amt).toLocaleString()+'원':'-';
+    rows+='<tr id="irow-'+i+'">'
       +'<td style="'+TD+';font-weight:500">'+( ins.co||'-')+'</td>'
       +'<td style="'+TD+'">'+( ins.type||'-')+'</td>'
       +'<td style="'+TD+'">'+amt+'</td>'
       +'<td style="'+TD+';color:#6b7280">'+( ins.start||'-')+'</td>'
       +'<td style="'+TD+';color:#6b7280">'+( ins.exp||'-')+'</td>'
       +'<td style="'+TD+'"><span class="badge" style="background:'+sc.bg+';color:'+sc.c+'">'+ins.st+'</span></td>'
-      +'<td style="'+TD+';text-align:center">'
-        +'<button onclick="expandInsEdit('+i+')" style="border:1px solid #B5D4F4;background:none;font-size:11px;color:#185FA5;cursor:pointer;font-family:inherit;border-radius:3px;padding:1px 6px;margin-right:3px">수정</button>'
+      +'<td style="'+TD+';white-space:nowrap">'
+        +'<button onclick="startInsEdit('+i+')" style="border:1px solid #B5D4F4;background:none;font-size:11px;color:#185FA5;cursor:pointer;font-family:inherit;border-radius:3px;padding:1px 6px;margin-right:3px">수정</button>'
         +'<button onclick="rmIns('+i+')" style="border:1px solid #fca5a5;background:none;font-size:11px;color:#dc2626;cursor:pointer;font-family:inherit;border-radius:3px;padding:1px 6px">삭제</button>'
-      +'</td>'
-      +'</tr>'
-      +'<tr id="iedit-'+i+'" style="display:none;background:#f8fafc">'
-      +'<td colspan="7" style="padding:8px 10px;border:1px solid #e5e7eb">'
-        +'<div style="display:grid;grid-template-columns:1fr 1fr 90px 100px 100px auto auto auto;gap:5px;align-items:center">'
-          +'<input id="ie-co-'+i+'" style="'+FI+'" placeholder="보험사" value="'+(ins.co||'')+'">'
-          +'<input id="ie-type-'+i+'" style="'+FI+'" placeholder="상품명" value="'+(ins.type||'')+'">'
-          +'<input id="ie-amt-'+i+'" type="number" style="'+FI+'" placeholder="보험료" value="'+(ins.amt||'')+'">'
-          +'<input id="ie-start-'+i+'" type="date" style="'+FI+'" placeholder="가입일" value="'+(ins.start||'')+'">'
-          +'<input id="ie-exp-'+i+'" type="date" style="'+FI+'" placeholder="만기일" value="'+(ins.exp||'')+'">'
-          +'<select id="ie-st-'+i+'" style="'+FI+'">'
-            +'<option'+(ins.st==='신규'?' selected':'')+'>신규</option>'
-            +'<option'+(ins.st==='유지중'?' selected':'')+'>유지중</option>'
-            +'<option'+(ins.st==='갱신필요'?' selected':'')+'>갱신필요</option>'
-            +'<option'+(ins.st==='해지'?' selected':'')+'>해지</option>'
-          +'</select>'
-          +'<button onclick="saveInsEdit('+i+')" style="background:#1a3a5c;color:#fff;border:none;border-radius:4px;font-size:12px;padding:4px 10px;cursor:pointer;font-family:inherit;white-space:nowrap">저장</button>'
-          +'<button onclick="cancelInsEdit('+i+')" style="background:none;border:1px solid #d1d5db;border-radius:4px;font-size:12px;padding:4px 8px;cursor:pointer;font-family:inherit">취소</button>'
-        +'</div>'
       +'</td>'
       +'</tr>';
   });
@@ -708,25 +690,51 @@ function renderIns(){
     +'<tbody>'+rows+'</tbody>'
     +'</table>';
 }
-
-function expandInsEdit(i){
-  formIns.forEach(function(_,j){var r=document.getElementById('iedit-'+j);if(r)r.style.display='none';});
-  var row=document.getElementById('iedit-'+i);
-  if(row)row.style.display='';
+function startInsEdit(i){
+  var row=document.getElementById('irow-'+i);
+  if(!row)return;
+  var ins=formIns[i];
+  var sc=INS_SC[ins.st]||INS_SC['유지중'];
+  var TD='padding:4px 6px;border:1px solid #f3f4f6;font-size:12px;vertical-align:middle';
+  var FI2='padding:3px 5px;border:1px solid #1a3a5c;border-radius:4px;font-size:12px;font-family:inherit;width:100%;background:#f0f4f8';
+  row.innerHTML=''
+    +'<td style="'+TD+'"><input id="iev-co-'+i+'" style="'+FI2+'" value="'+(ins.co||'')+'"></td>'
+    +'<td style="'+TD+'"><input id="iev-type-'+i+'" style="'+FI2+'" value="'+(ins.type||'')+'"></td>'
+    +'<td style="'+TD+'"><input id="iev-amt-'+i+'" type="number" style="'+FI2+'" value="'+(ins.amt||'')+'"></td>'
+    +'<td style="'+TD+'"><input id="iev-start-'+i+'" type="date" style="'+FI2+'" value="'+(ins.start||'')+'"></td>'
+    +'<td style="'+TD+'"><input id="iev-exp-'+i+'" type="date" style="'+FI2+'" value="'+(ins.exp||'')+'"></td>'
+    +'<td style="'+TD+'">'
+      +'<select id="iev-st-'+i+'" style="'+FI2+'">'
+        +'<option'+(ins.st==='신규'?' selected':'')+'>신규</option>'
+        +'<option'+(ins.st==='유지중'?' selected':'')+'>유지중</option>'
+        +'<option'+(ins.st==='갱신필요'?' selected':'')+'>갱신필요</option>'
+        +'<option'+(ins.st==='해지'?' selected':'')+'>해지</option>'
+      +'</select>'
+    +'</td>'
+    +'<td style="'+TD+';white-space:nowrap">'
+      +'<button onclick="saveInsInline('+i+')" style="background:#1a3a5c;color:#fff;border:none;border-radius:3px;font-size:11px;padding:2px 8px;cursor:pointer;font-family:inherit;margin-right:3px">저장</button>'
+      +'<button onclick="renderIns()" style="background:none;border:1px solid #d1d5db;border-radius:3px;font-size:11px;padding:2px 6px;cursor:pointer;font-family:inherit">취소</button>'
+    +'</td>';
+  var inp=document.getElementById('iev-co-'+i);
+  if(inp)inp.focus();
 }
-function saveInsEdit(i){
-  var co=document.getElementById('ie-co-'+i);
-  var tp=document.getElementById('ie-type-'+i);
-  var am=document.getElementById('ie-amt-'+i);
-  var ex=document.getElementById('ie-exp-'+i);
-  var sr=document.getElementById('ie-start-'+i);
-  var st=document.getElementById('ie-st-'+i);
+function saveInsInline(i){
+  var co=document.getElementById('iev-co-'+i);
+  var tp=document.getElementById('iev-type-'+i);
+  var am=document.getElementById('iev-amt-'+i);
+  var sr=document.getElementById('iev-start-'+i);
+  var ex=document.getElementById('iev-exp-'+i);
+  var st=document.getElementById('iev-st-'+i);
   if(!tp||!tp.value.trim())return;
-  formIns[i]={co:co?co.value.trim():'',type:tp.value.trim(),amt:Number(am?am.value:0)||0,start:sr?sr.value:'',exp:ex?ex.value:'',st:st?st.value:'신규'};
+  formIns[i]={
+    co:co?co.value.trim():'',
+    type:tp.value.trim(),
+    amt:Number(am?am.value:0)||0,
+    start:sr?sr.value:'',
+    exp:ex?ex.value:'',
+    st:st?st.value:'신규'
+  };
   renderIns();
-}
-function cancelInsEdit(i){
-  var row=document.getElementById('iedit-'+i);if(row)row.style.display='none';
 }
 function rmIns(i){formIns.splice(i,1);renderIns();}
 
