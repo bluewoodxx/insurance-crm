@@ -345,29 +345,69 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 
   <!-- STEP 1: 파일 업로드 -->
   <div class="import-step on" id="imp-step1">
-    <label class="import-zone" id="drop-zone" ondragover="impDragOver(event)" ondragleave="impDragLeave(event)" ondrop="impDrop(event)" onclick="document.getElementById('imp-file').click()">
-      <input type="file" id="imp-file" accept=".xlsx,.xls,.csv" onchange="impFileChange(event)">
-      <svg class="import-icon" viewBox="0 0 40 40" fill="none" stroke="#1a3a5c" stroke-width="1.8"><rect x="6" y="4" width="28" height="32" rx="3"/><path d="M14 4v10h12V4"/><line x1="12" y1="22" x2="28" y2="22"/><line x1="12" y1="27" x2="22" y2="27"/></svg>
-      <div style="font-size:14px;font-weight:500;color:#1a3a5c;margin-bottom:6px">엑셀 파일을 드래그하거나 클릭해서 선택</div>
-      <div style="font-size:12px;color:#9ca3af">.xlsx, .xls, .csv 지원 · 분배받은 외부DB 파일</div>
-    </label>
+    <!-- 탭 전환 -->
+    <div style="display:flex;border-bottom:1px solid #e5e7eb;margin:0 16px;gap:0">
+      <button id="tab-excel" onclick="impSwitchTab('excel')" style="padding:8px 18px;font-size:12px;font-weight:500;border:none;background:none;cursor:pointer;color:#1a3a5c;border-bottom:2px solid #1a3a5c;font-family:inherit">엑셀 파일</button>
+      <button id="tab-image" onclick="impSwitchTab('image')" style="padding:8px 18px;font-size:12px;font-weight:500;border:none;background:none;cursor:pointer;color:#9ca3af;border-bottom:2px solid transparent;font-family:inherit">이미지 OCR <span style="font-size:10px;background:#e0e7ff;color:#3730a3;padding:1px 5px;border-radius:4px;margin-left:4px">AI</span></button>
+    </div>
 
-    <!-- 컬럼 매핑 안내 -->
-    <div style="margin:0 16px 16px;padding:14px;border:1px solid #e5e7eb;border-radius:8px;background:#fafafa">
-      <div style="font-size:12px;font-weight:500;color:#1a3a5c;margin-bottom:10px">자동 인식 컬럼 매핑</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">
-        <div class="map-row"><span class="map-label">열 1 (날짜)</span><span class="map-arrow">→</span><span class="col-tag">DB등록일</span></div>
-        <div class="map-row"><span class="map-label">열 2 (이름)</span><span class="map-arrow">→</span><span class="col-tag">이름</span></div>
-        <div class="map-row"><span class="map-label">열 3 (주민번호)</span><span class="map-arrow">→</span><span class="col-tag">생년월일 + 뒷자리</span></div>
-        <div class="map-row"><span class="map-label">열 4 (연락처)</span><span class="map-arrow">→</span><span class="col-tag">휴대폰번호</span></div>
-        <div class="map-row"><span class="map-label">열 5 (상담가능시간)</span><span class="map-arrow">→</span><span class="col-tag">메모(진행과정)</span></div>
-        <div class="map-row"><span class="map-label">열 7 (보험료)</span><span class="map-arrow">→</span><span class="col-tag">기존 월보험료(메모)</span></div>
-        <div class="map-row"><span class="map-label">열 8 (주소)</span><span class="map-arrow">→</span><span class="col-tag">자택주소</span></div>
-        <div class="map-row"><span class="map-label">열 9 (보장내용)</span><span class="map-arrow">→</span><span class="col-tag">메모(진행과정)</span></div>
-        <div class="map-row"><span class="map-label">열 10 (직업)</span><span class="map-arrow">→</span><span class="col-tag">직업</span></div>
-        <div class="map-row"><span class="map-label">열 11 (특이사항)</span><span class="map-arrow">→</span><span class="col-tag">메모(진행과정)</span></div>
+    <!-- 엑셀 탭 -->
+    <div id="imp-tab-excel">
+      <input type="file" id="imp-file" accept=".xlsx,.xls,.csv" onchange="impFileChange(event)" style="display:none">
+      <div class="import-zone" id="drop-zone" ondragover="impDragOver(event)" ondragleave="impDragLeave(event)" ondrop="impDrop(event)" onclick="document.getElementById('imp-file').click()">
+        <svg class="import-icon" viewBox="0 0 40 40" fill="none" stroke="#1a3a5c" stroke-width="1.8"><rect x="6" y="4" width="28" height="32" rx="3"/><path d="M14 4v10h12V4"/><line x1="12" y1="22" x2="28" y2="22"/><line x1="12" y1="27" x2="22" y2="27"/></svg>
+        <div style="font-size:14px;font-weight:500;color:#1a3a5c;margin-bottom:6px">엑셀 파일을 드래그하거나 클릭해서 선택</div>
+        <div style="font-size:12px;color:#9ca3af">.xlsx, .xls, .csv 지원 · 분배받은 외부DB 파일</div>
       </div>
-      <div style="margin-top:10px;font-size:11px;color:#9ca3af">유입경로는 <strong style="color:#1a3a5c">외부DB</strong>로 자동 설정 · 상태는 <strong style="color:#1a3a5c">통화요청</strong>으로 자동 설정</div>
+      <div style="margin:0 16px 16px;padding:14px;border:1px solid #e5e7eb;border-radius:8px;background:#fafafa">
+        <div style="font-size:12px;font-weight:500;color:#1a3a5c;margin-bottom:10px">자동 인식 컬럼 매핑</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">
+          <div class="map-row"><span class="map-label">열 1 (날짜)</span><span class="map-arrow">→</span><span class="col-tag">DB등록일</span></div>
+          <div class="map-row"><span class="map-label">열 2 (이름)</span><span class="map-arrow">→</span><span class="col-tag">이름</span></div>
+          <div class="map-row"><span class="map-label">열 3 (주민번호)</span><span class="map-arrow">→</span><span class="col-tag">생년월일 + 뒷자리</span></div>
+          <div class="map-row"><span class="map-label">열 4 (연락처)</span><span class="map-arrow">→</span><span class="col-tag">휴대폰번호</span></div>
+          <div class="map-row"><span class="map-label">열 5 (상담가능시간)</span><span class="map-arrow">→</span><span class="col-tag">메모(진행과정)</span></div>
+          <div class="map-row"><span class="map-label">열 7 (보험료)</span><span class="map-arrow">→</span><span class="col-tag">기존 월보험료(메모)</span></div>
+          <div class="map-row"><span class="map-label">열 8 (주소)</span><span class="map-arrow">→</span><span class="col-tag">자택주소</span></div>
+          <div class="map-row"><span class="map-label">열 9 (보장내용)</span><span class="map-arrow">→</span><span class="col-tag">메모(진행과정)</span></div>
+          <div class="map-row"><span class="map-label">열 10 (직업)</span><span class="map-arrow">→</span><span class="col-tag">직업</span></div>
+          <div class="map-row"><span class="map-label">열 11 (특이사항)</span><span class="map-arrow">→</span><span class="col-tag">메모(진행과정)</span></div>
+        </div>
+        <div style="margin-top:10px;font-size:11px;color:#9ca3af">유입경로는 <strong style="color:#1a3a5c">외부DB</strong>로 자동 설정 · 상태는 <strong style="color:#1a3a5c">통화요청</strong>으로 자동 설정</div>
+      </div>
+    </div>
+
+    <!-- 이미지 OCR 탭 -->
+    <div id="imp-tab-image" style="display:none">
+      <input type="file" id="imp-img-file" accept="image/*" multiple onchange="impImgFileChange(event)" style="display:none">
+      <div style="margin:16px">
+        <!-- 드롭존 -->
+        <div id="img-drop-zone" onclick="document.getElementById('imp-img-file').click()"
+          ondragover="imgDragOver(event)" ondragleave="imgDragLeave(event)" ondrop="imgDrop(event)"
+          style="border:2px dashed #d1d5db;border-radius:12px;padding:32px 20px;text-align:center;cursor:pointer;background:#fafafa;transition:all 0.2s;margin-bottom:12px">
+          <div style="font-size:28px;margin-bottom:8px">📷</div>
+          <div style="font-size:14px;font-weight:500;color:#1a3a5c;margin-bottom:4px">카카오톡 스크린샷을 드래그하거나 클릭</div>
+          <div style="font-size:12px;color:#9ca3af">여러 장 동시 선택 가능 · jpg, png 지원</div>
+          <div style="font-size:11px;color:#9ca3af;margin-top:6px">Claude AI가 이미지에서 고객정보를 자동 추출합니다</div>
+        </div>
+        <!-- 붙여넣기 안내 -->
+        <div style="font-size:11px;color:#9ca3af;text-align:center;margin-bottom:12px">또는 이미지를 Ctrl+V 로 붙여넣기</div>
+        <!-- 대기 이미지 목록 -->
+        <div id="img-queue" style="display:none">
+          <div style="font-size:12px;font-weight:500;color:#1a3a5c;margin-bottom:8px">선택된 이미지</div>
+          <div id="img-queue-list" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px"></div>
+          <button onclick="impRunOcr()" id="ocr-btn" class="btn p" style="width:100%;padding:8px;font-size:13px">
+            AI로 정보 추출 시작
+          </button>
+        </div>
+        <!-- 진행 상태 -->
+        <div id="ocr-progress" style="display:none;padding:16px;text-align:center">
+          <span class="spinner" style="border-top-color:#1a3a5c;border-color:rgba(26,58,92,0.2)"></span>
+          <span id="ocr-progress-text" style="font-size:12px;color:#1a3a5c">이미지 분석 중...</span>
+        </div>
+        <!-- 결과 편집 영역 -->
+        <div id="ocr-result-area" style="display:none"></div>
+      </div>
     </div>
   </div>
 
@@ -1078,6 +1118,205 @@ function impReset(){
   document.getElementById('imp-file').value='';
   document.getElementById('imp-filename').textContent='';
   impSetStep(1);
+}
+
+// ════════════════════════════════════
+//  이미지 OCR (Claude Vision)
+// ════════════════════════════════════
+let imgQueue = [];   // {file, dataUrl, name}
+let ocrResults = []; // 파싱된 고객 배열
+
+function impSwitchTab(tab) {
+  const isExcel = tab === 'excel';
+  document.getElementById('imp-tab-excel').style.display = isExcel ? '' : 'none';
+  document.getElementById('imp-tab-image').style.display = isExcel ? 'none' : '';
+  const te = document.getElementById('tab-excel');
+  const ti = document.getElementById('tab-image');
+  te.style.color = isExcel ? '#1a3a5c' : '#9ca3af';
+  te.style.borderBottomColor = isExcel ? '#1a3a5c' : 'transparent';
+  ti.style.color = isExcel ? '#9ca3af' : '#1a3a5c';
+  ti.style.borderBottomColor = isExcel ? 'transparent' : '#1a3a5c';
+}
+
+function imgDragOver(e) { e.preventDefault(); document.getElementById('img-drop-zone').style.borderColor='#1a3a5c'; document.getElementById('img-drop-zone').style.background='#f0f4f8'; }
+function imgDragLeave()  { document.getElementById('img-drop-zone').style.borderColor='#d1d5db'; document.getElementById('img-drop-zone').style.background='#fafafa'; }
+function imgDrop(e)      { e.preventDefault(); imgDragLeave(); addImgFiles(e.dataTransfer.files); }
+function impImgFileChange(e) { addImgFiles(e.target.files); e.target.value=''; }
+
+// 붙여넣기 지원
+document.addEventListener('paste', function(e) {
+  if (!document.getElementById('imp-tab-image') || document.getElementById('imp-tab-image').style.display === 'none') return;
+  const items = e.clipboardData && e.clipboardData.items;
+  if (!items) return;
+  const files = [];
+  for (let i = 0; i < items.length; i++) {
+    if (items[i].type.startsWith('image/')) files.push(items[i].getAsFile());
+  }
+  if (files.length) addImgFiles(files);
+});
+
+function addImgFiles(files) {
+  Array.from(files).forEach(function(file) {
+    if (!file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      imgQueue.push({ file, dataUrl: e.target.result, name: file.name || ('image_'+Date.now()) });
+      renderImgQueue();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderImgQueue() {
+  const qEl = document.getElementById('img-queue');
+  const listEl = document.getElementById('img-queue-list');
+  if (!imgQueue.length) { qEl.style.display = 'none'; return; }
+  qEl.style.display = '';
+  listEl.innerHTML = imgQueue.map(function(item, i) {
+    return '<div style="position:relative;display:inline-block">'
+      + '<img src="' + item.dataUrl + '" style="width:80px;height:80px;object-fit:cover;border-radius:6px;border:1px solid #e5e7eb">'
+      + '<button onclick="removeImg(' + i + ')" style="position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:#dc2626;color:#fff;border:none;cursor:pointer;font-size:11px;line-height:18px;text-align:center;padding:0">×</button>'
+      + '<div style="font-size:10px;color:#9ca3af;text-align:center;margin-top:2px;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + item.name + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+function removeImg(i) { imgQueue.splice(i, 1); renderImgQueue(); }
+
+async function impRunOcr() {
+  if (!imgQueue.length) { toast('이미지를 먼저 추가해주세요'); return; }
+  document.getElementById('ocr-btn').disabled = true;
+  document.getElementById('ocr-progress').style.display = '';
+  document.getElementById('ocr-result-area').style.display = 'none';
+  ocrResults = [];
+
+  for (let i = 0; i < imgQueue.length; i++) {
+    document.getElementById('ocr-progress-text').textContent = (i+1) + '/' + imgQueue.length + ' 이미지 분석 중...';
+    const item = imgQueue[i];
+    // base64 추출
+    const b64 = item.dataUrl.split(',')[1];
+    const mediaType = item.file.type || 'image/jpeg';
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1000,
+          messages: [{
+            role: 'user',
+            content: [
+              { type: 'image', source: { type: 'base64', media_type: mediaType, data: b64 } },
+              { type: 'text', text: '이 이미지는 보험 고객 DB 화면입니다. 다음 정보를 JSON으로만 출력하세요 (설명 없이 JSON만). 없으면 빈 문자열:
+{"name":"이름","phone":"연락처(010-XXXX-XXXX형식)","birth":"생년월일6자리(YYMMDD)","job":"직업","homeaddr":"주소","regdate":"등록일(YYYY-MM-DD)","memo":"문의내용/상담유형/추가정보 등 나머지 유용한 정보 모두"}' }
+            ]
+          }]
+        })
+      });
+      const data = await res.json();
+      const text = (data.content||[]).map(function(b){return b.text||'';}).join('');
+      let parsed = null;
+      try {
+        const clean = text.replace(/```json|```/g,'').trim();
+        parsed = JSON.parse(clean);
+      } catch(e) {
+        // JSON 파싱 실패 시 빈 객체
+        parsed = { name:'', phone:'', birth:'', job:'', homeaddr:'', regdate:'', memo: text.slice(0,200) };
+      }
+      if (parsed && parsed.name) {
+        parsed._imgName = item.name;
+        parsed._dataUrl = item.dataUrl;
+        parsed.isDup = customers.some(function(c){ return c.name===parsed.name && c.phone===parsed.phone && parsed.name; });
+        ocrResults.push(parsed);
+      }
+    } catch(e) {
+      console.error('OCR 오류:', e);
+      toast('이미지 ' + (i+1) + ' 분석 실패');
+    }
+  }
+
+  document.getElementById('ocr-progress').style.display = 'none';
+  document.getElementById('ocr-btn').disabled = false;
+  if (!ocrResults.length) { toast('추출된 고객 정보가 없습니다'); return; }
+  renderOcrResults();
+}
+
+function renderOcrResults() {
+  const el = document.getElementById('ocr-result-area');
+  el.style.display = '';
+  const TH = 'padding:5px 8px;border:1px solid #e5e7eb;background:#f9fafb;color:#6b7280;font-weight:500;font-size:11px;text-align:left';
+  const TD = 'padding:5px 8px;border:1px solid #f3f4f6;font-size:12px;vertical-align:top';
+
+  let rows = ocrResults.map(function(r, i) {
+    const dupBadge = r.isDup ? '<span class="dup-badge">중복</span>' : '<span class="new-badge">신규</span>';
+    return '<tr>'
+      + '<td style="' + TD + '">' + '<img src="' + r._dataUrl + '" style="width:48px;height:48px;object-fit:cover;border-radius:4px;border:1px solid #e5e7eb"></td>'
+      + '<td style="' + TD + ';font-weight:500">' + (r.name||'-') + '&nbsp;' + dupBadge + '</td>'
+      + '<td style="' + TD + '">'
+        + '<input id="ocr-name-'+i+'" style="'+FI+';margin-bottom:3px" value="'+(r.name||'')+'" placeholder="이름"><br>'
+        + '<input id="ocr-phone-'+i+'" style="'+FI+';margin-bottom:3px" value="'+(r.phone||'')+'" placeholder="연락처"><br>'
+        + '<input id="ocr-birth-'+i+'" style="'+FI+';margin-bottom:3px;width:80px" value="'+(r.birth||'')+'" placeholder="생년월일6자리">'
+        + '&nbsp;<input id="ocr-job-'+i+'" style="'+FI+';margin-bottom:3px" value="'+(r.job||'')+'" placeholder="직업">'
+      + '</td>'
+      + '<td style="' + TD + '">'
+        + '<input id="ocr-addr-'+i+'" style="'+FI+';margin-bottom:3px" value="'+(r.homeaddr||'')+'" placeholder="주소"><br>'
+        + '<input id="ocr-date-'+i+'" style="'+FI+';margin-bottom:3px;width:120px" value="'+(r.regdate||today())+'" placeholder="YYYY-MM-DD">'
+      + '</td>'
+      + '<td style="' + TD + '">'
+        + '<textarea id="ocr-memo-'+i+'" style="'+FI+';height:60px;resize:none">' + (r.memo||'') + '</textarea>'
+      + '</td>'
+      + '</tr>';
+  }).join('');
+
+  el.innerHTML = '<div style="font-size:12px;font-weight:500;color:#1a3a5c;margin-bottom:8px">'
+    + 'AI 추출 결과 <span style="font-size:11px;color:#6b7280;font-weight:400">· 내용을 확인/수정 후 등록하세요</span></div>'
+    + '<div style="overflow-x:auto;border:1px solid #e5e7eb;border-radius:6px;margin-bottom:10px">'
+    + '<table style="width:100%;border-collapse:collapse;font-size:12px">'
+    + '<thead><tr>'
+    + '<th style="' + TH + ';width:60px">이미지</th>'
+    + '<th style="' + TH + '">인식결과</th>'
+    + '<th style="' + TH + '">이름/연락처/생년월일/직업</th>'
+    + '<th style="' + TH + '">주소/등록일</th>'
+    + '<th style="' + TH + '">메모</th>'
+    + '</tr></thead>'
+    + '<tbody>' + rows + '</tbody>'
+    + '</table></div>'
+    + '<button onclick="impOcrRegister()" class="btn success" style="width:100%;padding:8px;font-size:13px">추출된 ' + ocrResults.length + '건 CRM에 등록</button>';
+}
+
+async function impOcrRegister() {
+  let ok = 0, fail = 0;
+  for (let i = 0; i < ocrResults.length; i++) {
+    const name = document.getElementById('ocr-name-'+i).value.trim();
+    if (!name) { fail++; continue; }
+    const phone = document.getElementById('ocr-phone-'+i).value.trim();
+    const birth = document.getElementById('ocr-birth-'+i).value.trim();
+    const job   = document.getElementById('ocr-job-'+i).value.trim();
+    const addr  = document.getElementById('ocr-addr-'+i).value.trim();
+    const date  = document.getElementById('ocr-date-'+i).value.trim();
+    const memo  = document.getElementById('ocr-memo-'+i).value.trim();
+    try {
+      const obj = {
+        name, phone, birth, idback:'',
+        channel:'외부DB', status:'통화요청',
+        regdate: date || today(),
+        job, homeaddr: addr,
+        homeOwn:'', consultType:'', bizaddr:'',
+        claims:[], insurances:[], modifiedAt:today(), callbackAt:''
+      };
+      const res = await api('POST','customers',obj);
+      if (memo && res.id) {
+        await api('POST','memos',{ custId:res.id, datetime:nowStr(), author:'이미지OCR', text:'[이미지 OCR 추출]
+'+memo });
+      }
+      ok++;
+    } catch(e) { fail++; console.error(e); }
+  }
+  document.getElementById('imp-done-title').textContent = ok+'건 등록 완료';
+  document.getElementById('imp-done-msg').textContent = (fail?fail+'건 실패. ':'')+'고객목록에서 확인하세요.';
+  imgQueue = []; ocrResults = [];
+  impSetStep(3);
+  await loadList();
 }
 
 loadList();
