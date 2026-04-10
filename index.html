@@ -94,6 +94,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.6s linear infinite;vertical-align:middle;margin-right:6px}
 @keyframes spin{to{transform:rotate(360deg)}}
 .phone-prefix{font-size:12px;padding:3px 8px;border:1px solid #d1d5db;border-radius:4px;background:#f9fafb;color:#6b7280}
+/* 재통화 예정일시 하이라이트 */
+.callback-row td{background:#fffbeb !important}
+.callback-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:6px;background:#FEF3C7;color:#92400E;font-size:11px;font-weight:600;border:1px solid #FCD34D}
 @media(max-width:600px){.board{grid-template-columns:repeat(2,1fr)}.claim-input-row{grid-template-columns:1fr 1fr}}
 </style>
 </head>
@@ -108,7 +111,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
   <div class="nav-right"><span id="save-msg" style="opacity:0;transition:opacity 0.4s"></span></div>
 </div>
 <div class="toast" id="toast"></div>
-
 <!-- LIST -->
 <div class="page on" id="page-list">
   <div class="tbar">
@@ -125,7 +127,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
       <select class="fs" id="sf-status" onchange="currentPage=1;renderList()">
         <option value="">전체</option>
         <option>통화요청</option><option>부재</option><option>장기부재</option>
-        <option>상담거절</option><option>방문예정</option><option>1차방문</option><option>2차방문</option>
+        <option>상담거절</option><option>상담중</option><option>방문예정</option><option>1차방문</option><option>2차방문</option>
         <option>계약완료</option>
       </select>
       <span style="font-size:11px;color:#6b7280">경로</span>
@@ -157,7 +159,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
   </div>
   <div id="pagination" style="display:flex;align-items:center;justify-content:center;padding:12px 14px;border-top:1px solid #e5e7eb;flex-wrap:wrap;gap:4px"></div>
 </div>
-
 <!-- REGISTER / DETAIL -->
 <div class="page" id="page-reg">
   <div class="tbar">
@@ -173,7 +174,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="1" width="11" height="12" rx="1.5"/><line x1="4" y1="5" x2="10" y2="5"/><line x1="4" y1="7.5" x2="10" y2="7.5"/><line x1="4" y1="10" x2="8" y2="10"/></svg>
     <span id="form-title">신규고객등록</span>
   </div>
-
   <div class="sh">
     <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 11.5s0-3 5.5-3 5.5 3 5.5 3"/><circle cx="6.5" cy="4.5" r="2.5"/></svg>
     상담정보
@@ -183,7 +183,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
       <td class="lb rq">유입경로</td>
       <td><select class="fs" id="f-ch" style="width:150px"><option value="">==선택==</option><option>퍼미션A</option><option>퍼미션B</option><option>퍼미션C</option><option>외부DB</option><option>인포머셜</option><option>인포머셜실버</option><option>소개</option><option>고객센터</option></select></td>
       <td class="lb">상태</td>
-      <td><select class="fs" id="f-status" style="width:130px"><option value="">* 선택</option><option>통화요청</option><option>부재</option><option>장기부재</option><option>상담거절</option><option>방문예정</option><option>1차방문</option><option>2차방문</option><option>계약완료</option></select></td>
+      <td><select class="fs" id="f-status" style="width:110px"><option value="">* 선택</option><option>통화요청</option><option>부재</option><option>장기부재</option><option>상담거절</option><option>상담중</option><option>방문예정</option><option>1차방문</option><option>2차방문</option><option>계약완료</option></select></td>
+      <td class="lb" style="color:#92400E;font-weight:600;white-space:nowrap">📞 재통화예정</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:6px">
+          <input class="fi" id="f-callback-at" type="datetime-local" style="width:180px">
+          <button type="button" onclick="clearCallback()" style="font-size:11px;color:#9ca3af;border:none;background:none;cursor:pointer;padding:2px 4px;white-space:nowrap">✕</button>
+        </div>
+      </td>
     </tr>
     <tr>
       <td class="lb rq">이름</td>
@@ -240,8 +247,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
       </td>
     </tr>
   </table>
-
-
   <div class="sh" style="margin-top:3px">
     <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="2" width="11" height="9" rx="1.5"/><line x1="4" y1="5.5" x2="9" y2="5.5"/><line x1="4" y1="8" x2="7" y2="8"/><path d="M9 0.5v3M4 0.5v3"/></svg>
     보험금 청구이력
@@ -256,7 +261,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
     <input type="hidden" id="cl-edit-idx" value=""><div class="errmsg" id="err-claim">청구 내용을 입력해주세요</div>
     <div id="claim-wrap"><div style="font-size:12px;color:#9ca3af;padding:8px 0 2px">청구이력이 없습니다.</div></div>
   </div>
-
   <div style="padding:7px 16px;border-top:1px solid #e5e7eb">
     <div class="sh" style="padding:5px 0;border-bottom:none;margin-bottom:6px">
       계약 정보
@@ -264,8 +268,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
     </div>
     <div id="ins-list"><div style="font-size:12px;color:#9ca3af">등록된 계약이 없습니다.</div></div>
   </div>
-
-
   <div class="sh" style="border-top:2px solid #e5e7eb">
     <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1.5" width="11" height="10" rx="1.5"/><line x1="3.5" y1="5" x2="9.5" y2="5"/><line x1="3.5" y1="7.5" x2="7.5" y2="7.5"/></svg>
     진행과정
@@ -283,13 +285,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
     <button class="btn" onclick="showPage('list')">취소</button>
   </div>
 </div>
-
 <!-- BOARD -->
 <div class="page" id="page-board">
   <div class="tbar"><span style="font-size:12px;color:#6b7280">상태별 현황</span></div>
   <div class="board" id="board-content"></div>
 </div>
-
 <div class="modal-bg" id="modal-ins" onclick="if(event.target===this)closeIns()">
   <div class="modal">
     <div class="modal-title" id="ins-modal-title">계약 추가</div><input type="hidden" id="modal-ins-edit-idx" value="">
@@ -307,19 +307,27 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
   </div>
 </div>
 </div>
-
 <script>
 const FI='padding:3px 6px;border:1px solid #1a3a5c;border-radius:4px;font-size:12px;font-family:inherit;color:#1a1a1a;background:#f0f4f8;width:100%';
-const STATUSES=['통화요청','부재','장기부재','상담거절','방문예정','1차방문','2차방문','계약완료'];
-const SC={'통화요청':{bg:'#EFF6FF',c:'#1D4ED8'},'부재':{bg:'#FFFBEB',c:'#92400E'},'장기부재':{bg:'#FEF3C7',c:'#78350F'},'상담거절':{bg:'#FEF2F2',c:'#991B1B'},'방문예정':{bg:'#F0FDF4',c:'#15803D'},'1차방문':{bg:'#ECFDF5',c:'#065F46'},'2차방문':{bg:'#D1FAE5',c:'#064E3B'},'계약완료':{bg:'#EDE9FE',c:'#4C1D95'}};
+// ★ 상담중 추가
+const STATUSES=['통화요청','부재','장기부재','상담거절','상담중','방문예정','1차방문','2차방문','계약완료'];
+const SC={
+  '통화요청':{bg:'#EFF6FF',c:'#1D4ED8'},
+  '부재':{bg:'#FFFBEB',c:'#92400E'},
+  '장기부재':{bg:'#FEF3C7',c:'#78350F'},
+  '상담거절':{bg:'#FEF2F2',c:'#991B1B'},
+  '상담중':{bg:'#F0F9FF',c:'#0369A1'},   // ★ 상담중 - 하늘색 계열
+  '방문예정':{bg:'#F0FDF4',c:'#15803D'},
+  '1차방문':{bg:'#ECFDF5',c:'#065F46'},
+  '2차방문':{bg:'#D1FAE5',c:'#064E3B'},
+  '계약완료':{bg:'#EDE9FE',c:'#4C1D95'}
+};
 const INS_SC={신규:{bg:'#DBEAFE',c:'#1E40AF'},유지중:{bg:'#D1FAE5',c:'#065F46'},갱신필요:{bg:'#FEF3C7',c:'#92400E'},해지:{bg:'#FEE2E2',c:'#991B1B'}};
 const CLAIM_SC={지급:{bg:'#D1FAE5',c:'#065F46'},일부지급:{bg:'#CFFAFE',c:'#155E75'},부지급:{bg:'#FEE2E2',c:'#991B1B'},심사중:{bg:'#DBEAFE',c:'#1E40AF'}};
-
 let customers=[], memos=[];
 let editId=null, statusFilter='', searchOpen=true, currentPage=1;
 let formIns=[], formClaims=[];
 let homeOwn='';
-
 function setLoading(on){const bar=document.getElementById('loading-bar');bar.style.width=on?'70%':'100%';if(!on)setTimeout(()=>bar.style.width='0%',400);}
 async function api(method,path,body){
   setLoading(true);
@@ -342,7 +350,6 @@ function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t
 function showSave(){const el=document.getElementById('save-msg');el.textContent='저장됨 '+new Date().toLocaleTimeString('ko',{hour:'2-digit',minute:'2-digit'});el.style.opacity=1;setTimeout(()=>el.style.opacity=0,2200);}
 function today(){return new Date().toISOString().slice(0,10);}
 function nowStr(){const d=new Date();return[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')+' '+[d.getHours(),d.getMinutes(),d.getSeconds()].map(n=>String(n).padStart(2,'0')).join(':');}
-
 function calcInsAge(b){
   if(!b||b.length<6)return null;
   const yy=parseInt(b.slice(0,2),10),mm=parseInt(b.slice(2,4),10),dd=parseInt(b.slice(4,6),10);
@@ -357,7 +364,8 @@ function updateInsAge(){const age=calcInsAge(gv('f-birth'));document.getElementB
 function birthDisplay(b,idback){return b?(idback?b+'-'+idback:b):'';}
 function setOwn(v){homeOwn=(homeOwn===v)?'':v;document.getElementById('own-rent').className='own-btn'+(homeOwn==='임차'?' on':'');document.getElementById('own-own').className='own-btn'+(homeOwn==='자가'?' on':'');}
 function applyOwn(v){homeOwn=v||'';document.getElementById('own-rent').className='own-btn'+(homeOwn==='임차'?' on':'');document.getElementById('own-own').className='own-btn'+(homeOwn==='자가'?' on':'');}
-
+// ★ 재통화 초기화
+function clearCallback(){sv('f-callback-at','');document.getElementById('callback-display').textContent='';}
 async function loadList(){
   const data=await api('GET','customers');
   customers=(Array.isArray(data)?data:[]).map(function(c){
@@ -365,26 +373,23 @@ async function loadList(){
       insurances: typeof c.insurances==='string'?safeParseJSON(c.insurances,[]):( c.insurances||[]),
       claims: typeof c.claims==='string'?safeParseJSON(c.claims,[]):(c.claims||[]),
       consultType: c.consultType||c.consult_type||'',
-      homeOwn: c.homeOwn||c.home_own||''
+      homeOwn: c.homeOwn||c.home_own||'',
+      callbackAt: c.callbackAt||c.callback_at||''
     });
   });
   const mdata=await api('GET','memos');
   memos=Array.isArray(mdata)?mdata:[];
   renderList();
 }
-
 function safeParseJSON(str,def){
   try{return JSON.parse(str);}catch(e){return def;}
 }
-
 function renderPagination(totalPages,total,start){
   const el=document.getElementById('pagination');
   if(!el)return;
   const end=Math.min(start+15,total);
   let html='<span style="font-size:12px;color:#6b7280;margin-right:10px">'+(start+1)+'-'+end+' / 전체 '+total+'건</span>';
-  // 이전
   html+='<button onclick="renderList('+(currentPage-1)+')" style="'+pbtn(currentPage<=1)+'" '+(currentPage<=1?'disabled':'')+'>&#8592;</button>';
-  // 페이지 번호
   let s=Math.max(1,currentPage-2), e=Math.min(totalPages,s+4);
   if(e-s<4)s=Math.max(1,e-4);
   if(s>1)html+='<button onclick="renderList(1)" style="'+pbtn(false)+'">1</button>';
@@ -392,7 +397,6 @@ function renderPagination(totalPages,total,start){
   for(let i=s;i<=e;i++){html+='<button onclick="renderList('+i+')" style="'+pbtn(false,i===currentPage)+'">'+i+'</button>';}
   if(e<totalPages-1)html+='<span style="padding:0 4px;color:#9ca3af">…</span>';
   if(e<totalPages)html+='<button onclick="renderList('+totalPages+')" style="'+pbtn(false)+'">'+totalPages+'</button>';
-  // 다음
   html+='<button onclick="renderList('+(currentPage+1)+')" style="'+pbtn(currentPage>=totalPages)+'" '+(currentPage>=totalPages?'disabled':'')+'>&#8594;</button>';
   el.innerHTML=html;
 }
@@ -404,7 +408,16 @@ function buildSpills(){
 }
 function sfilt(v){statusFilter=v;currentPage=1;buildSpills();renderList();}
 function toggleSearch(){searchOpen=!searchOpen;document.getElementById('search-box').style.display=searchOpen?'block':'none';}
-
+// ★ 재통화 시간 포맷 헬퍼
+function fmtCallback(dt){
+  if(!dt)return '';
+  // datetime-local 값: "2026-04-13T09:00" 형태
+  try{
+    const d=new Date(dt);
+    if(isNaN(d))return dt;
+    return (d.getMonth()+1)+'월 '+d.getDate()+'일 '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+  }catch(e){return dt;}
+}
 function renderList(pg){
   buildSpills();
   let list=[...customers].sort((a,b)=>(b.regdate||'').localeCompare(a.regdate||''));
@@ -429,8 +442,11 @@ function renderList(pg){
     const sc=SC[c.status]||{bg:'#F3F4F6',c:'#374151'};
     const ms=memos.filter(m=>Number(m.custId||m.cust_id)===Number(c.id)).sort((a,b)=>b.datetime.localeCompare(a.datetime));
     const rm=ms[0];const age=calcInsAge(c.birth||'');
+    // ★ 재통화 예정이 있으면 메모행 대신(또는 추가로) 표시
+    const cbAt=c.callbackAt||'';
+    const cbRow=cbAt?`<tr onmousedown="rowMD(event)" onmouseup="rowMU(event,${c.id})" style="cursor:pointer"><td colspan="10" style="padding:2px 7px 5px 36px;border-bottom:none;background:#fffbeb"><span class="callback-badge">📞 재통화 예정: ${fmtCallback(cbAt)}</span></td></tr>`:'';
     const memoRow=rm?`<tr onmousedown="rowMD(event)" onmouseup="rowMU(event,${c.id})" style="cursor:pointer"><td colspan="10" style="padding:2px 7px 7px 36px;border-bottom:1px solid #e5e7eb;background:#fafafa"><span style="font-size:11px;color:#6b7280">[${rm.datetime.slice(0,16)}]&nbsp;&nbsp;${rm.text}</span></td></tr>`:'';
-    return`<tr onmousedown="rowMD(event)" onmouseup="rowMU(event,${c.id})" style="border-bottom:${rm?'none':''};cursor:pointer">
+    return`<tr onmousedown="rowMD(event)" onmouseup="rowMU(event,${c.id})" style="border-bottom:${(rm||cbAt)?'none':''};cursor:pointer">
       <td><input type="checkbox" onclick="event.stopPropagation()"></td>
       <td style="color:#9ca3af">${list.length-start-i}</td>
       <td>${c.channel||''}</td>
@@ -441,14 +457,12 @@ function renderList(pg){
       <td><span class="badge" style="background:${sc.bg};color:${sc.c}">${c.status}</span></td>
       <td style="color:#9ca3af;font-size:11px">${c.regdate||''}</td>
       <td style="text-align:center">${(c.insurances||[]).length?`<span style="font-size:12px;color:#1D4ED8;font-weight:500">${c.insurances.length}건</span>`:'-'}</td>
-    </tr>${memoRow}`;
+    </tr>${cbRow}${memoRow}`;
   }).join('');
 }
-
 async function openDetail(id){
   editId=id;
   const c=customers.find(x=>x.id===id);if(!c)return;
-  // 페이지 먼저 전환 후 DOM 요소 접근
   showPage('reg');
   document.getElementById('form-bc').textContent='고객관리 / '+c.name;
   document.getElementById('form-title').textContent='고객관리';
@@ -464,6 +478,10 @@ async function openDetail(id){
   document.getElementById('f-p2').value=pm?pm[2]:'';
   applyOwn(c.homeOwn||c.home_own||'');
   updateInsAge();
+  // ★ 재통화 예정일시 복원
+  const cba=c.callbackAt||c.callback_at||'';
+  sv('f-callback-at', cba);
+  document.getElementById('callback-display').textContent=cba?'→ '+fmtCallback(cba):'';
   formClaims=[...(typeof c.claims==='string'?safeParseJSON(c.claims,[]):(c.claims||[]))];renderClaims();
   formIns=[...(typeof c.insurances==='string'?safeParseJSON(c.insurances,[]):(c.insurances||[]))];renderIns();
   sv('f-prog','');
@@ -471,7 +489,6 @@ async function openDetail(id){
   memos=memos.filter(m=>Number(m.custId||m.cust_id)!==Number(id)).concat(Array.isArray(mdata)?mdata:[]);
   renderTL(id);
 }
-
 function clearForm(){
   document.getElementById('form-bc').textContent='신규고객등록';
   document.getElementById('form-title').textContent='신규고객등록';
@@ -480,6 +497,9 @@ function clearForm(){
   document.getElementById('f-idback').value='';
   sv('f-regdate',today());
   document.getElementById('ins-age-display').textContent='';
+  // ★ 재통화 초기화
+  sv('f-callback-at','');
+  document.getElementById('callback-display').textContent='';
   homeOwn='';setTimeout(()=>applyOwn(''),0);
   formClaims=[];renderClaims();
   formIns=[];renderIns();
@@ -488,7 +508,6 @@ function clearForm(){
   sv('f-prog','');
   ['err-name','err-claim','err-prog'].forEach(id=>showErr(id,false));
 }
-
 async function submitForm(){
   const name=gv('f-name');
   if(!name){markErr('f-name',true);showErr('err-name',true);document.getElementById('f-name').focus();return;}
@@ -497,6 +516,7 @@ async function submitForm(){
   const btn=document.getElementById('submit-btn');
   btn.innerHTML='<span class="spinner"></span>저장 중...';btn.disabled=true;
   const progText=gv('f-prog');
+  // ★ callbackAt 포함
   const obj={
     name,phone:p1&&p2?'010-'+p1+'-'+p2:'',
     birth:gv('f-birth'),idback:document.getElementById('f-idback').value.trim(),
@@ -504,7 +524,8 @@ async function submitForm(){
     status:gv('f-status')||'',regdate:gv('f-regdate')||today(),
     job:gv('f-job'),consultType:gv('f-consult-type'),
     bizaddr:gv('f-bizaddr'),homeaddr:gv('f-homeaddr'),
-    homeOwn,claims:formClaims,insurances:formIns,modifiedAt:today()
+    homeOwn,claims:formClaims,insurances:formIns,modifiedAt:today(),
+    callbackAt:gv('f-callback-at')||''
   };
   try{
     if(editId!==null){
@@ -513,14 +534,12 @@ async function submitForm(){
       const res=await api('POST','customers',obj);
       editId=res.id;
     }
-    // 진행과정 - 입력창 내용 저장
     if(progText&&editId!==null){
       const entry={custId:editId,datetime:nowStr(),author:'',text:progText};
       const res=await api('POST','memos',entry);
       memos.push({...entry,id:res.id});
       sv('f-prog','');
     }
-    // 임시 저장된 메모들 저장
     const temps=memos.filter(m=>m._temp);
     for(const m of temps){
       const entry={custId:editId,datetime:m.datetime,author:'',text:m.text};
@@ -533,7 +552,6 @@ async function submitForm(){
   }catch(e){toast('저장 실패: '+e.message);}
   finally{btn.innerHTML='작성완료';btn.disabled=false;}
 }
-
 async function deleteCust(){
   const c=customers.find(x=>x.id===editId);if(!c)return;
   showDeleteConfirm(c.name);
@@ -554,7 +572,6 @@ async function confirmDelete(){
   await api('DELETE','customers/'+editId);
   toast('삭제되었습니다');await loadList();editId=null;showPage('list');
 }
-
 function addClaim(){
   const content=gv('cl-content');
   if(!content){showErr('err-claim',true);setTimeout(()=>showErr('err-claim',false),2000);return;}
@@ -615,9 +632,7 @@ function renderClaims(){
     +'<tbody>'+rows+'</tbody>'
     +'</table>';
 }
-
 function expandClaimEdit(i){
-  // 다른 편집행 닫기
   formClaims.forEach(function(_,j){
     var r=document.getElementById('cedit-'+j);
     if(r)r.style.display='none';
@@ -639,7 +654,6 @@ function cancelClaimEdit(i){
   var row=document.getElementById('cedit-'+i);
   if(row)row.style.display='none';
 }
-
 function openInsModal(){showErr('err-ins',false);const midxEl2=document.getElementById('modal-ins-edit-idx');if(midxEl2)midxEl2.value='';const t1=document.getElementById('ins-modal-title');if(t1)t1.textContent='계약 추가';document.getElementById('modal-ins').classList.add('on');}
 function closeIns(){document.getElementById('modal-ins').classList.remove('on');}
 function saveIns(){
@@ -694,7 +708,6 @@ function startInsEdit(i){
   var row=document.getElementById('irow-'+i);
   if(!row)return;
   var ins=formIns[i];
-  var sc=INS_SC[ins.st]||INS_SC['유지중'];
   var TD='padding:4px 6px;border:1px solid #f3f4f6;font-size:12px;vertical-align:middle';
   var FI2='padding:3px 5px;border:1px solid #1a3a5c;border-radius:4px;font-size:12px;font-family:inherit;width:100%;background:#f0f4f8';
   row.innerHTML=''
@@ -737,12 +750,10 @@ function saveInsInline(i){
   renderIns();
 }
 function rmIns(i){formIns.splice(i,1);renderIns();}
-
 async function addProg(){
   const text=gv('f-prog');
   if(!text){showErr('err-prog',true);setTimeout(()=>showErr('err-prog',false),2000);return;}
   if(editId===null){
-    // 신규등록 중 - 임시 목록에 보관 (작성완료 시 저장됨)
     const entry={id:'tmp_'+Date.now(),custId:null,datetime:nowStr(),author:'',text,_temp:true};
     memos.push(entry);
     renderTempTL();
@@ -756,7 +767,6 @@ async function addProg(){
   showSave();
   sv('f-prog','');
 }
-
 function renderTempTL(){
   var temps=memos.filter(function(m){return m._temp;});
   var el=document.getElementById('tl-area');
@@ -778,7 +788,6 @@ function rmTempTL(btn){
   memos=memos.filter(function(m){return m.id!==id;});
   renderTempTL();
 }
-
 function tlItemHtml(m,editStart,editSave,editCancel,delFn){
   return`<div class="tl-item" id="tl-${m.id}">
     <div class="tl-meta"><div>${m.datetime.slice(0,10)}</div><div>${m.datetime.slice(11,19)}</div>${m.editedAt||m.edited_at?`<div style="font-size:10px;color:#d1d5db">수정됨</div>`:''}</div>
@@ -797,7 +806,6 @@ function tlItemHtml(m,editStart,editSave,editCancel,delFn){
     </div>
   </div>`;
 }
-
 function renderTL(id){
   const ms=memos.filter(m=>Number(m.custId||m.cust_id)===Number(id)).sort((a,b)=>b.datetime.localeCompare(a.datetime));
   const el=document.getElementById('tl-area');
@@ -825,14 +833,12 @@ function cancelEdit(id){
 async function delMemo(id){
   await api('DELETE','memos/'+id);memos=memos.filter(m=>m.id!==id);renderTL(editId);showSave();
 }
-
 function renderBoard(){
   document.getElementById('board-content').innerHTML=STATUSES.map(s=>{
     const list=customers.filter(c=>c.status===s);const sc=SC[s]||{bg:'#F3F4F6',c:'#374151'};
     return`<div class="board-col"><div class="board-head" style="background:${sc.bg}"><span style="color:${sc.c}">${s}</span><span style="color:${sc.c}">${list.length}</span></div><div class="board-body">${list.length?list.map(c=>`<div class="board-card" onclick="openDetail(${c.id})">${c.name} <span style="color:#9ca3af">${c.phone||''}</span></div>`).join(''):'<div style="font-size:11px;color:#9ca3af;padding:2px 4px">없음</div>'}</div></div>`;
   }).join('');
 }
-
 function showPage(p){
   document.querySelectorAll('.page').forEach(x=>x.classList.remove('on'));
   document.querySelectorAll('.ntab').forEach(x=>x.classList.remove('on'));
@@ -841,7 +847,6 @@ function showPage(p){
   if(p==='board')renderBoard();
 }
 function navToReg(){editId=null;showPage('reg');clearForm();}
-
 let _rowMDx=0,_rowMDy=0;
 function rowMD(e){_rowMDx=e.clientX;_rowMDy=e.clientY;}
 function rowMU(e,id){
