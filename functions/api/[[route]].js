@@ -75,15 +75,15 @@ export async function onRequest(context) {
       } else if (method === 'POST') {
         const b = await request.json();
         const stmt = await db.prepare(
-          `INSERT INTO customers (name,phone,birth,idback,channel,manager,status,regdate,job,consult_type,bizaddr,homeaddr,home_own,claims,insurances,modified_at,callbackAt)
-           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
+          `INSERT INTO customers (name,phone,birth,idback,channel,manager,status,regdate,job,consult_type,bizaddr,homeaddr,home_own,claims,insurances,modified_at)
+           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
         ).bind(
           b.name||'', b.phone||'', b.birth||'', b.idback||'',
           b.channel||'', b.manager||'', b.status||'', b.regdate||'',
           b.job||'', b.consultType||b.consult_type||'',
           b.bizaddr||'', b.homeaddr||'', b.homeOwn||b.home_own||'',
           JSON.stringify(b.claims||[]), JSON.stringify(b.insurances||[]),
-          b.modifiedAt||b.modified_at||'', b.callbackAt||b.callback_at||''
+          b.modifiedAt||b.modified_at||''
         ).run();
         result = { id: stmt.meta.last_row_id };
       }
@@ -92,15 +92,22 @@ export async function onRequest(context) {
       if (method === 'PUT') {
         const b = await request.json();
         await db.prepare(
-          `UPDATE customers SET name=?,phone=?,birth=?,idback=?,channel=?,status=?,regdate=?,job=?,consult_type=?,bizaddr=?,homeaddr=?,home_own=?,claims=?,insurances=?,modified_at=?,callbackAt=? WHERE id=?`
+          `UPDATE customers SET name=?,phone=?,birth=?,idback=?,channel=?,status=?,regdate=?,job=?,consult_type=?,bizaddr=?,homeaddr=?,home_own=?,claims=?,insurances=?,modified_at=? WHERE id=?`
         ).bind(
           b.name||'', b.phone||'', b.birth||'', b.idback||'',
           b.channel||'', b.status||'', b.regdate||'',
           b.job||'', b.consultType||b.consult_type||'',
           b.bizaddr||'', b.homeaddr||'', b.homeOwn||b.home_own||'',
           JSON.stringify(b.claims||[]), JSON.stringify(b.insurances||[]),
-          b.modifiedAt||b.modified_at||'', b.callbackAt||b.callback_at||'', id
+          b.modifiedAt||b.modified_at||'', id
         ).run();
+        // callbackAt 별도 업데이트 시도 (컬럼 없으면 무시)
+        try {
+          if (b.callbackAt !== undefined) {
+            await db.prepare('UPDATE customers SET callbackAt=? WHERE id=?')
+              .bind(b.callbackAt||'', id).run();
+          }
+        } catch(e) { /* callbackAt 컬럼 없으면 무시 */ }
         result = { ok: true };
       } else if (method === 'DELETE') {
         await db.prepare('DELETE FROM customers WHERE id=?').bind(id).run();
