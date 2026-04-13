@@ -593,7 +593,7 @@ function renderList(pg){
     const ms=memos.filter(m=>Number(m.custId||m.cust_id)===Number(c.id)).sort((a,b)=>b.datetime.localeCompare(a.datetime));
     const rm=ms[0];const age=calcInsAge(c.birth||'');
     const cbAt=c.callbackAt||'';
-    const cbRow=cbAt?'<tr onmousedown="rowMD(event)" onmouseup="rowMU(event,'+c.id+')" style="cursor:pointer"><td colspan="10" style="padding:2px 7px 5px 36px;border-bottom:none;background:#fffbeb"><span class="callback-badge">📞 재통화 예정: '+fmtCallback(cbAt)+'</span></td></tr>':'';
+    const cbRow=cbAt?'<tr onmousedown="rowMD(event)" onmouseup="rowMU(event,'+c.id+')" style="cursor:pointer"><td colspan="10" style="padding:2px 7px 5px 36px;border-bottom:none;background:#fffbeb"><span class="callback-badge">\uD83D\uDCDE 재통화 예정: '+fmtCallback(cbAt)+'</span></td></tr>':'';
     const memoRow=rm?'<tr onmousedown="rowMD(event)" onmouseup="rowMU(event,'+c.id+')" style="cursor:pointer"><td colspan="10" style="padding:2px 7px 7px 36px;border-bottom:1px solid #e5e7eb;background:#fafafa"><span style="font-size:11px;color:#6b7280">['+rm.datetime.slice(0,16)+']&nbsp;&nbsp;'+rm.text+'</span></td></tr>':'';
     return'<tr onmousedown="rowMD(event)" onmouseup="rowMU(event,'+c.id+')" style="border-bottom:'+((rm||cbAt)?'none':'')+';cursor:pointer">'
       +'<td><input type="checkbox" onclick="event.stopPropagation()"></td>'
@@ -1197,20 +1197,17 @@ async function impRunOcr() {
     const b64 = item.dataUrl.split(',')[1];
     const mediaType = item.file.type || 'image/jpeg';
     try {
+      const prompt = '이 이미지는 보험 고객 DB 화면입니다. 다음 정보를 JSON으로만 출력하세요 (설명 없이 JSON만). 없으면 빈 문자열. {"name":"이름","phone":"연락처(010-XXXX-XXXX형식)","birth":"생년월일6자리(YYMMDD)","job":"직업","homeaddr":"주소","regdate":"등록일(YYYY-MM-DD)","memo":"문의내용/상담유형/추가정보 등 나머지 유용한 정보 모두"}';
       const res = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           model: 'claude-sonnet-4-20250514',
           max_tokens: 1000,
-          messages: [{
-            role: 'user',
-            content: [
-              { type: 'image', source: { type: 'base64', media_type: mediaType, data: b64 } },
-              { type: 'text', text: '이 이미지는 보험 고객 DB 화면입니다. 다음 정보를 JSON으로만 출력하세요 (설명 없이 JSON만). 없으면 빈 문자열:
-{"name":"이름","phone":"연락처(010-XXXX-XXXX형식)","birth":"생년월일6자리(YYMMDD)","job":"직업","homeaddr":"주소","regdate":"등록일(YYYY-MM-DD)","memo":"문의내용/상담유형/추가정보 등 나머지 유용한 정보 모두"}' }
-            ]
-          }]
+          messages: [{ role: 'user', content: [
+            { type: 'image', source: { type: 'base64', media_type: mediaType, data: b64 } },
+            { type: 'text', text: prompt }
+          ]}]
         })
       });
       const data = await res.json();
