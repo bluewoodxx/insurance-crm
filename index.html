@@ -30,7 +30,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 .lt{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed}
 .lt th{padding:5px 7px;border-bottom:1px solid #e5e7eb;color:#6b7280;font-weight:500;font-size:11px;text-align:left;background:#f9fafb;white-space:nowrap}
 .lt td{padding:6px 7px;border-bottom:1px solid #f3f4f6;vertical-align:top;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.lt tr:hover td{background:#f9fafb}.lt tr td{cursor:default}.lt tr td.click-cell{cursor:pointer}
+.lt tr:hover td{background:#f9fafb}.lt tr td{cursor:default}
 .badge{display:inline-block;padding:2px 7px;border-radius:9px;font-size:11px;font-weight:500}
 .ph{display:flex;align-items:center;gap:6px;padding:9px 16px;border-bottom:1px solid #e5e7eb;font-size:14px;font-weight:500}
 .sh{display:flex;align-items:center;gap:5px;padding:7px 16px;font-size:12px;font-weight:500;color:#1a3a5c;border-bottom:1px solid #e5e7eb;background:#f0f4f8}
@@ -47,17 +47,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 .own-btn.on{background:#1a3a5c;color:#fff;border-color:#1a3a5c}
 .errmsg{font-size:11px;color:#dc2626;padding:3px 0;display:none}
 .errmsg.show{display:block}
-.claim-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:6px}
-.claim-table th{padding:5px 8px;border:1px solid #e5e7eb;background:#f9fafb;color:#6b7280;font-weight:500;font-size:11px;text-align:left}
-.claim-table td{padding:5px 8px;border:1px solid #f3f4f6;vertical-align:middle;font-size:12px}
-.claim-table tr:hover td{background:#f9fafb}
-.claim-input-row{display:grid;grid-template-columns:100px 1fr 80px 80px 80px 44px;gap:5px;align-items:center;margin-top:8px}
-.cadd{padding:4px 0;background:#1a3a5c;color:#fff;border:none;border-radius:4px;font-size:12px;cursor:pointer;font-family:inherit;width:100%}
-.cadd:hover{opacity:0.85}
-.cdel{border:none;background:none;font-size:11px;color:#dc2626;cursor:pointer;font-family:inherit;padding:0 2px;opacity:0;transition:opacity 0.15s}
-.claim-table tr:hover .cdel{opacity:1}
-.ins-row{display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid #f3f4f6;font-size:12px}
-.ins-row:last-child{border-bottom:none}
+.claim-input-row{display:grid;grid-template-columns:100px 1fr 80px 80px 44px;gap:5px;align-items:center;margin-top:8px}
 .psec{padding:10px 16px}
 .pi-row{display:flex;gap:8px;margin-bottom:6px}
 .pi-row textarea{flex:1;padding:6px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:12px;font-family:inherit;color:#1a1a1a;background:#fff;resize:none;min-height:64px}
@@ -97,23 +87,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 @keyframes spin{to{transform:rotate(360deg)}}
 .phone-prefix{font-size:12px;padding:3px 8px;border:1px solid #d1d5db;border-radius:4px;background:#f9fafb;color:#6b7280}
 .callback-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:6px;background:#FEF3C7;color:#92400E;font-size:11px;font-weight:600;border:1px solid #FCD34D}
-
-/* ── 외부DB 임포트 전용 스타일 ── */
 .import-zone{border:2px dashed #d1d5db;border-radius:12px;padding:40px 20px;text-align:center;transition:all 0.2s;cursor:pointer;background:#fafafa;margin:16px}
 .import-zone:hover,.import-zone.drag-over{border-color:#1a3a5c;background:#f0f4f8}
-.import-zone input[type=file]{display:none}
-.import-icon{width:40px;height:40px;margin:0 auto 12px;opacity:0.35}
-.import-preview{margin:0 16px 16px}
 .import-stats{display:flex;gap:12px;padding:10px 16px;background:#f0f4f8;border-radius:8px;margin:0 16px 12px;flex-wrap:wrap}
-.import-stat{font-size:12px;color:#1a3a5c}
-.import-stat strong{font-weight:600}
+.import-stat{font-size:12px;color:#1a3a5c}.import-stat strong{font-weight:600}
 .imp-table{width:100%;border-collapse:collapse;font-size:11px}
 .imp-table th{padding:5px 6px;border-bottom:2px solid #e5e7eb;color:#6b7280;font-weight:500;text-align:left;background:#f9fafb;white-space:nowrap;position:sticky;top:0}
 .imp-table td{padding:5px 6px;border-bottom:1px solid #f3f4f6;vertical-align:top;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .imp-table tr:hover td{background:#f9fafb}
-.imp-table tr.dup td{background:#fffbeb}
 .imp-table tr.sel td{background:#f0fdf4}
-.imp-check{width:14px;height:14px;cursor:pointer}
+.imp-table tr.dup td{background:#fffbeb}
 .imp-scroll{max-height:400px;overflow-y:auto;border:1px solid #e5e7eb;border-radius:6px}
 .dup-badge{display:inline-block;padding:1px 5px;border-radius:4px;font-size:10px;background:#fef3c7;color:#92400e;font-weight:500}
 .new-badge{display:inline-block;padding:1px 5px;border-radius:4px;font-size:10px;background:#d1fae5;color:#065f46;font-weight:500}
@@ -122,7 +105,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 .map-arrow{color:#9ca3af;font-size:11px}
 .col-tag{display:inline-block;padding:2px 7px;background:#e0e7ff;color:#3730a3;border-radius:4px;font-size:11px;font-weight:500}
 .import-step{display:none}.import-step.on{display:block}
-.step-indicator{display:flex;align-items:center;gap:0;padding:14px 16px;border-bottom:1px solid #e5e7eb}
+.step-indicator{display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid #e5e7eb}
 .step-dot{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0;transition:all 0.2s}
 .step-dot.done{background:#15803d;color:#fff}
 .step-dot.active{background:#1a3a5c;color:#fff}
@@ -130,6 +113,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 .step-line{flex:1;height:2px;background:#e5e7eb;margin:0 4px}
 .step-line.done{background:#15803d}
 .step-label{font-size:10px;color:#6b7280;margin-top:3px;text-align:center;white-space:nowrap}
+.ocr-zone{border:2px dashed #d1d5db;border-radius:12px;padding:32px 20px;text-align:center;cursor:pointer;background:#fafafa;transition:all 0.2s;margin-bottom:12px}
+.ocr-zone:hover{border-color:#1a3a5c;background:#f0f4f8}
 @media(max-width:600px){.board{grid-template-columns:repeat(2,1fr)}.claim-input-row{grid-template-columns:1fr 1fr}}
 </style>
 </head>
@@ -169,8 +154,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
       <select class="fs" id="sf-ch" onchange="currentPage=1;renderList()">
         <option value="">전체</option>
         <option>퍼미션A</option><option>퍼미션B</option><option>퍼미션C</option>
-        <option>외부DB</option><option>인포머셜</option><option>인포머셜실버</option><option>소개</option>
-        <option>고객센터</option>
+        <option>외부DB</option><option>인포머셜</option><option>인포머셜실버</option><option>소개</option><option>고객센터</option>
       </select>
     </div>
   </div>
@@ -179,15 +163,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
     <table class="lt">
       <thead><tr>
         <th style="width:26px"><input type="checkbox"></th>
-        <th style="width:26px">번호</th>
-        <th style="width:70px">경로</th>
-        <th style="width:66px">이름</th>
-        <th style="width:106px">연락처</th>
-        <th style="width:110px">생년월일</th>
-        <th style="width:60px">보험나이</th>
-        <th style="width:74px">상태</th>
-        <th style="width:80px">DB등록일</th>
-        <th style="width:50px">계약</th>
+        <th style="width:26px">번호</th><th style="width:70px">경로</th><th style="width:66px">이름</th>
+        <th style="width:106px">연락처</th><th style="width:110px">생년월일</th><th style="width:60px">보험나이</th>
+        <th style="width:74px">상태</th><th style="width:80px">DB등록일</th><th style="width:50px">계약</th>
       </tr></thead>
       <tbody id="list-body"></tbody>
     </table>
@@ -219,7 +197,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
       <td class="lb rq">유입경로</td>
       <td><select class="fs" id="f-ch" style="width:150px"><option value="">==선택==</option><option>퍼미션A</option><option>퍼미션B</option><option>퍼미션C</option><option>외부DB</option><option>인포머셜</option><option>인포머셜실버</option><option>소개</option><option>고객센터</option></select></td>
       <td class="lb">상태</td>
-      <td><select class="fs" id="f-status" style="width:130px"><option value="">* 선택</option><option>통화요청</option><option>부재</option><option>장기부재</option><option>상담거절</option><option>상담중</option><option>방문예정</option><option>1차방문</option><option>2차방문</option><option>계약완료</option></select></td>
+      <td><select class="fs" id="f-status" style="width:110px"><option value="">* 선택</option><option>통화요청</option><option>부재</option><option>장기부재</option><option>상담거절</option><option>상담중</option><option>방문예정</option><option>1차방문</option><option>2차방문</option><option>계약완료</option></select></td>
+      <td class="lb" style="color:#92400E;font-weight:600;white-space:nowrap">📞 재통화예정</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:6px">
+          <input class="fi" id="f-callback-at" type="datetime-local" style="width:180px">
+          <button type="button" onclick="clearCallback()" style="font-size:11px;color:#9ca3af;border:none;background:none;cursor:pointer;padding:2px 4px">✕</button>
+        </div>
+      </td>
     </tr>
     <tr>
       <td class="lb rq">이름</td>
@@ -321,11 +306,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
   <div class="board" id="board-content"></div>
 </div>
 
-<!-- ────────────────────────────────────────────
-     외부DB 임포트 페이지
-──────────────────────────────────────────── -->
+<!-- IMPORT -->
 <div class="page" id="page-import">
-  <!-- 단계 표시 -->
   <div class="step-indicator">
     <div style="display:flex;flex-direction:column;align-items:center">
       <div class="step-dot active" id="sd1">1</div>
@@ -343,19 +325,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
     </div>
   </div>
 
-  <!-- STEP 1: 파일 업로드 -->
   <div class="import-step on" id="imp-step1">
-    <!-- 탭 전환 -->
-    <div style="display:flex;border-bottom:1px solid #e5e7eb;margin:0 16px;gap:0">
+    <div style="display:flex;border-bottom:1px solid #e5e7eb;margin:0 16px">
       <button id="tab-excel" onclick="impSwitchTab('excel')" style="padding:8px 18px;font-size:12px;font-weight:500;border:none;background:none;cursor:pointer;color:#1a3a5c;border-bottom:2px solid #1a3a5c;font-family:inherit">엑셀 파일</button>
       <button id="tab-image" onclick="impSwitchTab('image')" style="padding:8px 18px;font-size:12px;font-weight:500;border:none;background:none;cursor:pointer;color:#9ca3af;border-bottom:2px solid transparent;font-family:inherit">이미지 OCR <span style="font-size:10px;background:#e0e7ff;color:#3730a3;padding:1px 5px;border-radius:4px;margin-left:4px">AI</span></button>
     </div>
 
-    <!-- 엑셀 탭 -->
     <div id="imp-tab-excel">
       <input type="file" id="imp-file" accept=".xlsx,.xls,.csv" onchange="impFileChange(event)" style="display:none">
-      <div class="import-zone" id="drop-zone" ondragover="impDragOver(event)" ondragleave="impDragLeave(event)" ondrop="impDrop(event)" onclick="document.getElementById('imp-file').click()">
-        <svg class="import-icon" viewBox="0 0 40 40" fill="none" stroke="#1a3a5c" stroke-width="1.8"><rect x="6" y="4" width="28" height="32" rx="3"/><path d="M14 4v10h12V4"/><line x1="12" y1="22" x2="28" y2="22"/><line x1="12" y1="27" x2="22" y2="27"/></svg>
+      <div class="import-zone" id="drop-zone"
+        ondragover="impDragOver(event)" ondragleave="impDragLeave(event)" ondrop="impDrop(event)"
+        onclick="document.getElementById('imp-file').click()">
+        <svg style="width:40px;height:40px;margin:0 auto 12px;display:block;opacity:0.35" viewBox="0 0 40 40" fill="none" stroke="#1a3a5c" stroke-width="1.8"><rect x="6" y="4" width="28" height="32" rx="3"/><path d="M14 4v10h12V4"/><line x1="12" y1="22" x2="28" y2="22"/><line x1="12" y1="27" x2="22" y2="27"/></svg>
         <div style="font-size:14px;font-weight:500;color:#1a3a5c;margin-bottom:6px">엑셀 파일을 드래그하거나 클릭해서 선택</div>
         <div style="font-size:12px;color:#9ca3af">.xlsx, .xls, .csv 지원 · 분배받은 외부DB 파일</div>
       </div>
@@ -364,54 +345,45 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">
           <div class="map-row"><span class="map-label">열 1 (날짜)</span><span class="map-arrow">→</span><span class="col-tag">DB등록일</span></div>
           <div class="map-row"><span class="map-label">열 2 (이름)</span><span class="map-arrow">→</span><span class="col-tag">이름</span></div>
-          <div class="map-row"><span class="map-label">열 3 (주민번호)</span><span class="map-arrow">→</span><span class="col-tag">생년월일 + 뒷자리</span></div>
+          <div class="map-row"><span class="map-label">열 3 (주민번호)</span><span class="map-arrow">→</span><span class="col-tag">생년월일+뒷자리</span></div>
           <div class="map-row"><span class="map-label">열 4 (연락처)</span><span class="map-arrow">→</span><span class="col-tag">휴대폰번호</span></div>
-          <div class="map-row"><span class="map-label">열 5 (상담가능시간)</span><span class="map-arrow">→</span><span class="col-tag">메모(진행과정)</span></div>
-          <div class="map-row"><span class="map-label">열 7 (보험료)</span><span class="map-arrow">→</span><span class="col-tag">기존 월보험료(메모)</span></div>
+          <div class="map-row"><span class="map-label">열 5 (상담가능시간)</span><span class="map-arrow">→</span><span class="col-tag">메모</span></div>
+          <div class="map-row"><span class="map-label">열 7 (보험료)</span><span class="map-arrow">→</span><span class="col-tag">기존월보험료(메모)</span></div>
           <div class="map-row"><span class="map-label">열 8 (주소)</span><span class="map-arrow">→</span><span class="col-tag">자택주소</span></div>
-          <div class="map-row"><span class="map-label">열 9 (보장내용)</span><span class="map-arrow">→</span><span class="col-tag">메모(진행과정)</span></div>
+          <div class="map-row"><span class="map-label">열 9 (보장내용)</span><span class="map-arrow">→</span><span class="col-tag">메모</span></div>
           <div class="map-row"><span class="map-label">열 10 (직업)</span><span class="map-arrow">→</span><span class="col-tag">직업</span></div>
-          <div class="map-row"><span class="map-label">열 11 (특이사항)</span><span class="map-arrow">→</span><span class="col-tag">메모(진행과정)</span></div>
+          <div class="map-row"><span class="map-label">열 11 (특이사항)</span><span class="map-arrow">→</span><span class="col-tag">메모</span></div>
         </div>
-        <div style="margin-top:10px;font-size:11px;color:#9ca3af">유입경로는 <strong style="color:#1a3a5c">외부DB</strong>로 자동 설정 · 상태는 <strong style="color:#1a3a5c">통화요청</strong>으로 자동 설정</div>
+        <div style="margin-top:10px;font-size:11px;color:#9ca3af">유입경로 <strong style="color:#1a3a5c">외부DB</strong> · 상태 <strong style="color:#1a3a5c">통화요청</strong> 자동 설정</div>
       </div>
     </div>
 
-    <!-- 이미지 OCR 탭 -->
     <div id="imp-tab-image" style="display:none">
       <input type="file" id="imp-img-file" accept="image/*" multiple onchange="impImgFileChange(event)" style="display:none">
       <div style="margin:16px">
-        <!-- 드롭존 -->
-        <div id="img-drop-zone" onclick="document.getElementById('imp-img-file').click()"
-          ondragover="imgDragOver(event)" ondragleave="imgDragLeave(event)" ondrop="imgDrop(event)"
-          style="border:2px dashed #d1d5db;border-radius:12px;padding:32px 20px;text-align:center;cursor:pointer;background:#fafafa;transition:all 0.2s;margin-bottom:12px">
-          <div style="font-size:28px;margin-bottom:8px">📷</div>
+        <div class="ocr-zone" id="img-drop-zone"
+          onclick="document.getElementById('imp-img-file').click()"
+          ondragover="imgDragOver(event)" ondragleave="imgDragLeave(event)" ondrop="imgDrop(event)">
+          <div style="font-size:28px;margin-bottom:8px">&#128247;</div>
           <div style="font-size:14px;font-weight:500;color:#1a3a5c;margin-bottom:4px">카카오톡 스크린샷을 드래그하거나 클릭</div>
           <div style="font-size:12px;color:#9ca3af">여러 장 동시 선택 가능 · jpg, png 지원</div>
           <div style="font-size:11px;color:#9ca3af;margin-top:6px">Claude AI가 이미지에서 고객정보를 자동 추출합니다</div>
         </div>
-        <!-- 붙여넣기 안내 -->
         <div style="font-size:11px;color:#9ca3af;text-align:center;margin-bottom:12px">또는 이미지를 Ctrl+V 로 붙여넣기</div>
-        <!-- 대기 이미지 목록 -->
         <div id="img-queue" style="display:none">
           <div style="font-size:12px;font-weight:500;color:#1a3a5c;margin-bottom:8px">선택된 이미지</div>
           <div id="img-queue-list" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px"></div>
-          <button onclick="impRunOcr()" id="ocr-btn" class="btn p" style="width:100%;padding:8px;font-size:13px">
-            AI로 정보 추출 시작
-          </button>
+          <button onclick="impRunOcr()" id="ocr-btn" class="btn p" style="width:100%;padding:8px;font-size:13px">AI로 정보 추출 시작</button>
         </div>
-        <!-- 진행 상태 -->
         <div id="ocr-progress" style="display:none;padding:16px;text-align:center">
           <span class="spinner" style="border-top-color:#1a3a5c;border-color:rgba(26,58,92,0.2)"></span>
           <span id="ocr-progress-text" style="font-size:12px;color:#1a3a5c">이미지 분석 중...</span>
         </div>
-        <!-- 결과 편집 영역 -->
         <div id="ocr-result-area" style="display:none"></div>
       </div>
     </div>
   </div>
 
-  <!-- STEP 2: 미리보기 & 선택 -->
   <div class="import-step" id="imp-step2">
     <div class="tbar" style="justify-content:space-between">
       <div style="display:flex;gap:6px;align-items:center">
@@ -422,35 +394,23 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
         <button class="btn" onclick="impSelectAll(true)">전체 선택</button>
         <button class="btn" onclick="impSelectAll(false)">전체 해제</button>
         <button class="btn" onclick="impSelectNewOnly()">신규만 선택</button>
-        <button class="btn success" id="imp-start-btn" onclick="impStartImport()">
-          <span id="imp-count-label">선택한 0건 등록</span>
-        </button>
+        <button class="btn success" id="imp-start-btn" onclick="impStartImport()"><span id="imp-count-label">선택한 0건 등록</span></button>
       </div>
     </div>
     <div class="import-stats" id="imp-stats"></div>
-    <div class="import-preview">
+    <div style="margin:0 16px 16px">
       <div class="imp-scroll">
         <table class="imp-table">
-          <thead>
-            <tr>
-              <th style="width:28px"><input type="checkbox" id="imp-all-chk" onchange="impToggleAll(this.checked)"></th>
-              <th style="width:30px">#</th>
-              <th>이름</th>
-              <th>연락처</th>
-              <th>생년월일</th>
-              <th>직업</th>
-              <th>주소</th>
-              <th>DB등록일</th>
-              <th style="width:50px">상태</th>
-            </tr>
-          </thead>
+          <thead><tr>
+            <th style="width:28px"><input type="checkbox" id="imp-all-chk" onchange="impToggleAll(this.checked)"></th>
+            <th style="width:30px">#</th><th>이름</th><th>연락처</th><th>생년월일</th><th>직업</th><th>주소</th><th>DB등록일</th><th style="width:50px">상태</th>
+          </tr></thead>
           <tbody id="imp-tbody"></tbody>
         </table>
       </div>
     </div>
   </div>
 
-  <!-- STEP 3: 완료 -->
   <div class="import-step" id="imp-step3">
     <div style="text-align:center;padding:60px 20px">
       <div style="width:56px;height:56px;background:#d1fae5;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px">
@@ -469,7 +429,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 <!-- Insurance Modal -->
 <div class="modal-bg" id="modal-ins" onclick="if(event.target===this)closeIns()">
   <div class="modal">
-    <div class="modal-title" id="ins-modal-title">계약 추가</div><input type="hidden" id="modal-ins-edit-idx" value="">
+    <div class="modal-title" id="ins-modal-title">계약 추가</div>
+    <input type="hidden" id="modal-ins-edit-idx" value="">
     <div class="mf"><div class="mlb">상품명 *</div><input class="fi" id="mi-type" placeholder="종신보험, 암보험, 실손보험 등"></div>
     <div class="mf"><div class="mlb">보험사</div><input class="fi" id="mi-co" placeholder="삼성생명, 교보생명 등"></div>
     <div class="mf"><div class="mlb">월 보험료 (원)</div><input class="fi" id="mi-amt" type="number" placeholder="100000"></div>
@@ -488,114 +449,129 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 <script>
 const FI='padding:3px 6px;border:1px solid #1a3a5c;border-radius:4px;font-size:12px;font-family:inherit;color:#1a1a1a;background:#f0f4f8;width:100%';
 const STATUSES=['통화요청','부재','장기부재','상담거절','상담중','방문예정','1차방문','2차방문','계약완료'];
-const SC={'통화요청':{bg:'#EFF6FF',c:'#1D4ED8'},'부재':{bg:'#FFFBEB',c:'#92400E'},'장기부재':{bg:'#FEF3C7',c:'#78350F'},'상담거절':{bg:'#FEF2F2',c:'#991B1B'},'상담중':{bg:'#F0F9FF',c:'#0369A1'},'방문예정':{bg:'#F0FDF4',c:'#15803D'},'1차방문':{bg:'#ECFDF5',c:'#065F46'},'2차방문':{bg:'#D1FAE5',c:'#064E3B'},'계약완료':{bg:'#EDE9FE',c:'#4C1D95'}};
+const SC={
+  '통화요청':{bg:'#EFF6FF',c:'#1D4ED8'},'부재':{bg:'#FFFBEB',c:'#92400E'},
+  '장기부재':{bg:'#FEF3C7',c:'#78350F'},'상담거절':{bg:'#FEF2F2',c:'#991B1B'},
+  '상담중':{bg:'#F0F9FF',c:'#0369A1'},'방문예정':{bg:'#F0FDF4',c:'#15803D'},
+  '1차방문':{bg:'#ECFDF5',c:'#065F46'},'2차방문':{bg:'#D1FAE5',c:'#064E3B'},
+  '계약완료':{bg:'#EDE9FE',c:'#4C1D95'}
+};
 const INS_SC={신규:{bg:'#DBEAFE',c:'#1E40AF'},유지중:{bg:'#D1FAE5',c:'#065F46'},갱신필요:{bg:'#FEF3C7',c:'#92400E'},해지:{bg:'#FEE2E2',c:'#991B1B'}};
-const CLAIM_SC={지급:{bg:'#D1FAE5',c:'#065F46'},일부지급:{bg:'#CFFAFE',c:'#155E75'},부지급:{bg:'#FEE2E2',c:'#991B1B'},심사중:{bg:'#DBEAFE',c:'#1E40AF'}};
-let customers=[], memos=[];
-let editId=null, statusFilter='', searchOpen=true, currentPage=1;
-let formIns=[], formClaims=[];
-let homeOwn='';
+let customers=[],memos=[];
+let editId=null,statusFilter='',searchOpen=true,currentPage=1;
+let formIns=[],formClaims=[],homeOwn='';
 
-// ── 공통 유틸 ──────────────────────────────────
-function setLoading(on){const bar=document.getElementById('loading-bar');bar.style.width=on?'70%':'100%';if(!on)setTimeout(()=>bar.style.width='0%',400);}
+// ── 유틸 ──────────────────────────────────────
+function setLoading(on){var b=document.getElementById('loading-bar');b.style.width=on?'70%':'100%';if(!on)setTimeout(function(){b.style.width='0%'},400);}
 async function api(method,path,body){
   setLoading(true);
   try{
-    const res=await fetch('/api/'+path,{method,headers:{'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});
-    const text=await res.text();
-    if(!text||text.trim()===''){return {};}
+    var res=await fetch('/api/'+path,{method:method,headers:{'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});
+    var text=await res.text();
+    if(!text||text.trim()==='')return{};
     try{return JSON.parse(text);}
-    catch(e){console.error('API 응답 오류:',text.slice(0,200));throw new Error('서버 응답 오류: '+text.slice(0,100));}
+    catch(e){console.error('API err',text.slice(0,100));throw new Error('서버 응답 오류');}
   }finally{setLoading(false);}
 }
-function gv(id){const e=document.getElementById(id);return e?e.value.trim():'';}
-function sv(id,v){const e=document.getElementById(id);if(!e)return;e.tagName==='SELECT'?e.value=v:e.value=v;}
-function showErr(id,show){const e=document.getElementById(id);if(e)e.className='errmsg'+(show?' show':'');}
-function markErr(id,has){const e=document.getElementById(id);if(e)e.className='fi'+(has?' err':'');}
-function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show';setTimeout(()=>t.className='toast',2500);}
-function showSave(){const el=document.getElementById('save-msg');el.textContent='저장됨 '+new Date().toLocaleTimeString('ko',{hour:'2-digit',minute:'2-digit'});el.style.opacity=1;setTimeout(()=>el.style.opacity=0,2200);}
+function gv(id){var e=document.getElementById(id);return e?e.value.trim():'';}
+function sv(id,v){var e=document.getElementById(id);if(!e)return;if(e.tagName==='SELECT')e.value=v;else e.value=v;}
+function showErr(id,show){var e=document.getElementById(id);if(e)e.className='errmsg'+(show?' show':'');}
+function markErr(id,has){var e=document.getElementById(id);if(e)e.className='fi'+(has?' err':'');}
+function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.className='toast show';setTimeout(function(){t.className='toast'},2500);}
+function showSave(){var el=document.getElementById('save-msg');el.textContent='저장됨 '+new Date().toLocaleTimeString('ko',{hour:'2-digit',minute:'2-digit'});el.style.opacity=1;setTimeout(function(){el.style.opacity=0},2200);}
 function today(){return new Date().toISOString().slice(0,10);}
-function nowStr(){const d=new Date();return[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')+' '+[d.getHours(),d.getMinutes(),d.getSeconds()].map(n=>String(n).padStart(2,'0')).join(':');}
+function nowStr(){var d=new Date();return[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')+' '+[d.getHours(),d.getMinutes(),d.getSeconds()].map(function(n){return String(n).padStart(2,'0')}).join(':');}
 function safeParseJSON(str,def){try{return JSON.parse(str);}catch(e){return def;}}
 function calcInsAge(b){
   if(!b||b.length<6)return null;
-  const yy=parseInt(b.slice(0,2),10),mm=parseInt(b.slice(2,4),10),dd=parseInt(b.slice(4,6),10);
+  var yy=parseInt(b.slice(0,2),10),mm=parseInt(b.slice(2,4),10),dd=parseInt(b.slice(4,6),10);
   if(isNaN(yy)||isNaN(mm)||isNaN(dd))return null;
-  const fy=yy<=30?2000+yy:1900+yy;
-  const now=new Date();let age=now.getFullYear()-fy;
-  const half=new Date(fy,mm-1,dd);half.setMonth(half.getMonth()+6);
+  var fy=yy<=30?2000+yy:1900+yy;
+  var now=new Date(),age=now.getFullYear()-fy;
+  var half=new Date(fy,mm-1,dd);half.setMonth(half.getMonth()+6);
   if(now<half)age--;
   return age>=0?age:null;
 }
-function updateInsAge(){const age=calcInsAge(gv('f-birth'));document.getElementById('ins-age-display').textContent=age!==null?'보험나이 '+age+'세':'';}
+function updateInsAge(){var age=calcInsAge(gv('f-birth'));document.getElementById('ins-age-display').textContent=age!==null?'보험나이 '+age+'세':'';}
 function birthDisplay(b,idback){return b?(idback?b+'-'+idback:b):'';}
 function setOwn(v){homeOwn=(homeOwn===v)?'':v;document.getElementById('own-rent').className='own-btn'+(homeOwn==='임차'?' on':'');document.getElementById('own-own').className='own-btn'+(homeOwn==='자가'?' on':'');}
 function applyOwn(v){homeOwn=v||'';document.getElementById('own-rent').className='own-btn'+(homeOwn==='임차'?' on':'');document.getElementById('own-own').className='own-btn'+(homeOwn==='자가'?' on':'');}
+function clearCallback(){sv('f-callback-at','');}
+function fmtCallback(dt){
+  if(!dt)return '';
+  try{var d=new Date(dt);if(isNaN(d))return dt;return (d.getMonth()+1)+'월 '+d.getDate()+'일 '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
+  catch(e){return dt;}
+}
 
 // ── 고객 목록 ──────────────────────────────────
 async function loadList(){
-  const data=await api('GET','customers');
+  var data=await api('GET','customers');
   customers=(Array.isArray(data)?data:[]).map(function(c){
     return Object.assign({},c,{
       insurances:typeof c.insurances==='string'?safeParseJSON(c.insurances,[]):(c.insurances||[]),
       claims:typeof c.claims==='string'?safeParseJSON(c.claims,[]):(c.claims||[]),
       consultType:c.consultType||c.consult_type||'',
-      homeOwn:c.homeOwn||c.home_own||''
+      homeOwn:c.homeOwn||c.home_own||'',
+      callbackAt:c.callbackAt||c.callback_at||''
     });
   });
-  const mdata=await api('GET','memos');
+  var mdata=await api('GET','memos');
   memos=Array.isArray(mdata)?mdata:[];
   renderList();
 }
+function pbtn(disabled,active){return 'border:1px solid '+(active?'#1a3a5c':'#d1d5db')+';background:'+(active?'#1a3a5c':'#fff')+';color:'+(active?'#fff':(disabled?'#d1d5db':'#374151'))+';border-radius:4px;padding:3px 8px;font-size:12px;cursor:'+(disabled?'default':'pointer')+';margin:0 2px;font-family:inherit';}
 function renderPagination(totalPages,total,start){
-  const el=document.getElementById('pagination');if(!el)return;
-  const end=Math.min(start+15,total);
-  let html='<span style="font-size:12px;color:#6b7280;margin-right:10px">'+(start+1)+'-'+end+' / 전체 '+total+'건</span>';
+  var el=document.getElementById('pagination');if(!el)return;
+  var end=Math.min(start+15,total);
+  var html='<span style="font-size:12px;color:#6b7280;margin-right:10px">'+(start+1)+'-'+end+' / 전체 '+total+'건</span>';
   html+='<button onclick="renderList('+(currentPage-1)+')" style="'+pbtn(currentPage<=1)+'" '+(currentPage<=1?'disabled':'')+'>&#8592;</button>';
-  let s=Math.max(1,currentPage-2),e=Math.min(totalPages,s+4);
+  var s=Math.max(1,currentPage-2),e=Math.min(totalPages,s+4);
   if(e-s<4)s=Math.max(1,e-4);
   if(s>1)html+='<button onclick="renderList(1)" style="'+pbtn(false)+'">1</button>';
   if(s>2)html+='<span style="padding:0 4px;color:#9ca3af">…</span>';
-  for(let i=s;i<=e;i++){html+='<button onclick="renderList('+i+')" style="'+pbtn(false,i===currentPage)+'">'+i+'</button>';}
+  for(var i=s;i<=e;i++)html+='<button onclick="renderList('+i+')" style="'+pbtn(false,i===currentPage)+'">'+i+'</button>';
   if(e<totalPages-1)html+='<span style="padding:0 4px;color:#9ca3af">…</span>';
   if(e<totalPages)html+='<button onclick="renderList('+totalPages+')" style="'+pbtn(false)+'">'+totalPages+'</button>';
   html+='<button onclick="renderList('+(currentPage+1)+')" style="'+pbtn(currentPage>=totalPages)+'" '+(currentPage>=totalPages?'disabled':'')+'>&#8594;</button>';
   el.innerHTML=html;
 }
-function pbtn(disabled,active){return 'border:1px solid '+(active?'#1a3a5c':'#d1d5db')+';background:'+(active?'#1a3a5c':'#fff')+';color:'+(active?'#fff':(disabled?'#d1d5db':'#374151'))+';border-radius:4px;padding:3px 8px;font-size:12px;cursor:'+(disabled?'default':'pointer')+';margin:0 2px;font-family:inherit';}
 function buildSpills(){
-  document.getElementById('spill-bar').innerHTML=[{label:'전체',v:''},...STATUSES.map(s=>({label:s,v:s}))].map(({label,v})=>{const sc=SC[v]||{bg:'#F3F4F6',c:'#374151'};return'<span class="spill'+(statusFilter===v?' on':'')+'" style="background:'+sc.bg+';color:'+sc.c+'" onclick="sfilt(\''+v+'\')">'+label+'</span>';}).join('');
+  var bar=document.getElementById('spill-bar');
+  var items=[{label:'전체',v:''}].concat(STATUSES.map(function(s){return{label:s,v:s};}));
+  bar.innerHTML=items.map(function(item){
+    var sc=SC[item.v]||{bg:'#F3F4F6',c:'#374151'};
+    return '<span class="spill'+(statusFilter===item.v?' on':'')+'" style="background:'+sc.bg+';color:'+sc.c+'" onclick="sfilt(\''+item.v+'\')">'+item.label+'</span>';
+  }).join('');
 }
 function sfilt(v){statusFilter=v;currentPage=1;buildSpills();renderList();}
 function toggleSearch(){searchOpen=!searchOpen;document.getElementById('search-box').style.display=searchOpen?'block':'none';}
 function renderList(pg){
   buildSpills();
-  let list=[...customers].sort((a,b)=>(b.regdate||'').localeCompare(a.regdate||''));
-  if(statusFilter)list=list.filter(c=>c.status===statusFilter);
-  const n=gv('sf-name'),ph=gv('sf-phone'),st=gv('sf-status'),ch=gv('sf-ch');
-  if(n)list=list.filter(c=>c.name.includes(n));
-  if(ph)list=list.filter(c=>(c.phone||'').includes(ph));
-  if(st)list=list.filter(c=>c.status===st);
-  if(ch)list=list.filter(c=>c.channel===ch);
-  const PAGE_SIZE=15;
-  const totalPages=Math.ceil(list.length/PAGE_SIZE)||1;
+  var list=customers.slice().sort(function(a,b){return(b.regdate||'').localeCompare(a.regdate||'');});
+  if(statusFilter)list=list.filter(function(c){return c.status===statusFilter;});
+  var n=gv('sf-name'),ph=gv('sf-phone'),st=gv('sf-status'),ch=gv('sf-ch');
+  if(n)list=list.filter(function(c){return c.name.includes(n);});
+  if(ph)list=list.filter(function(c){return(c.phone||'').includes(ph);});
+  if(st)list=list.filter(function(c){return c.status===st;});
+  if(ch)list=list.filter(function(c){return c.channel===ch;});
+  var PAGE_SIZE=15,totalPages=Math.ceil(list.length/PAGE_SIZE)||1;
   if(pg!==undefined)currentPage=pg;
   if(currentPage>totalPages)currentPage=totalPages;
   if(currentPage<1)currentPage=1;
-  const start=(currentPage-1)*PAGE_SIZE;
-  const pageList=list.slice(start,start+PAGE_SIZE);
+  var start=(currentPage-1)*PAGE_SIZE,pageList=list.slice(start,start+PAGE_SIZE);
   document.getElementById('tc').textContent=list.length;
   renderPagination(totalPages,list.length,start);
-  const tb=document.getElementById('list-body');
+  var tb=document.getElementById('list-body');
   if(!list.length){tb.innerHTML='<tr><td colspan="10" class="empty">등록된 고객이 없습니다.</td></tr>';return;}
-  tb.innerHTML=pageList.map((c,i)=>{
-    const sc=SC[c.status]||{bg:'#F3F4F6',c:'#374151'};
-    const ms=memos.filter(m=>Number(m.custId||m.cust_id)===Number(c.id)).sort((a,b)=>b.datetime.localeCompare(a.datetime));
-    const rm=ms[0];const age=calcInsAge(c.birth||'');
-    const cbAt=c.callbackAt||'';
-    const cbRow=cbAt?'<tr onmousedown="rowMD(event)" onmouseup="rowMU(event,'+c.id+')" style="cursor:pointer"><td colspan="10" style="padding:2px 7px 5px 36px;border-bottom:none;background:#fffbeb"><span class="callback-badge">\uD83D\uDCDE 재통화 예정: '+fmtCallback(cbAt)+'</span></td></tr>':'';
-    const memoRow=rm?'<tr onmousedown="rowMD(event)" onmouseup="rowMU(event,'+c.id+')" style="cursor:pointer"><td colspan="10" style="padding:2px 7px 7px 36px;border-bottom:1px solid #e5e7eb;background:#fafafa"><span style="font-size:11px;color:#6b7280">['+rm.datetime.slice(0,16)+']&nbsp;&nbsp;'+rm.text+'</span></td></tr>':'';
-    return'<tr onmousedown="rowMD(event)" onmouseup="rowMU(event,'+c.id+')" style="border-bottom:'+((rm||cbAt)?'none':'')+';cursor:pointer">'
+  var rows='';
+  pageList.forEach(function(c,i){
+    var sc=SC[c.status]||{bg:'#F3F4F6',c:'#374151'};
+    var ms=memos.filter(function(m){return Number(m.custId||m.cust_id)===Number(c.id);}).sort(function(a,b){return b.datetime.localeCompare(a.datetime);});
+    var rm=ms[0],age=calcInsAge(c.birth||''),cbAt=c.callbackAt||'';
+    var cbRow=cbAt?'<tr onmousedown="rowMD(event)" onmouseup="rowMU(event,'+c.id+')" style="cursor:pointer"><td colspan="10" style="padding:2px 7px 5px 36px;border-bottom:none;background:#fffbeb"><span class="callback-badge">&#128222; 재통화 예정: '+fmtCallback(cbAt)+'</span></td></tr>':'';
+    var memoRow=rm?'<tr onmousedown="rowMD(event)" onmouseup="rowMU(event,'+c.id+')" style="cursor:pointer"><td colspan="10" style="padding:2px 7px 7px 36px;border-bottom:1px solid #e5e7eb;background:#fafafa"><span style="font-size:11px;color:#6b7280">['+rm.datetime.slice(0,16)+']&nbsp;&nbsp;'+rm.text+'</span></td></tr>':'';
+    var ins=c.insurances||[];
+    rows+='<tr onmousedown="rowMD(event)" onmouseup="rowMU(event,'+c.id+')" style="border-bottom:'+((rm||cbAt)?'none':'')+';cursor:pointer">'
       +'<td><input type="checkbox" onclick="event.stopPropagation()"></td>'
       +'<td style="color:#9ca3af">'+(list.length-start-i)+'</td>'
       +'<td>'+(c.channel||'')+'</td>'
@@ -605,15 +581,16 @@ function renderList(pg){
       +'<td>'+(age!==null?age+'세':'')+'</td>'
       +'<td><span class="badge" style="background:'+sc.bg+';color:'+sc.c+'">'+c.status+'</span></td>'
       +'<td style="color:#9ca3af;font-size:11px">'+(c.regdate||'')+'</td>'
-      +'<td style="text-align:center">'+((c.insurances||[]).length?'<span style="font-size:12px;color:#1D4ED8;font-weight:500">'+c.insurances.length+'건</span>':'-')+'</td>'
+      +'<td style="text-align:center">'+(ins.length?'<span style="font-size:12px;color:#1D4ED8;font-weight:500">'+ins.length+'건</span>':'-')+'</td>'
       +'</tr>'+cbRow+memoRow;
-  }).join('');
+  });
+  tb.innerHTML=rows;
 }
 
-// ── 고객 상세/등록 ──────────────────────────────
+// ── 상세/등록 ──────────────────────────────────
 async function openDetail(id){
   editId=id;
-  const c=customers.find(x=>x.id===id);if(!c)return;
+  var c=customers.find(function(x){return x.id===id;});if(!c)return;
   showPage('reg');
   document.getElementById('form-bc').textContent='고객관리 / '+c.name;
   document.getElementById('form-title').textContent='고객관리';
@@ -623,113 +600,107 @@ async function openDetail(id){
   sv('f-bizaddr',c.bizaddr||'');sv('f-homeaddr',c.homeaddr||'');
   sv('f-job',c.job||'');sv('f-consult-type',c.consultType||c.consult_type||'');
   document.getElementById('f-idback').value=c.idback||'';
-  const pm=(c.phone||'').match(/\d{3}-(\d{4})-(\d{4})/);
+  var pm=(c.phone||'').match(/\d{3}-(\d{4})-(\d{4})/);
   document.getElementById('f-p1').value=pm?pm[1]:'';
   document.getElementById('f-p2').value=pm?pm[2]:'';
   applyOwn(c.homeOwn||c.home_own||'');
   updateInsAge();
   sv('f-callback-at',c.callbackAt||c.callback_at||'');
-  formClaims=[...(typeof c.claims==='string'?safeParseJSON(c.claims,[]):(c.claims||[]))];renderClaims();
-  formIns=[...(typeof c.insurances==='string'?safeParseJSON(c.insurances,[]):(c.insurances||[]))];renderIns();
+  formClaims=safeParseJSON(typeof c.claims==='string'?c.claims:JSON.stringify(c.claims||[]),[]).slice();
+  renderClaims();
+  formIns=safeParseJSON(typeof c.insurances==='string'?c.insurances:JSON.stringify(c.insurances||[]),[]).slice();
+  renderIns();
   sv('f-prog','');
-  const mdata=await api('GET','memos?custId='+id);
-  memos=memos.filter(m=>Number(m.custId||m.cust_id)!==Number(id)).concat(Array.isArray(mdata)?mdata:[]);
+  var mdata=await api('GET','memos?custId='+id);
+  memos=memos.filter(function(m){return Number(m.custId||m.cust_id)!==Number(id);}).concat(Array.isArray(mdata)?mdata:[]);
   renderTL(id);
-}
-
-function clearCallback(){sv('f-callback-at','');}
-function fmtCallback(dt){
-  if(!dt)return '';
-  try{const d=new Date(dt);if(isNaN(d))return dt;return (d.getMonth()+1)+'월 '+d.getDate()+'일 '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
-  catch(e){return dt;}
 }
 function clearForm(){
   document.getElementById('form-bc').textContent='신규고객등록';
   document.getElementById('form-title').textContent='신규고객등록';
   document.getElementById('del-btn').style.display='none';
-  ['f-ch','f-status','f-name','f-birth','f-bizaddr','f-homeaddr','f-job','f-p1','f-p2','f-consult-type'].forEach(id=>sv(id,''));
+  ['f-ch','f-status','f-name','f-birth','f-bizaddr','f-homeaddr','f-job','f-p1','f-p2','f-consult-type'].forEach(function(id){sv(id,'');});
   document.getElementById('f-idback').value='';
   sv('f-regdate',today());
   document.getElementById('ins-age-display').textContent='';
   sv('f-callback-at','');
-  homeOwn='';setTimeout(()=>applyOwn(''),0);
+  homeOwn='';setTimeout(function(){applyOwn('');},0);
   formClaims=[];renderClaims();
   formIns=[];renderIns();
-  memos=memos.filter(m=>!m._temp);
+  memos=memos.filter(function(m){return!m._temp;});
   document.getElementById('tl-area').innerHTML='<div class="empty">진행 내역이 없습니다.</div>';
   sv('f-prog','');
-  ['err-name','err-claim','err-prog'].forEach(id=>showErr(id,false));
+  ['err-name','err-claim','err-prog'].forEach(function(id){showErr(id,false);});
 }
 async function submitForm(){
-  const name=gv('f-name');
+  var name=gv('f-name');
   if(!name){markErr('f-name',true);showErr('err-name',true);document.getElementById('f-name').focus();return;}
   markErr('f-name',false);showErr('err-name',false);
-  const p1=gv('f-p1'),p2=gv('f-p2');
-  const btn=document.getElementById('submit-btn');
+  var p1=gv('f-p1'),p2=gv('f-p2');
+  var btn=document.getElementById('submit-btn');
   btn.innerHTML='<span class="spinner"></span>저장 중...';btn.disabled=true;
-  const progText=gv('f-prog');
-  const obj={
-    name,phone:p1&&p2?'010-'+p1+'-'+p2:'',
+  var progText=gv('f-prog');
+  var obj={
+    name:name,phone:p1&&p2?'010-'+p1+'-'+p2:'',
     birth:gv('f-birth'),idback:document.getElementById('f-idback').value.trim(),
     channel:gv('f-ch'),status:gv('f-status')||'',regdate:gv('f-regdate')||today(),
     job:gv('f-job'),consultType:gv('f-consult-type'),
     bizaddr:gv('f-bizaddr'),homeaddr:gv('f-homeaddr'),
-    homeOwn,claims:formClaims,insurances:formIns,modifiedAt:today(),
+    homeOwn:homeOwn,claims:formClaims,insurances:formIns,modifiedAt:today(),
     callbackAt:gv('f-callback-at')||''
   };
   try{
     if(editId!==null){await api('PUT','customers/'+editId,obj);}
-    else{const res=await api('POST','customers',obj);editId=res.id;}
+    else{var r=await api('POST','customers',obj);editId=r.id;}
     if(progText&&editId!==null){
-      const entry={custId:editId,datetime:nowStr(),author:'',text:progText};
-      const res=await api('POST','memos',entry);
-      memos.push({...entry,id:res.id});sv('f-prog','');
+      var entry={custId:editId,datetime:nowStr(),author:'',text:progText};
+      var res=await api('POST','memos',entry);
+      memos.push(Object.assign({},entry,{id:res.id}));sv('f-prog','');
     }
-    const temps=memos.filter(m=>m._temp);
-    for(const m of temps){await api('POST','memos',{custId:editId,datetime:m.datetime,author:'',text:m.text});}
-    memos=memos.filter(m=>!m._temp);
+    var temps=memos.filter(function(m){return m._temp;});
+    for(var ti=0;ti<temps.length;ti++){await api('POST','memos',{custId:editId,datetime:temps[ti].datetime,author:'',text:temps[ti].text});}
+    memos=memos.filter(function(m){return!m._temp;});
     showSave();toast('저장되었습니다');
     await loadList();editId=null;
-    setTimeout(()=>showPage('list'),400);
+    setTimeout(function(){showPage('list');},400);
   }catch(e){toast('저장 실패: '+e.message);}
   finally{btn.innerHTML='작성완료';btn.disabled=false;}
 }
-async function deleteCust(){const c=customers.find(x=>x.id===editId);if(!c)return;showDeleteConfirm(c.name);}
+async function deleteCust(){var c=customers.find(function(x){return x.id===editId;});if(!c)return;showDeleteConfirm(c.name);}
 function showDeleteConfirm(name){
-  const existing=document.getElementById('delete-confirm-bar');if(existing)existing.remove();
-  const bar=document.createElement('div');bar.id='delete-confirm-bar';
+  var ex=document.getElementById('delete-confirm-bar');if(ex)ex.remove();
+  var bar=document.createElement('div');bar.id='delete-confirm-bar';
   bar.style.cssText='position:fixed;bottom:0;left:50%;transform:translateX(-50%);max-width:1200px;width:100%;background:#1a1a1a;color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:center;gap:12px;z-index:9999;font-size:13px;box-shadow:0 -4px 12px rgba(0,0,0,0.3)';
-  bar.innerHTML='<span>정말로 <strong>'+name+'</strong> 고객을 삭제할까요? 복구할 수 없습니다.</span>'
+  bar.innerHTML='<span>정말로 <strong>'+name+'</strong> 고객을 삭제할까요?</span>'
     +'<button onclick="confirmDelete()" style="background:#dc2626;color:#fff;border:none;border-radius:6px;padding:6px 16px;font-size:13px;cursor:pointer;font-family:inherit">삭제</button>'
     +'<button onclick="document.getElementById(\'delete-confirm-bar\').remove()" style="background:#6b7280;color:#fff;border:none;border-radius:6px;padding:6px 16px;font-size:13px;cursor:pointer;font-family:inherit">취소</button>';
   (document.querySelector('.app')||document.body).appendChild(bar);
 }
 async function confirmDelete(){
-  const bar=document.getElementById('delete-confirm-bar');if(bar)bar.remove();
+  var bar=document.getElementById('delete-confirm-bar');if(bar)bar.remove();
   await api('DELETE','customers/'+editId);
   toast('삭제되었습니다');await loadList();editId=null;showPage('list');
 }
 
 // ── 청구이력 ──────────────────────────────────
 function addClaim(){
-  const content=gv('cl-content');
-  if(!content){showErr('err-claim',true);setTimeout(()=>showErr('err-claim',false),2000);return;}
-  const idxEl=document.getElementById('cl-edit-idx');const idx=idxEl?idxEl.value:'';
-  const obj={date:gv('cl-date'),content,company:gv('cl-company')};
-  if(idx!==''){formClaims[parseInt(idx)]=obj;}else{formClaims.push(obj);}
-  const clei=document.getElementById('cl-edit-idx');if(clei)clei.value='';
-  const cb1=document.getElementById('cadd-btn');if(cb1)cb1.textContent='입력';
+  var content=gv('cl-content');
+  if(!content){showErr('err-claim',true);setTimeout(function(){showErr('err-claim',false);},2000);return;}
+  var idxEl=document.getElementById('cl-edit-idx'),idx=idxEl?idxEl.value:'';
+  var obj={date:gv('cl-date'),content:content,company:gv('cl-company')};
+  if(idx!=='')formClaims[parseInt(idx)]=obj;else formClaims.push(obj);
+  if(idxEl)idxEl.value='';
+  var cb=document.getElementById('cadd-btn');if(cb)cb.textContent='입력';
   renderClaims();
-  ['cl-date','cl-content','cl-company'].forEach(id=>sv(id,''));
+  ['cl-date','cl-content','cl-company'].forEach(function(id){sv(id,'');});
 }
-function editClaim(i){const c=formClaims[i];sv('cl-date',c.date||'');sv('cl-content',c.content||'');sv('cl-company',c.company||'');const clei2=document.getElementById('cl-edit-idx');if(clei2)clei2.value=i;const cb2=document.getElementById('cadd-btn');if(cb2)cb2.textContent='수정저장';document.getElementById('cl-content').focus();}
 function removeClaim(i){formClaims.splice(i,1);renderClaims();}
 function renderClaims(){
-  const w=document.getElementById('claim-wrap');
+  var w=document.getElementById('claim-wrap');
   if(!formClaims.length){w.innerHTML='<div style="font-size:12px;color:#9ca3af;padding:8px 0 2px">청구이력이 없습니다.</div>';return;}
-  const TH='padding:5px 8px;border:1px solid #e5e7eb;text-align:left;color:#6b7280;font-weight:500;font-size:11px';
-  const TD='padding:6px 8px;border:1px solid #f3f4f6;font-size:12px';
-  let rows='';
+  var TH='padding:5px 8px;border:1px solid #e5e7eb;text-align:left;color:#6b7280;font-weight:500;font-size:11px';
+  var TD='padding:6px 8px;border:1px solid #f3f4f6;font-size:12px';
+  var rows='';
   formClaims.forEach(function(c,i){
     rows+='<tr id="crow-'+i+'">'
       +'<td style="'+TD+';color:#6b7280;width:90px">'+(c.date||'-')+'</td>'
@@ -743,121 +714,90 @@ function renderClaims(){
       +'<td colspan="4" style="padding:8px 10px;border:1px solid #e5e7eb">'
         +'<div style="display:grid;grid-template-columns:110px 1fr 90px auto auto;gap:5px;align-items:center">'
           +'<input id="ce-date-'+i+'" type="date" style="'+FI+'" value="'+(c.date||'')+'">'
-          +'<input id="ce-content-'+i+'" style="'+FI+'" value="'+c.content.replace(/"/g,'&quot;')+'">'\n          +'<input id="ce-company-'+i+'" style="'+FI+'" value="'+(c.company||'')+'">'\n          +'<button onclick="saveClaimEdit('+i+')" style="background:#1a3a5c;color:#fff;border:none;border-radius:4px;font-size:12px;padding:4px 10px;cursor:pointer;font-family:inherit;white-space:nowrap">저장</button>'\n          +'<button onclick="cancelClaimEdit('+i+')" style="background:none;border:1px solid #d1d5db;border-radius:4px;font-size:12px;padding:4px 8px;cursor:pointer;font-family:inherit">취소</button>'\n        +'</div>'\n      +'</td></tr>';\n  });\n  w.innerHTML='<table style="width:100%;border-collapse:collapse;margin-top:6px">'\n    +'<thead><tr style="background:#f9fafb">'\n    +'<th style="'+TH+';width:90px">청구일</th>'\n    +'<th style="'+TH+'">청구 내용</th>'\n    +'<th style="'+TH+';width:80px">보험사</th>'\n    +'<th style="'+TH+';width:100px"></th>'\n    +'</tr></thead>'\n    +'<tbody>'+rows+'</tbody></table>';\n}\nfunction expandClaimEdit(i){formClaims.forEach(function(_,j){var r=document.getElementById('cedit-'+j);if(r)r.style.display='none';});var row=document.getElementById('cedit-'+i);if(row)row.style.display='';var inp=document.getElementById('ce-content-'+i);if(inp)inp.focus();}\nfunction saveClaimEdit(i){var d=document.getElementById('ce-date-'+i);var ct=document.getElementById('ce-content-'+i);var co=document.getElementById('ce-company-'+i);if(!ct||!ct.value.trim())return;formClaims[i]={date:d?d.value:'',content:ct.value.trim(),company:co?co.value.trim():''};renderClaims();}\nfunction cancelClaimEdit(i){var row=document.getElementById('cedit-'+i);if(row)row.style.display='none';}\n\n// ── 계약 정보 ──────────────────────────────────\nfunction openInsModal(){showErr('err-ins',false);const midxEl2=document.getElementById('modal-ins-edit-idx');if(midxEl2)midxEl2.value='';const t1=document.getElementById('ins-modal-title');if(t1)t1.textContent='계약 추가';document.getElementById('modal-ins').classList.add('on');}\nfunction closeIns(){document.getElementById('modal-ins').classList.remove('on');}\nfunction saveIns(){\n  const t=gv('mi-type');if(!t){showErr('err-ins',true);return;}\n  const obj={type:t,co:gv('mi-co'),amt:Number(document.getElementById('mi-amt').value)||0,start:gv('mi-start'),exp:gv('mi-exp'),st:gv('mi-st')||'신규'};\n  const midxEl=document.getElementById('modal-ins-edit-idx');const editIdx=midxEl?midxEl.value:'';\n  if(editIdx!==''){formIns[parseInt(editIdx)]=obj;}else{formIns.push(obj);}\n  renderIns();toast('계약 정보가 추가되었습니다. 작성완료를 눌러 저장하세요.');closeIns();\n  ['mi-type','mi-co','mi-amt','mi-start','mi-exp'].forEach(id=>sv(id,''));sv('mi-st','신규');\n  const midxEl2=document.getElementById('modal-ins-edit-idx');if(midxEl2)midxEl2.value='';\n}\nfunction renderIns(){\n  var el=document.getElementById('ins-list');if(!el)return;\n  if(!formIns.length){el.innerHTML='<div style="font-size:12px;color:#9ca3af">등록된 계약이 없습니다.</div>';return;}\n  var TH='padding:5px 8px;border:1px solid #e5e7eb;text-align:left;color:#6b7280;font-weight:500;font-size:11px';\n  var TD='padding:6px 8px;border:1px solid #f3f4f6;font-size:12px;vertical-align:middle';\n  var rows='';\n  formIns.forEach(function(ins,i){\n    var sc=INS_SC[ins.st]||INS_SC['유지중'];\n    var amt=ins.amt?Number(ins.amt).toLocaleString()+'원':'-';\n    rows+='<tr id="irow-'+i+'">'\n      +'<td style="'+TD+';font-weight:500">'+(ins.co||'-')+'</td>'\n      +'<td style="'+TD+'">'+(ins.type||'-')+'</td>'\n      +'<td style="'+TD+'">'+amt+'</td>'\n      +'<td style="'+TD+';color:#6b7280">'+(ins.start||'-')+'</td>'\n      +'<td style="'+TD+';color:#6b7280">'+(ins.exp||'-')+'</td>'\n      +'<td style="'+TD+'"><span class="badge" style="background:'+sc.bg+';color:'+sc.c+'">'+ins.st+'</span></td>'\n      +'<td style="'+TD+';white-space:nowrap">'\n        +'<button onclick="startInsEdit('+i+')" style="border:1px solid #B5D4F4;background:none;font-size:11px;color:#185FA5;cursor:pointer;font-family:inherit;border-radius:3px;padding:1px 6px;margin-right:3px">수정</button>'\n        +'<button onclick="rmIns('+i+')" style="border:1px solid #fca5a5;background:none;font-size:11px;color:#dc2626;cursor:pointer;font-family:inherit;border-radius:3px;padding:1px 6px">삭제</button>'\n      +'</td></tr>';\n  });\n  el.innerHTML='<table style="width:100%;border-collapse:collapse;font-size:12px">'\n    +'<thead><tr style="background:#f9fafb">'\n    +'<th style="'+TH+'">보험사</th><th style="'+TH+'">상품명</th><th style="'+TH+'">월 보험료</th>'\n    +'<th style="'+TH+'">가입일</th><th style="'+TH+'">만기일</th><th style="'+TH+'">상태</th>'\n    +'<th style="padding:5px 8px;border:1px solid #e5e7eb;width:90px"></th>'\n    +'</tr></thead><tbody>'+rows+'</tbody></table>';\n}\nfunction startInsEdit(i){\n  var row=document.getElementById('irow-'+i);if(!row)return;\n  var ins=formIns[i];\n  var TD='padding:4px 6px;border:1px solid #f3f4f6;font-size:12px;vertical-align:middle';\n  var FI2='padding:3px 5px;border:1px solid #1a3a5c;border-radius:4px;font-size:12px;font-family:inherit;width:100%;background:#f0f4f8';\n  row.innerHTML=''\n    +'<td style="'+TD+'"><input id="iev-co-'+i+'" style="'+FI2+'" value="'+(ins.co||'')+'"></td>'\n    +'<td style="'+TD+'"><input id="iev-type-'+i+'" style="'+FI2+'" value="'+(ins.type||'')+'"></td>'\n    +'<td style="'+TD+'"><input id="iev-amt-'+i+'" type="number" style="'+FI2+'" value="'+(ins.amt||'')+'"></td>'\n    +'<td style="'+TD+'"><input id="iev-start-'+i+'" type="date" style="'+FI2+'" value="'+(ins.start||'')+'"></td>'\n    +'<td style="'+TD+'"><input id="iev-exp-'+i+'" type="date" style="'+FI2+'" value="'+(ins.exp||'')+'"></td>'\n    +'<td style="'+TD+'">'\n      +'<select id="iev-st-'+i+'" style="'+FI2+'">'\n        +'<option'+(ins.st==='신규'?' selected':'')+'>신규</option>'\n        +'<option'+(ins.st==='유지중'?' selected':'')+'>유지중</option>'\n        +'<option'+(ins.st==='갱신필요'?' selected':'')+'>갱신필요</option>'\n        +'<option'+(ins.st==='해지'?' selected':'')+'>해지</option>'\n      +'</select>'\n    +'</td>'\n    +'<td style="'+TD+';white-space:nowrap">'\n      +'<button onclick="saveInsInline('+i+')" style="background:#1a3a5c;color:#fff;border:none;border-radius:3px;font-size:11px;padding:2px 8px;cursor:pointer;font-family:inherit;margin-right:3px">저장</button>'\n      +'<button onclick="renderIns()" style="background:none;border:1px solid #d1d5db;border-radius:3px;font-size:11px;padding:2px 6px;cursor:pointer;font-family:inherit">취소</button>'\n    +'</td>';\n  var inp=document.getElementById('iev-co-'+i);if(inp)inp.focus();\n}\nfunction saveInsInline(i){\n  var co=document.getElementById('iev-co-'+i);var tp=document.getElementById('iev-type-'+i);\n  var am=document.getElementById('iev-amt-'+i);var sr=document.getElementById('iev-start-'+i);\n  var ex=document.getElementById('iev-exp-'+i);var st=document.getElementById('iev-st-'+i);\n  if(!tp||!tp.value.trim())return;\n  formIns[i]={co:co?co.value.trim():'',type:tp.value.trim(),amt:Number(am?am.value:0)||0,start:sr?sr.value:'',exp:ex?ex.value:'',st:st?st.value:'신규'};\n  renderIns();\n}\nfunction rmIns(i){formIns.splice(i,1);renderIns();}\n\n// ── 진행과정(메모) ─────────────────────────────\nasync function addProg(){\n  const text=gv('f-prog');\n  if(!text){showErr('err-prog',true);setTimeout(()=>showErr('err-prog',false),2000);return;}\n  if(editId===null){\n    const entry={id:'tmp_'+Date.now(),custId:null,datetime:nowStr(),author:'',text,_temp:true};\n    memos.push(entry);renderTempTL();sv('f-prog','');return;\n  }\n  const entry={custId:editId,datetime:nowStr(),author:'',text};\n  const res=await api('POST','memos',entry);\n  memos.push({...entry,id:res.id});renderTL(editId);showSave();sv('f-prog','');\n}\nfunction renderTempTL(){\n  var temps=memos.filter(function(m){return m._temp;});\n  var el=document.getElementById('tl-area');\n  if(!temps.length){el.innerHTML='<div class="empty">진행 내역이 없습니다.</div>';return;}\n  var html='';\n  temps.forEach(function(m){\n    var txt=m.text.split('\n').join('<br>');\n    html+='<div class="tl-item"><div class="tl-meta"><div>'+m.datetime.slice(0,10)+'</div><div>'+m.datetime.slice(11,19)+'</div></div>'\n      +'<div class="tl-body"><div class="tl-text">'+txt+'</div></div>'\n      +'<div class="tl-actions"><button class="tl-act-btn del" onclick="rmTempTL(this)" data-id="'+m.id+'">삭제</button></div></div>';\n  });\n  el.innerHTML=html;\n}\nfunction rmTempTL(btn){const id=btn.getAttribute('data-id');memos=memos.filter(function(m){return m.id!==id;});renderTempTL();}\nfunction tlItemHtml(m,editStart,editSave,editCancel,delFn){\n  return'<div class="tl-item" id="tl-'+m.id+'">'\n    +'<div class="tl-meta"><div>'+m.datetime.slice(0,10)+'</div><div>'+m.datetime.slice(11,19)+'</div>'+(m.editedAt||m.edited_at?'<div style="font-size:10px;color:#d1d5db">수정됨</div>':'')+'</div>'\n    +'<div class="tl-body">'\n      +'<div class="tl-text">'+m.text.split('\n').join('<br>')+'</div>'\n      +'<div class="tl-edit-area"><textarea rows="3"></textarea>'\n        +'<div class="tl-edit-btns">'\n          +'<button class="btn" style="font-size:11px;padding:3px 10px" onclick="'+editCancel+'">취소</button>'\n          +'<button class="btn p" style="font-size:11px;padding:3px 10px" onclick="'+editSave+'">저장</button>'\n        +'</div>'\n      +'</div>'\n    +'</div>'\n    +'<div class="tl-actions">'\n      +'<button class="tl-act-btn edit" onclick="'+editStart+'">수정</button>'\n      +'<button class="tl-act-btn del" onclick="'+delFn+'">삭제</button>'\n    +'</div></div>';\n}\nfunction renderTL(id){\n  const ms=memos.filter(m=>Number(m.custId||m.cust_id)===Number(id)).sort((a,b)=>b.datetime.localeCompare(a.datetime));\n  const el=document.getElementById('tl-area');\n  el.innerHTML=ms.length?ms.map(m=>tlItemHtml(m,'startEdit('+m.id+')','saveEdit('+m.id+')','cancelEdit('+m.id+')','delMemo('+m.id+')')).join(''):'<div class="empty">진행 내역이 없습니다.</div>';\n}\nfunction startEdit(id){const m=memos.find(x=>x.id===id);if(!m)return;const el=document.getElementById('tl-'+id);if(!el)return;el.querySelector('.tl-text').style.display='none';const ea=el.querySelector('.tl-edit-area');ea.querySelector('textarea').value=m.text;ea.style.display='block';ea.querySelector('textarea').focus();}\nasync function saveEdit(id){const el=document.getElementById('tl-'+id);if(!el)return;const newText=el.querySelector('.tl-edit-area textarea').value.trim();if(!newText)return;const editedAt=nowStr();await api('PUT','memos/'+id,{text:newText,editedAt});const m=memos.find(x=>x.id===id);if(m){m.text=newText;m.editedAt=editedAt;}renderTL(editId);showSave();}\nfunction cancelEdit(id){const el=document.getElementById('tl-'+id);if(!el)return;el.querySelector('.tl-text').style.display='';el.querySelector('.tl-edit-area').style.display='none';}\nasync function delMemo(id){await api('DELETE','memos/'+id);memos=memos.filter(m=>m.id!==id);renderTL(editId);showSave();}\n\n// ── 현황판 ───────────────────────────────────\nfunction renderBoard(){\n  document.getElementById('board-content').innerHTML=STATUSES.map(s=>{\n    const list=customers.filter(c=>c.status===s);const sc=SC[s]||{bg:'#F3F4F6',c:'#374151'};\n    return'<div class="board-col"><div class="board-head" style="background:'+sc.bg+'"><span style="color:'+sc.c+'">'+s+'</span><span style="color:'+sc.c+'">'+list.length+'</span></div><div class="board-body">'+(list.length?list.map(c=>'<div class="board-card" onclick="openDetail('+c.id+')">'+c.name+' <span style="color:#9ca3af">'+(c.phone||'')+'</span></div>').join(''):'<div style="font-size:11px;color:#9ca3af;padding:2px 4px">없음</div>')+'</div></div>';\n  }).join('');\n}\n\n// ── 페이지 전환 ──────────────────────────────\nfunction showPage(p){\n  document.querySelectorAll('.page').forEach(x=>x.classList.remove('on'));\n  document.querySelectorAll('.ntab').forEach(x=>x.classList.remove('on'));\n  document.getElementById('page-'+p).classList.add('on');\n  document.getElementById('nav-'+p).classList.add('on');\n  if(p==='board')renderBoard();\n}\nfunction navToReg(){editId=null;showPage('reg');clearForm();}\nlet _rowMDx=0,_rowMDy=0;\nfunction rowMD(e){_rowMDx=e.clientX;_rowMDy=e.clientY;}\nfunction rowMU(e,id){if(Math.abs(e.clientX-_rowMDx)<5&&Math.abs(e.clientY-_rowMDy)<5)openDetail(id);}\n\n// ════════════════════════════════════════════════\n//  외부DB 임포트 기능\n// ════════════════════════════════════════════════\nlet impRows=[];   // 파싱된 전체 행\nlet impSelected=new Set(); // 선택된 인덱스\n\n// 단계 UI 업데이트\nfunction impSetStep(n){\n  [1,2,3].forEach(function(i){\n    document.getElementById('imp-step'+i).className='import-step'+(i===n?' on':'');\n    var dot=document.getElementById('sd'+i);\n    if(i<n)dot.className='step-dot done';\n    else if(i===n)dot.className='step-dot active';\n    else dot.className='step-dot idle';\n    if(i<3){var line=document.getElementById('sl'+i);if(line)line.className='step-line'+(i<n?' done':'');}\n  });\n}\n\n// 드래그앤드롭\nfunction impDragOver(e){e.preventDefault();document.getElementById('drop-zone').classList.add('drag-over');}\nfunction impDragLeave(e){document.getElementById('drop-zone').classList.remove('drag-over');}\nfunction impDrop(e){\n  e.preventDefault();\n  document.getElementById('drop-zone').classList.remove('drag-over');\n  const file=e.dataTransfer.files[0];\n  if(file)impProcessFile(file);\n}\nfunction impFileChange(e){const file=e.target.files[0];if(file)impProcessFile(file);}\n\n// 파일 파싱\nfunction impProcessFile(file){\n  if(!file.name.match(/\.(xlsx|xls|csv)$/i)){toast('xlsx, xls, csv 파일만 지원됩니다');return;}\n  document.getElementById('imp-filename').textContent=file.name;\n  const reader=new FileReader();\n  reader.onload=function(e){\n    try{\n      const wb=XLSX.read(e.target.result,{type:'array',cellDates:true});\n      const ws=wb.Sheets[wb.SheetNames[0]];\n      const raw=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});\n      // 헤더행 자동 감지: 첫 열이 날짜 형식이면 데이터, 아니면 헤더 skip\n      var dataRows=raw.filter(function(r){return r.some(function(c){return c!=='';});});\n      // 첫 행이 텍스트 헤더인지 확인\n      if(dataRows.length>0){\n        var first=dataRows[0][0];\n        if(typeof first==='string'&&isNaN(Date.parse(first))&&!first.match(/^\d{4}/)){\n          dataRows=dataRows.slice(1);\n        }\n      }\n      impRows=dataRows.map(function(r,idx){return impParseRow(r,idx);}).filter(function(r){return r.name;});\n      impSelected=new Set();\n      // 중복 체크 후 신규만 기본 선택\n      impRows.forEach(function(r,i){if(!r.isDup)impSelected.add(i);});\n      impRenderPreview();\n      impSetStep(2);\n    }catch(err){toast('파일 파싱 오류: '+err.message);}\n  };\n  reader.readAsArrayBuffer(file);\n}\n\n// 열 → CRM 필드 매핑\n// 외부DB 구조: 날짜/이름/주민번호/연락처/상담가능시간/열6/보험료/주소/보장내용/직업/특이사항\nfunction impParseRow(r,idx){\n  function cell(i){return r[i]!==undefined&&r[i]!==null?String(r[i]).trim():'';}\n\n  // 날짜 처리 (엑셀 날짜 객체 or 문자열)\n  var rawDate=r[0];var regdate='';\n  if(rawDate instanceof Date){\n    regdate=[rawDate.getFullYear(),String(rawDate.getMonth()+1).padStart(2,'0'),String(rawDate.getDate()).padStart(2,'0')].join('-');\n  } else if(typeof rawDate==='number'){\n    // 엑셀 시리얼 날짜\n    var d=XLSX.SSF.parse_date_code(rawDate);\n    if(d)regdate=[d.y,String(d.m).padStart(2,'0'),String(d.d).padStart(2,'0')].join('-');\n  } else {\n    var ds=cell(0);\n    if(ds.match(/^\d{4}-\d{2}-\d{2}/))regdate=ds.slice(0,10);\n    else if(ds.match(/^\d{4}\/\d{2}\/\d{2}/))regdate=ds.slice(0,10).replace(/\//g,'-');\n  }\n\n  var name=cell(1);\n  // 주민번호 파싱\n  var idraw=cell(2).replace(/[^0-9]/g,'');\n  var birth='',idback='';\n  if(idraw.length>=13){birth=idraw.slice(0,6);idback=idraw.slice(6,13);}\n  else if(idraw.length>=6){birth=idraw.slice(0,6);}\n\n  // 연락처 파싱 - 010-XXXX-XXXX 형식으로 정규화\n  var phoneRaw=cell(3).replace(/[^0-9]/g,'');\n  var phone='';\n  if(phoneRaw.length===11&&phoneRaw.startsWith('010')){\n    phone='010-'+phoneRaw.slice(3,7)+'-'+phoneRaw.slice(7);\n  } else if(phoneRaw.length===10&&phoneRaw.startsWith('010')){\n    phone='010-'+phoneRaw.slice(3,6)+'-'+phoneRaw.slice(6);\n  } else if(phoneRaw){phone=phoneRaw;}\n\n  var consultTime=cell(4);   // 상담가능시간\n  var premium=cell(6);       // 기존 보험료\n  var homeaddr=cell(7);      // 주소\n  var coverage=cell(8);      // 보장내용\n  var job=cell(9);           // 직업\n  var special=cell(10);      // 특이사항\n\n  // 메모 조합: 상담가능시간 + 기존보험료 + 보장내용 + 특이사항\n  var memoLines=[];\n  if(consultTime)memoLines.push('[상담가능시간] '+consultTime);\n  if(premium){var pn=Number(String(premium).replace(/[^0-9]/g,''));memoLines.push('[기존월보험료] '+(pn?pn.toLocaleString()+'원':premium));}\n  if(coverage)memoLines.push('[보장내용/기가입] '+coverage);\n  if(special)memoLines.push('[특이사항] '+special);\n  var memo=memoLines.join('\n');\n\n  // 중복 체크: 이름 + 연락처\n  var isDup=customers.some(function(c){return c.name===name&&c.phone===phone&&name;});\n\n  return{name,birth,idback,phone,homeaddr,job,regdate,memo,isDup,_idx:idx};\n}\n\n// 미리보기 렌더링\nfunction impRenderPreview(){\n  var newCnt=impRows.filter(function(r){return !r.isDup;}).length;\n  var dupCnt=impRows.filter(function(r){return r.isDup;}).length;\n  document.getElementById('imp-stats').innerHTML=\n    '<span class="import-stat">전체 <strong>'+impRows.length+'건</strong></span>'\n    +'<span class="import-stat" style="color:#15803d">신규 <strong>'+newCnt+'건</strong></span>'\n    +(dupCnt?'<span class="import-stat" style="color:#92400e">중복 의심 <strong>'+dupCnt+'건</strong></span>':'')\n    +'<span class="import-stat" style="color:#6b7280;font-size:11px">※ 중복 기준: 이름+연락처 일치</span>';\n  var tbody=document.getElementById('imp-tbody');\n  tbody.innerHTML=impRows.map(function(r,i){\n    var chk=impSelected.has(i);\n    var cls=r.isDup?'dup':(chk?'sel':'');\n    return'<tr class="'+cls+'" id="imp-row-'+i+'">'\n      +'<td><input type="checkbox" class="imp-check" '+(chk?'checked':'')+' onchange="impToggleRow('+i+',this.checked)"></td>'\n      +'<td style="color:#9ca3af;text-align:center">'+(i+1)+'</td>'\n      +'<td style="font-weight:500">'+r.name+(r.isDup?'&nbsp;<span class="dup-badge">중복</span>':'<span class="new-badge">신규</span>')+'</td>'\n      +'<td>'+r.phone+'</td>'\n      +'<td style="color:#6b7280">'+(r.birth?r.birth+(r.idback?'-'+r.idback.slice(0,1)+'●●●●●●':''):'')+'</td>'\n      +'<td>'+r.job+'</td>'\n      +'<td style="color:#6b7280;max-width:120px;overflow:hidden;text-overflow:ellipsis">'+r.homeaddr+'</td>'\n      +'<td style="color:#9ca3af;font-size:11px">'+r.regdate+'</td>'\n      +'<td>'+(chk?'<span class="new-badge">선택</span>':'<span style="font-size:10px;color:#d1d5db">제외</span>')+'</td>'\n      +'</tr>';\n  }).join('');\n  impUpdateBtn();\n}\nfunction impToggleRow(i,chk){\n  if(chk)impSelected.add(i);else impSelected.delete(i);\n  var row=document.getElementById('imp-row-'+i);\n  if(row){\n    var r=impRows[i];\n    row.className=r.isDup?'dup':(chk?'sel':'');\n    var last=row.cells[row.cells.length-1];\n    if(last)last.innerHTML=chk?'<span class="new-badge">선택</span>':'<span style="font-size:10px;color:#d1d5db">제외</span>';\n  }\n  impUpdateBtn();\n}\nfunction impToggleAll(chk){\n  if(chk)impRows.forEach(function(_,i){impSelected.add(i);});\n  else impSelected.clear();\n  impRenderPreview();\n}\nfunction impSelectAll(chk){impToggleAll(chk);}\nfunction impSelectNewOnly(){impSelected.clear();impRows.forEach(function(r,i){if(!r.isDup)impSelected.add(i);});impRenderPreview();}\nfunction impUpdateBtn(){\n  var cnt=impSelected.size;\n  document.getElementById('imp-count-label').textContent='선택한 '+cnt+'건 등록';\n  document.getElementById('imp-start-btn').disabled=cnt===0;\n}\n\n// 실제 등록 처리\nasync function impStartImport(){\n  var toImport=impRows.filter(function(_,i){return impSelected.has(i);});\n  if(!toImport.length){toast('선택된 항목이 없습니다');return;}\n  var btn=document.getElementById('imp-start-btn');\n  btn.innerHTML='<span class="spinner"></span>등록 중...';btn.disabled=true;\n  var ok=0,fail=0;\n  for(var i=0;i<toImport.length;i++){\n    var r=toImport[i];\n    try{\n      var obj={\n        name:r.name,phone:r.phone,birth:r.birth,idback:r.idback,\n        channel:'외부DB',status:'통화요청',\n        regdate:r.regdate||today(),\n        job:r.job,homeaddr:r.homeaddr,\n        homeOwn:'',consultType:'',bizaddr:'',\n        claims:[],insurances:[],modifiedAt:today(),callbackAt:''\n      };\n      var res=await api('POST','customers',obj);\n      var custId=res.id;\n      // 메모 저장\n      if(r.memo&&custId){\n        await api('POST','memos',{custId:custId,datetime:r.regdate?r.regdate+' 09:00:00':nowStr(),author:'외부DB임포트',text:r.memo});\n      }\n      ok++;\n    }catch(e){fail++;console.error('임포트 오류:',r.name,e);}\n  }\n  btn.innerHTML='선택한 '+impSelected.size+'건 등록';btn.disabled=false;\n  // 완료 화면\n  document.getElementById('imp-done-title').textContent=ok+'건 등록 완료';\n  document.getElementById('imp-done-msg').textContent=(fail?fail+'건 실패. ':'')+' 고객목록에서 확인하세요.';\n  impSetStep(3);\n  await loadList();\n}\n\nfunction impReset(){\n  impRows=[];impSelected=new Set();\n  document.getElementById('imp-file').value='';\n  document.getElementById('imp-filename').textContent='';\n  impSetStep(1);\n}\n\n// ════════════════════════════════════\n//  이미지 OCR (Claude Vision)\n// ════════════════════════════════════\nlet imgQueue = [];   // {file, dataUrl, name}\nlet ocrResults = []; // 파싱된 고객 배열\n\nfunction impSwitchTab(tab) {\n  const isExcel = tab === 'excel';\n  document.getElementById('imp-tab-excel').style.display = isExcel ? '' : 'none';\n  document.getElementById('imp-tab-image').style.display = isExcel ? 'none' : '';\n  const te = document.getElementById('tab-excel');\n  const ti = document.getElementById('tab-image');\n  te.style.color = isExcel ? '#1a3a5c' : '#9ca3af';\n  te.style.borderBottomColor = isExcel ? '#1a3a5c' : 'transparent';\n  ti.style.color = isExcel ? '#9ca3af' : '#1a3a5c';\n  ti.style.borderBottomColor = isExcel ? 'transparent' : '#1a3a5c';\n}\n\nfunction imgDragOver(e) { e.preventDefault(); document.getElementById('img-drop-zone').style.borderColor='#1a3a5c'; document.getElementById('img-drop-zone').style.background='#f0f4f8'; }\nfunction imgDragLeave()  { document.getElementById('img-drop-zone').style.borderColor='#d1d5db'; document.getElementById('img-drop-zone').style.background='#fafafa'; }\nfunction imgDrop(e)      { e.preventDefault(); imgDragLeave(); addImgFiles(e.dataTransfer.files); }\nfunction impImgFileChange(e) { addImgFiles(e.target.files); e.target.value=''; }\n\n// 붙여넣기 지원\ndocument.addEventListener('paste', function(e) {\n  if (!document.getElementById('imp-tab-image') || document.getElementById('imp-tab-image').style.display === 'none') return;\n  const items = e.clipboardData && e.clipboardData.items;\n  if (!items) return;\n  const files = [];\n  for (let i = 0; i < items.length; i++) {\n    if (items[i].type.startsWith('image/')) files.push(items[i].getAsFile());\n  }\n  if (files.length) addImgFiles(files);\n});\n\nfunction addImgFiles(files) {\n  Array.from(files).forEach(function(file) {\n    if (!file.type.startsWith('image/')) return;\n    const reader = new FileReader();\n    reader.onload = function(e) {\n      imgQueue.push({ file, dataUrl: e.target.result, name: file.name || ('image_'+Date.now()) });\n      renderImgQueue();\n    };\n    reader.readAsDataURL(file);\n  });\n}\n\nfunction renderImgQueue() {\n  const qEl = document.getElementById('img-queue');\n  const listEl = document.getElementById('img-queue-list');\n  if (!imgQueue.length) { qEl.style.display = 'none'; return; }\n  qEl.style.display = '';\n  listEl.innerHTML = imgQueue.map(function(item, i) {\n    return '<div style="position:relative;display:inline-block">'\n      + '<img src="' + item.dataUrl + '" style="width:80px;height:80px;object-fit:cover;border-radius:6px;border:1px solid #e5e7eb">'\n      + '<button onclick="removeImg(' + i + ')" style="position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:#dc2626;color:#fff;border:none;cursor:pointer;font-size:11px;line-height:18px;text-align:center;padding:0">×</button>'\n      + '<div style="font-size:10px;color:#9ca3af;text-align:center;margin-top:2px;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + item.name + '</div>'\n      + '</div>';\n  }).join('');\n}\n\nfunction removeImg(i) { imgQueue.splice(i, 1); renderImgQueue(); }\n\nasync function impRunOcr() {\n  if (!imgQueue.length) { toast('이미지를 먼저 추가해주세요'); return; }\n  document.getElementById('ocr-btn').disabled = true;\n  document.getElementById('ocr-progress').style.display = '';\n  document.getElementById('ocr-result-area').style.display = 'none';\n  ocrResults = [];\n\n  for (let i = 0; i < imgQueue.length; i++) {\n    document.getElementById('ocr-progress-text').textContent = (i+1) + '/' + imgQueue.length + ' 이미지 분석 중...';\n    const item = imgQueue[i];\n    // base64 추출\n    const b64 = item.dataUrl.split(',')[1];\n    const mediaType = item.file.type || 'image/jpeg';\n    try {\n      const prompt = '이 이미지는 보험 고객 DB 화면입니다. 다음 정보를 JSON으로만 출력하세요 (설명 없이 JSON만). 없으면 빈 문자열. {"name":"이름","phone":"연락처(010-XXXX-XXXX형식)","birth":"생년월일6자리(YYMMDD)","job":"직업","homeaddr":"주소","regdate":"등록일(YYYY-MM-DD)","memo":"문의내용/상담유형/추가정보 등 나머지 유용한 정보 모두"}';\n      const res = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 1000,
-          messages: [{ role: 'user', content: [
-            { type: 'image', source: { type: 'base64', media_type: mediaType, data: b64 } },
-            { type: 'text', text: prompt }
+          +'<input id="ce-content-'+i+'" style="'+FI+'" value="'+c.content.replace(/"/g,'&quot;')+'">'\n          +'<input id="ce-company-'+i+'" style="'+FI+'" value="'+(c.company||'')+'">'\n          +'<button onclick="saveClaimEdit('+i+')" style="background:#1a3a5c;color:#fff;border:none;border-radius:4px;font-size:12px;padding:4px 10px;cursor:pointer;font-family:inherit;white-space:nowrap">저장</button>'\n          +'<button onclick="cancelClaimEdit('+i+')" style="background:none;border:1px solid #d1d5db;border-radius:4px;font-size:12px;padding:4px 8px;cursor:pointer;font-family:inherit">취소</button>'\n        +'</div>'\n      +'</td></tr>';\n  });\n  w.innerHTML='<table style="width:100%;border-collapse:collapse;margin-top:6px">'\n    +'<thead><tr style="background:#f9fafb">'\n    +'<th style="'+TH+';width:90px">청구일</th><th style="'+TH+'">청구 내용</th>'\n    +'<th style="'+TH+';width:80px">보험사</th><th style="'+TH+';width:100px"></th>'\n    +'</tr></thead><tbody>'+rows+'</tbody></table>';\n}\nfunction expandClaimEdit(i){\n  formClaims.forEach(function(_,j){var r=document.getElementById('cedit-'+j);if(r)r.style.display='none';});\n  var row=document.getElementById('cedit-'+i);if(row)row.style.display='';\n  var inp=document.getElementById('ce-content-'+i);if(inp)inp.focus();\n}\nfunction saveClaimEdit(i){\n  var d=document.getElementById('ce-date-'+i),ct=document.getElementById('ce-content-'+i),co=document.getElementById('ce-company-'+i);\n  if(!ct||!ct.value.trim())return;\n  formClaims[i]={date:d?d.value:'',content:ct.value.trim(),company:co?co.value.trim():''};\n  renderClaims();\n}\nfunction cancelClaimEdit(i){var row=document.getElementById('cedit-'+i);if(row)row.style.display='none';}\n\n// ── 계약 정보 ──────────────────────────────────\nfunction openInsModal(){\n  showErr('err-ins',false);\n  var el=document.getElementById('modal-ins-edit-idx');if(el)el.value='';\n  var t=document.getElementById('ins-modal-title');if(t)t.textContent='계약 추가';\n  document.getElementById('modal-ins').classList.add('on');\n}\nfunction closeIns(){document.getElementById('modal-ins').classList.remove('on');}\nfunction saveIns(){\n  var t=gv('mi-type');if(!t){showErr('err-ins',true);return;}\n  var obj={type:t,co:gv('mi-co'),amt:Number(document.getElementById('mi-amt').value)||0,start:gv('mi-start'),exp:gv('mi-exp'),st:gv('mi-st')||'신규'};\n  var idxEl=document.getElementById('modal-ins-edit-idx'),ei=idxEl?idxEl.value:'';\n  if(ei!=='')formIns[parseInt(ei)]=obj;else formIns.push(obj);\n  renderIns();toast('계약 정보가 추가되었습니다. 작성완료를 눌러 저장하세요.');closeIns();\n  ['mi-type','mi-co','mi-amt','mi-start','mi-exp'].forEach(function(id){sv(id,'');});sv('mi-st','신규');\n  if(idxEl)idxEl.value='';\n}\nfunction renderIns(){\n  var el=document.getElementById('ins-list');if(!el)return;\n  if(!formIns.length){el.innerHTML='<div style="font-size:12px;color:#9ca3af">등록된 계약이 없습니다.</div>';return;}\n  var TH='padding:5px 8px;border:1px solid #e5e7eb;text-align:left;color:#6b7280;font-weight:500;font-size:11px';\n  var TD='padding:6px 8px;border:1px solid #f3f4f6;font-size:12px;vertical-align:middle';\n  var rows='';\n  formIns.forEach(function(ins,i){\n    var sc=INS_SC[ins.st]||INS_SC['유지중'];\n    var amt=ins.amt?Number(ins.amt).toLocaleString()+'원':'-';\n    rows+='<tr id="irow-'+i+'">'\n      +'<td style="'+TD+';font-weight:500">'+(ins.co||'-')+'</td>'\n      +'<td style="'+TD+'">'+(ins.type||'-')+'</td>'\n      +'<td style="'+TD+'">'+amt+'</td>'\n      +'<td style="'+TD+';color:#6b7280">'+(ins.start||'-')+'</td>'\n      +'<td style="'+TD+';color:#6b7280">'+(ins.exp||'-')+'</td>'\n      +'<td style="'+TD+'"><span class="badge" style="background:'+sc.bg+';color:'+sc.c+'">'+ins.st+'</span></td>'\n      +'<td style="'+TD+';white-space:nowrap">'\n        +'<button onclick="startInsEdit('+i+')" style="border:1px solid #B5D4F4;background:none;font-size:11px;color:#185FA5;cursor:pointer;font-family:inherit;border-radius:3px;padding:1px 6px;margin-right:3px">수정</button>'\n        +'<button onclick="rmIns('+i+')" style="border:1px solid #fca5a5;background:none;font-size:11px;color:#dc2626;cursor:pointer;font-family:inherit;border-radius:3px;padding:1px 6px">삭제</button>'\n      +'</td></tr>';\n  });\n  el.innerHTML='<table style="width:100%;border-collapse:collapse;font-size:12px">'\n    +'<thead><tr style="background:#f9fafb">'\n    +'<th style="'+TH+'">보험사</th><th style="'+TH+'">상품명</th><th style="'+TH+'">월 보험료</th>'\n    +'<th style="'+TH+'">가입일</th><th style="'+TH+'">만기일</th><th style="'+TH+'">상태</th>'\n    +'<th style="padding:5px 8px;border:1px solid #e5e7eb;width:90px"></th>'\n    +'</tr></thead><tbody>'+rows+'</tbody></table>';\n}\nfunction startInsEdit(i){\n  var row=document.getElementById('irow-'+i);if(!row)return;\n  var ins=formIns[i];\n  var TD='padding:4px 6px;border:1px solid #f3f4f6;font-size:12px;vertical-align:middle';\n  var FI2='padding:3px 5px;border:1px solid #1a3a5c;border-radius:4px;font-size:12px;font-family:inherit;width:100%;background:#f0f4f8';\n  row.innerHTML=''\n    +'<td style="'+TD+'"><input id="iev-co-'+i+'" style="'+FI2+'" value="'+(ins.co||'')+'"></td>'\n    +'<td style="'+TD+'"><input id="iev-type-'+i+'" style="'+FI2+'" value="'+(ins.type||'')+'"></td>'\n    +'<td style="'+TD+'"><input id="iev-amt-'+i+'" type="number" style="'+FI2+'" value="'+(ins.amt||'')+'"></td>'\n    +'<td style="'+TD+'"><input id="iev-start-'+i+'" type="date" style="'+FI2+'" value="'+(ins.start||'')+'"></td>'\n    +'<td style="'+TD+'"><input id="iev-exp-'+i+'" type="date" style="'+FI2+'" value="'+(ins.exp||'')+'"></td>'\n    +'<td style="'+TD+'">'\n      +'<select id="iev-st-'+i+'" style="'+FI2+'">'\n        +'<option'+(ins.st==='신규'?' selected':'')+'>신규</option>'\n        +'<option'+(ins.st==='유지중'?' selected':'')+'>유지중</option>'\n        +'<option'+(ins.st==='갱신필요'?' selected':'')+'>갱신필요</option>'\n        +'<option'+(ins.st==='해지'?' selected':'')+'>해지</option>'\n      +'</select>'\n    +'</td>'\n    +'<td style="'+TD+';white-space:nowrap">'\n      +'<button onclick="saveInsInline('+i+')" style="background:#1a3a5c;color:#fff;border:none;border-radius:3px;font-size:11px;padding:2px 8px;cursor:pointer;font-family:inherit;margin-right:3px">저장</button>'\n      +'<button onclick="renderIns()" style="background:none;border:1px solid #d1d5db;border-radius:3px;font-size:11px;padding:2px 6px;cursor:pointer;font-family:inherit">취소</button>'\n    +'</td>';\n  var inp=document.getElementById('iev-co-'+i);if(inp)inp.focus();\n}\nfunction saveInsInline(i){\n  var co=document.getElementById('iev-co-'+i),tp=document.getElementById('iev-type-'+i);\n  var am=document.getElementById('iev-amt-'+i),sr=document.getElementById('iev-start-'+i);\n  var ex=document.getElementById('iev-exp-'+i),st=document.getElementById('iev-st-'+i);\n  if(!tp||!tp.value.trim())return;\n  formIns[i]={co:co?co.value.trim():'',type:tp.value.trim(),amt:Number(am?am.value:0)||0,start:sr?sr.value:'',exp:ex?ex.value:'',st:st?st.value:'신규'};\n  renderIns();\n}\nfunction rmIns(i){formIns.splice(i,1);renderIns();}\n\n// ── 진행과정 ──────────────────────────────────\nasync function addProg(){\n  var text=gv('f-prog');\n  if(!text){showErr('err-prog',true);setTimeout(function(){showErr('err-prog',false);},2000);return;}\n  if(editId===null){\n    var entry={id:'tmp_'+Date.now(),custId:null,datetime:nowStr(),author:'',text:text,_temp:true};\n    memos.push(entry);renderTempTL();sv('f-prog','');return;\n  }\n  var entry2={custId:editId,datetime:nowStr(),author:'',text:text};\n  var res=await api('POST','memos',entry2);\n  memos.push(Object.assign({},entry2,{id:res.id}));renderTL(editId);showSave();sv('f-prog','');\n}\nfunction renderTempTL(){\n  var temps=memos.filter(function(m){return m._temp;});\n  var el=document.getElementById('tl-area');\n  if(!temps.length){el.innerHTML='<div class="empty">진행 내역이 없습니다.</div>';return;}\n  var html='';\n  temps.forEach(function(m){\n    var txt=m.text.split('\n').join('<br>');\n    html+='<div class="tl-item">'\n      +'<div class="tl-meta"><div>'+m.datetime.slice(0,10)+'</div><div>'+m.datetime.slice(11,19)+'</div></div>'\n      +'<div class="tl-body"><div class="tl-text">'+txt+'</div></div>'\n      +'<div class="tl-actions"><button class="tl-act-btn del" onclick="rmTempTL(this)" data-id="'+m.id+'">삭제</button></div>'\n      +'</div>';\n  });\n  el.innerHTML=html;\n}\nfunction rmTempTL(btn){var id=btn.getAttribute('data-id');memos=memos.filter(function(m){return m.id!==id;});renderTempTL();}\nfunction tlItemHtml(m,es,ev,ec,df){\n  var edited=m.editedAt||m.edited_at?'<div style="font-size:10px;color:#d1d5db">수정됨</div>':'';\n  var txt=m.text.split('\n').join('<br>');\n  return '<div class="tl-item" id="tl-'+m.id+'">'\n    +'<div class="tl-meta"><div>'+m.datetime.slice(0,10)+'</div><div>'+m.datetime.slice(11,19)+'</div>'+edited+'</div>'\n    +'<div class="tl-body">'\n      +'<div class="tl-text">'+txt+'</div>'\n      +'<div class="tl-edit-area"><textarea rows="3"></textarea>'\n        +'<div class="tl-edit-btns">'\n          +'<button class="btn" style="font-size:11px;padding:3px 10px" onclick="'+ec+'">취소</button>'\n          +'<button class="btn p" style="font-size:11px;padding:3px 10px" onclick="'+ev+'">저장</button>'\n        +'</div>'\n      +'</div>'\n    +'</div>'\n    +'<div class="tl-actions">'\n      +'<button class="tl-act-btn edit" onclick="'+es+'">수정</button>'\n      +'<button class="tl-act-btn del" onclick="'+df+'">삭제</button>'\n    +'</div></div>';\n}\nfunction renderTL(id){\n  var ms=memos.filter(function(m){return Number(m.custId||m.cust_id)===Number(id);}).sort(function(a,b){return b.datetime.localeCompare(a.datetime);});\n  var el=document.getElementById('tl-area');\n  el.innerHTML=ms.length?ms.map(function(m){return tlItemHtml(m,'startEdit('+m.id+')','saveEdit('+m.id+')','cancelEdit('+m.id+')','delMemo('+m.id+')');}).join(''):'<div class="empty">진행 내역이 없습니다.</div>';\n}\nfunction startEdit(id){\n  var m=memos.find(function(x){return x.id===id;});if(!m)return;\n  var el=document.getElementById('tl-'+id);if(!el)return;\n  el.querySelector('.tl-text').style.display='none';\n  var ea=el.querySelector('.tl-edit-area');\n  ea.querySelector('textarea').value=m.text;ea.style.display='block';ea.querySelector('textarea').focus();\n}\nasync function saveEdit(id){\n  var el=document.getElementById('tl-'+id);if(!el)return;\n  var newText=el.querySelector('.tl-edit-area textarea').value.trim();if(!newText)return;\n  var editedAt=nowStr();\n  await api('PUT','memos/'+id,{text:newText,editedAt:editedAt});\n  var m=memos.find(function(x){return x.id===id;});if(m){m.text=newText;m.editedAt=editedAt;}\n  renderTL(editId);showSave();\n}\nfunction cancelEdit(id){\n  var el=document.getElementById('tl-'+id);if(!el)return;\n  el.querySelector('.tl-text').style.display='';el.querySelector('.tl-edit-area').style.display='none';\n}\nasync function delMemo(id){await api('DELETE','memos/'+id);memos=memos.filter(function(m){return m.id!==id;});renderTL(editId);showSave();}\n\n// ── 현황판 ───────────────────────────────────\nfunction renderBoard(){\n  var content='';\n  STATUSES.forEach(function(s){\n    var list=customers.filter(function(c){return c.status===s;});\n    var sc=SC[s]||{bg:'#F3F4F6',c:'#374151'};\n    var cards=list.length?list.map(function(c){return '<div class="board-card" onclick="openDetail('+c.id+')">'+c.name+' <span style="color:#9ca3af">'+(c.phone||'')+'</span></div>';}).join(''):'<div style="font-size:11px;color:#9ca3af;padding:2px 4px">없음</div>';\n    content+='<div class="board-col"><div class="board-head" style="background:'+sc.bg+'"><span style="color:'+sc.c+'">'+s+'</span><span style="color:'+sc.c+'">'+list.length+'</span></div><div class="board-body">'+cards+'</div></div>';\n  });\n  document.getElementById('board-content').innerHTML=content;\n}\n\n// ── 페이지 전환 ──────────────────────────────\nfunction showPage(p){\n  document.querySelectorAll('.page').forEach(function(x){x.classList.remove('on');});\n  document.querySelectorAll('.ntab').forEach(function(x){x.classList.remove('on');});\n  document.getElementById('page-'+p).classList.add('on');\n  document.getElementById('nav-'+p).classList.add('on');\n  if(p==='board')renderBoard();\n}\nfunction navToReg(){editId=null;showPage('reg');clearForm();}\nvar _rowMDx=0,_rowMDy=0;\nfunction rowMD(e){_rowMDx=e.clientX;_rowMDy=e.clientY;}\nfunction rowMU(e,id){if(Math.abs(e.clientX-_rowMDx)<5&&Math.abs(e.clientY-_rowMDy)<5)openDetail(id);}\n\n// ── 외부DB 임포트 (엑셀) ─────────────────────\nvar impRows=[],impSelected=new Set();\nfunction impSetStep(n){\n  [1,2,3].forEach(function(i){\n    document.getElementById('imp-step'+i).className='import-step'+(i===n?' on':'');\n    var dot=document.getElementById('sd'+i);\n    dot.className='step-dot '+(i<n?'done':i===n?'active':'idle');\n    var line=document.getElementById('sl'+i);\n    if(line)line.className='step-line'+(i<n?' done':'');\n  });\n}\nfunction impSwitchTab(tab){\n  var isE=tab==='excel';\n  document.getElementById('imp-tab-excel').style.display=isE?'':'none';\n  document.getElementById('imp-tab-image').style.display=isE?'none':'';\n  var te=document.getElementById('tab-excel'),ti=document.getElementById('tab-image');\n  te.style.color=isE?'#1a3a5c':'#9ca3af';te.style.borderBottomColor=isE?'#1a3a5c':'transparent';\n  ti.style.color=isE?'#9ca3af':'#1a3a5c';ti.style.borderBottomColor=isE?'transparent':'#1a3a5c';\n}\nfunction impDragOver(e){e.preventDefault();document.getElementById('drop-zone').classList.add('drag-over');}\nfunction impDragLeave(e){document.getElementById('drop-zone').classList.remove('drag-over');}\nfunction impDrop(e){e.preventDefault();document.getElementById('drop-zone').classList.remove('drag-over');var f=e.dataTransfer.files[0];if(f)impProcessFile(f);}\nfunction impFileChange(e){var f=e.target.files[0];if(f)impProcessFile(f);}\nfunction impProcessFile(file){\n  if(!file.name.match(/\.(xlsx|xls|csv)$/i)){toast('xlsx, xls, csv 파일만 지원됩니다');return;}\n  document.getElementById('imp-filename').textContent=file.name;\n  var reader=new FileReader();\n  reader.onload=function(e){\n    try{\n      var wb=XLSX.read(e.target.result,{type:'array',cellDates:true});\n      var ws=wb.Sheets[wb.SheetNames[0]];\n      var raw=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});\n      var dataRows=raw.filter(function(r){return r.some(function(c){return c!=='';});});\n      if(dataRows.length>0){\n        var first=dataRows[0][0];\n        if(typeof first==='string'&&isNaN(Date.parse(first))&&!first.match(/^\d{4}/))dataRows=dataRows.slice(1);\n      }\n      impRows=dataRows.map(function(r){return impParseRow(r);}).filter(function(r){return r.name;});\n      impSelected=new Set();\n      impRows.forEach(function(r,i){if(!r.isDup)impSelected.add(i);});\n      impRenderPreview();impSetStep(2);\n    }catch(err){toast('파일 파싱 오류: '+err.message);}\n  };\n  reader.readAsArrayBuffer(file);\n}\nfunction impParseRow(r){\n  function cell(i){return r[i]!==undefined&&r[i]!==null?String(r[i]).trim():'';}\n  var rawDate=r[0],regdate='';\n  if(rawDate instanceof Date){\n    regdate=[rawDate.getFullYear(),String(rawDate.getMonth()+1).padStart(2,'0'),String(rawDate.getDate()).padStart(2,'0')].join('-');\n  }else if(typeof rawDate==='number'){\n    var d=XLSX.SSF.parse_date_code(rawDate);\n    if(d)regdate=[d.y,String(d.m).padStart(2,'0'),String(d.d).padStart(2,'0')].join('-');\n  }else{\n    var ds=cell(0);\n    if(ds.match(/^\d{4}-\d{2}-\d{2}/))regdate=ds.slice(0,10);\n    else if(ds.match(/^\d{4}\/\d{2}\/\d{2}/))regdate=ds.slice(0,10).replace(/\//g,'-');\n  }\n  var name=cell(1);\n  var idraw=cell(2).replace(/[^0-9]/g,''),birth='',idback='';\n  if(idraw.length>=13){birth=idraw.slice(0,6);idback=idraw.slice(6,13);}\n  else if(idraw.length>=6)birth=idraw.slice(0,6);\n  var phoneRaw=cell(3).replace(/[^0-9]/g,''),phone='';\n  if(phoneRaw.length===11&&phoneRaw.startsWith('010'))phone='010-'+phoneRaw.slice(3,7)+'-'+phoneRaw.slice(7);\n  else if(phoneRaw.length===10&&phoneRaw.startsWith('010'))phone='010-'+phoneRaw.slice(3,6)+'-'+phoneRaw.slice(6);\n  else if(phoneRaw)phone=phoneRaw;\n  var consultTime=cell(4),premium=cell(6),homeaddr=cell(7),coverage=cell(8),job=cell(9),special=cell(10);\n  var memoLines=[];\n  if(consultTime)memoLines.push('[상담가능시간] '+consultTime);\n  if(premium){var pn=Number(String(premium).replace(/[^0-9]/g,''));memoLines.push('[기존월보험료] '+(pn?pn.toLocaleString()+'원':premium));}\n  if(coverage)memoLines.push('[보장내용] '+coverage);\n  if(special)memoLines.push('[특이사항] '+special);\n  var isDup=customers.some(function(c){return c.name===name&&c.phone===phone&&name;});\n  return{name:name,birth:birth,idback:idback,phone:phone,homeaddr:homeaddr,job:job,regdate:regdate,memo:memoLines.join('\n'),isDup:isDup};\n}\nfunction impRenderPreview(){\n  var newCnt=impRows.filter(function(r){return !r.isDup;}).length;\n  var dupCnt=impRows.filter(function(r){return r.isDup;}).length;\n  document.getElementById('imp-stats').innerHTML=\n    '<span class="import-stat">전체 <strong>'+impRows.length+'건</strong></span>'\n    +'<span class="import-stat" style="color:#15803d">신규 <strong>'+newCnt+'건</strong></span>'\n    +(dupCnt?'<span class="import-stat" style="color:#92400e">중복 의심 <strong>'+dupCnt+'건</strong></span>':'')\n    +'<span class="import-stat" style="color:#6b7280;font-size:11px">※ 중복 기준: 이름+연락처</span>';\n  var rows='';\n  impRows.forEach(function(r,i){\n    var chk=impSelected.has(i),cls=r.isDup?'dup':(chk?'sel':'');\n    var badge=r.isDup?'<span class="dup-badge">중복</span>':'<span class="new-badge">신규</span>';\n    var stat=chk?'<span class="new-badge">선택</span>':'<span style="font-size:10px;color:#d1d5db">제외</span>';\n    var birthTxt=r.birth?r.birth+(r.idback?'-'+r.idback.slice(0,1)+'&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;':''):'';\n    rows+='<tr class="'+cls+'" id="imp-row-'+i+'">'\n      +'<td><input type="checkbox" class="imp-check" '+(chk?'checked':'')+' onchange="impToggleRow('+i+',this.checked)"></td>'\n      +'<td style="color:#9ca3af;text-align:center">'+(i+1)+'</td>'\n      +'<td style="font-weight:500">'+r.name+'&nbsp;'+badge+'</td>'\n      +'<td>'+r.phone+'</td>'\n      +'<td style="color:#6b7280">'+birthTxt+'</td>'\n      +'<td>'+r.job+'</td>'\n      +'<td style="color:#6b7280">'+r.homeaddr+'</td>'\n      +'<td style="color:#9ca3af;font-size:11px">'+r.regdate+'</td>'\n      +'<td>'+stat+'</td>'\n      +'</tr>';\n  });\n  document.getElementById('imp-tbody').innerHTML=rows;\n  impUpdateBtn();\n}\nfunction impToggleRow(i,chk){\n  if(chk)impSelected.add(i);else impSelected.delete(i);\n  var row=document.getElementById('imp-row-'+i);\n  if(row){\n    var r=impRows[i];\n    row.className=r.isDup?'dup':(chk?'sel':'');\n    var last=row.cells[row.cells.length-1];\n    if(last)last.innerHTML=chk?'<span class="new-badge">선택</span>':'<span style="font-size:10px;color:#d1d5db">제외</span>';\n  }\n  impUpdateBtn();\n}\nfunction impToggleAll(chk){\n  if(chk)impRows.forEach(function(_,i){impSelected.add(i);});\n  else impSelected.clear();\n  impRenderPreview();\n}\nfunction impSelectAll(chk){impToggleAll(chk);}\nfunction impSelectNewOnly(){impSelected.clear();impRows.forEach(function(r,i){if(!r.isDup)impSelected.add(i);});impRenderPreview();}\nfunction impUpdateBtn(){\n  var cnt=impSelected.size;\n  document.getElementById('imp-count-label').textContent='선택한 '+cnt+'건 등록';\n  document.getElementById('imp-start-btn').disabled=cnt===0;\n}\nasync function impStartImport(){\n  var toImport=impRows.filter(function(_,i){return impSelected.has(i);});\n  if(!toImport.length){toast('선택된 항목이 없습니다');return;}\n  var btn=document.getElementById('imp-start-btn');\n  btn.innerHTML='<span class="spinner"></span>등록 중...';btn.disabled=true;\n  var ok=0,fail=0;\n  for(var i=0;i<toImport.length;i++){\n    var r=toImport[i];\n    try{\n      var obj={name:r.name,phone:r.phone,birth:r.birth,idback:r.idback,\n        channel:'외부DB',status:'통화요청',regdate:r.regdate||today(),\n        job:r.job,homeaddr:r.homeaddr,homeOwn:'',consultType:'',bizaddr:'',\n        claims:[],insurances:[],modifiedAt:today(),callbackAt:''};\n      var res=await api('POST','customers',obj);\n      if(r.memo&&res.id)await api('POST','memos',{custId:res.id,datetime:r.regdate?r.regdate+' 09:00:00':nowStr(),author:'외부DB임포트',text:r.memo});\n      ok++;\n    }catch(e){fail++;console.error('임포트 오류:',r.name,e);}\n  }\n  btn.innerHTML='선택한 '+impSelected.size+'건 등록';btn.disabled=false;\n  document.getElementById('imp-done-title').textContent=ok+'건 등록 완료';\n  document.getElementById('imp-done-msg').textContent=(fail?fail+'건 실패. ':'')+'고객목록에서 확인하세요.';\n  impSetStep(3);await loadList();\n}\nfunction impReset(){\n  impRows=[];impSelected=new Set();\n  document.getElementById('imp-file').value='';\n  document.getElementById('imp-filename').textContent='';\n  imgQueue=[];ocrResults=[];\n  renderImgQueue();\n  document.getElementById('ocr-result-area').style.display='none';\n  document.getElementById('ocr-progress').style.display='none';\n  impSetStep(1);\n}\n\n// ── OCR (이미지 임포트) ──────────────────────\nvar imgQueue=[],ocrResults=[];\nfunction imgDragOver(e){e.preventDefault();var z=document.getElementById('img-drop-zone');z.style.borderColor='#1a3a5c';z.style.background='#f0f4f8';}\nfunction imgDragLeave(){var z=document.getElementById('img-drop-zone');z.style.borderColor='#d1d5db';z.style.background='#fafafa';}\nfunction imgDrop(e){e.preventDefault();imgDragLeave();addImgFiles(e.dataTransfer.files);}\nfunction impImgFileChange(e){addImgFiles(e.target.files);e.target.value='';}\ndocument.addEventListener('paste',function(e){\n  var tabImg=document.getElementById('imp-tab-image');\n  if(!tabImg||tabImg.style.display==='none')return;\n  var items=e.clipboardData&&e.clipboardData.items;\n  if(!items)return;\n  var files=[];\n  for(var i=0;i<items.length;i++)if(items[i].type.startsWith('image/'))files.push(items[i].getAsFile());\n  if(files.length)addImgFiles(files);\n});\nfunction addImgFiles(files){\n  Array.from(files).forEach(function(file){\n    if(!file.type.startsWith('image/'))return;\n    var reader=new FileReader();\n    reader.onload=function(e){\n      imgQueue.push({file:file,dataUrl:e.target.result,name:file.name||('image_'+Date.now())});\n      renderImgQueue();\n    };\n    reader.readAsDataURL(file);\n  });\n}\nfunction renderImgQueue(){\n  var qEl=document.getElementById('img-queue'),listEl=document.getElementById('img-queue-list');\n  if(!imgQueue.length){qEl.style.display='none';return;}\n  qEl.style.display='';\n  listEl.innerHTML=imgQueue.map(function(item,i){\n    return '<div style="position:relative;display:inline-block">'\n      +'<img src="'+item.dataUrl+'" style="width:80px;height:80px;object-fit:cover;border-radius:6px;border:1px solid #e5e7eb">'\n      +'<button onclick="removeImg('+i+')" style="position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:#dc2626;color:#fff;border:none;cursor:pointer;font-size:11px;line-height:18px;text-align:center;padding:0">x</button>'\n      +'<div style="font-size:10px;color:#9ca3af;text-align:center;margin-top:2px;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+item.name+'</div>'\n      +'</div>';\n  }).join('');\n}\nfunction removeImg(i){imgQueue.splice(i,1);renderImgQueue();}\nasync function impRunOcr(){\n  if(!imgQueue.length){toast('이미지를 먼저 추가해주세요');return;}\n  document.getElementById('ocr-btn').disabled=true;\n  document.getElementById('ocr-progress').style.display='';\n  document.getElementById('ocr-result-area').style.display='none';\n  ocrResults=[];\n  var OCR_PROMPT='이 이미지는 보험 고객 DB 화면입니다. 다음 JSON 형식으로만 출력하세요 (설명 없이 JSON만, 없으면 빈 문자열): {"name":"이름","phone":"연락처(010-XXXX-XXXX형식)","birth":"생년월일6자리(YYMMDD)","job":"직업","homeaddr":"주소","regdate":"등록일(YYYY-MM-DD)","memo":"문의내용 상담유형 추가정보 등 나머지 유용한 정보 모두"}';\n  for(var i=0;i<imgQueue.length;i++){\n    document.getElementById('ocr-progress-text').textContent=(i+1)+'/'+imgQueue.length+' 이미지 분석 중...';\n    var item=imgQueue[i];\n    var b64=item.dataUrl.split(',')[1];\n    var mediaType=item.file.type||'image/jpeg';\n    try{\n      var apiRes=await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          model:'claude-sonnet-4-20250514',
+          max_tokens:1000,
+          messages:[{role:'user',content:[
+            {type:'image',source:{type:'base64',media_type:mediaType,data:b64}},
+            {type:'text',text:OCR_PROMPT}
           ]}]
         })
       });
-      const data = await res.json();
-      const text = (data.content||[]).map(function(b){return b.text||'';}).join('');
-      let parsed = null;
-      try {
-        const clean = text.replace(/```json|```/g,'').trim();
-        parsed = JSON.parse(clean);
-      } catch(e) {
-        // JSON 파싱 실패 시 빈 객체
-        parsed = { name:'', phone:'', birth:'', job:'', homeaddr:'', regdate:'', memo: text.slice(0,200) };
-      }
-      if (parsed && parsed.name) {
-        parsed._imgName = item.name;
-        parsed._dataUrl = item.dataUrl;
-        parsed.isDup = customers.some(function(c){ return c.name===parsed.name && c.phone===parsed.phone && parsed.name; });
+      var data=await apiRes.json();
+      var txt=(data.content||[]).map(function(b){return b.text||'';}).join('');
+      var parsed=null;
+      try{parsed=JSON.parse(txt.replace(/```json|```/g,'').trim());}
+      catch(e){parsed={name:'',phone:'',birth:'',job:'',homeaddr:'',regdate:'',memo:txt.slice(0,200)};}
+      if(parsed&&parsed.name){
+        parsed._imgName=item.name;parsed._dataUrl=item.dataUrl;
+        parsed.isDup=customers.some(function(c){return c.name===parsed.name&&c.phone===parsed.phone&&parsed.name;});
         ocrResults.push(parsed);
       }
-    } catch(e) {
-      console.error('OCR 오류:', e);
-      toast('이미지 ' + (i+1) + ' 분석 실패');
-    }
+    }catch(e){console.error('OCR 오류:',e);toast('이미지 '+(i+1)+' 분석 실패');}
   }
-
-  document.getElementById('ocr-progress').style.display = 'none';
-  document.getElementById('ocr-btn').disabled = false;
-  if (!ocrResults.length) { toast('추출된 고객 정보가 없습니다'); return; }
+  document.getElementById('ocr-progress').style.display='none';
+  document.getElementById('ocr-btn').disabled=false;
+  if(!ocrResults.length){toast('추출된 고객 정보가 없습니다');return;}
   renderOcrResults();
 }
-
-function renderOcrResults() {
-  const el = document.getElementById('ocr-result-area');
-  el.style.display = '';
-  const TH = 'padding:5px 8px;border:1px solid #e5e7eb;background:#f9fafb;color:#6b7280;font-weight:500;font-size:11px;text-align:left';
-  const TD = 'padding:5px 8px;border:1px solid #f3f4f6;font-size:12px;vertical-align:top';
-
-  let rows = ocrResults.map(function(r, i) {
-    const dupBadge = r.isDup ? '<span class="dup-badge">중복</span>' : '<span class="new-badge">신규</span>';
+function renderOcrResults(){
+  var el=document.getElementById('ocr-result-area');el.style.display='';
+  var TH='padding:5px 8px;border:1px solid #e5e7eb;background:#f9fafb;color:#6b7280;font-weight:500;font-size:11px;text-align:left';
+  var TD='padding:5px 8px;border:1px solid #f3f4f6;font-size:12px;vertical-align:top';
+  var rows=ocrResults.map(function(r,i){
+    var badge=r.isDup?'<span class="dup-badge">중복</span>':'<span class="new-badge">신규</span>';
     return '<tr>'
-      + '<td style="' + TD + '">' + '<img src="' + r._dataUrl + '" style="width:48px;height:48px;object-fit:cover;border-radius:4px;border:1px solid #e5e7eb"></td>'
-      + '<td style="' + TD + ';font-weight:500">' + (r.name||'-') + '&nbsp;' + dupBadge + '</td>'
-      + '<td style="' + TD + '">'
-        + '<input id="ocr-name-'+i+'" style="'+FI+';margin-bottom:3px" value="'+(r.name||'')+'" placeholder="이름"><br>'
-        + '<input id="ocr-phone-'+i+'" style="'+FI+';margin-bottom:3px" value="'+(r.phone||'')+'" placeholder="연락처"><br>'
-        + '<input id="ocr-birth-'+i+'" style="'+FI+';margin-bottom:3px;width:80px" value="'+(r.birth||'')+'" placeholder="생년월일6자리">'
-        + '&nbsp;<input id="ocr-job-'+i+'" style="'+FI+';margin-bottom:3px" value="'+(r.job||'')+'" placeholder="직업">'
-      + '</td>'
-      + '<td style="' + TD + '">'
-        + '<input id="ocr-addr-'+i+'" style="'+FI+';margin-bottom:3px" value="'+(r.homeaddr||'')+'" placeholder="주소"><br>'
-        + '<input id="ocr-date-'+i+'" style="'+FI+';margin-bottom:3px;width:120px" value="'+(r.regdate||today())+'" placeholder="YYYY-MM-DD">'
-      + '</td>'
-      + '<td style="' + TD + '">'
-        + '<textarea id="ocr-memo-'+i+'" style="'+FI+';height:60px;resize:none">' + (r.memo||'') + '</textarea>'
-      + '</td>'
-      + '</tr>';
+      +'<td style="'+TD+'"><img src="'+r._dataUrl+'" style="width:48px;height:48px;object-fit:cover;border-radius:4px;border:1px solid #e5e7eb"></td>'
+      +'<td style="'+TD+';font-weight:500">'+(r.name||'-')+'&nbsp;'+badge+'</td>'
+      +'<td style="'+TD+'">'
+        +'<input id="ocr-name-'+i+'" style="'+FI+';margin-bottom:3px" value="'+(r.name||'')+'" placeholder="이름"><br>'
+        +'<input id="ocr-phone-'+i+'" style="'+FI+';margin-bottom:3px" value="'+(r.phone||'')+'" placeholder="연락처"><br>'
+        +'<input id="ocr-birth-'+i+'" style="'+FI+';margin-bottom:3px;width:80px;display:inline-block" value="'+(r.birth||'')+'" placeholder="생년월일">'
+        +'&nbsp;<input id="ocr-job-'+i+'" style="'+FI+';display:inline-block" value="'+(r.job||'')+'" placeholder="직업">'
+      +'</td>'
+      +'<td style="'+TD+'">'
+        +'<input id="ocr-addr-'+i+'" style="'+FI+';margin-bottom:3px" value="'+(r.homeaddr||'')+'" placeholder="주소"><br>'
+        +'<input id="ocr-date-'+i+'" style="'+FI+';width:120px" value="'+(r.regdate||today())+'" placeholder="YYYY-MM-DD">'
+      +'</td>'
+      +'<td style="'+TD+'">'
+        +'<textarea id="ocr-memo-'+i+'" style="'+FI+';height:60px;resize:none">'+(r.memo||'')+'</textarea>'
+      +'</td>'
+      +'</tr>';
   }).join('');
-
-  el.innerHTML = '<div style="font-size:12px;font-weight:500;color:#1a3a5c;margin-bottom:8px">'
-    + 'AI 추출 결과 <span style="font-size:11px;color:#6b7280;font-weight:400">· 내용을 확인/수정 후 등록하세요</span></div>'
-    + '<div style="overflow-x:auto;border:1px solid #e5e7eb;border-radius:6px;margin-bottom:10px">'
-    + '<table style="width:100%;border-collapse:collapse;font-size:12px">'
-    + '<thead><tr>'
-    + '<th style="' + TH + ';width:60px">이미지</th>'
-    + '<th style="' + TH + '">인식결과</th>'
-    + '<th style="' + TH + '">이름/연락처/생년월일/직업</th>'
-    + '<th style="' + TH + '">주소/등록일</th>'
-    + '<th style="' + TH + '">메모</th>'
-    + '</tr></thead>'
-    + '<tbody>' + rows + '</tbody>'
-    + '</table></div>'
-    + '<button onclick="impOcrRegister()" class="btn success" style="width:100%;padding:8px;font-size:13px">추출된 ' + ocrResults.length + '건 CRM에 등록</button>';
+  el.innerHTML='<div style="font-size:12px;font-weight:500;color:#1a3a5c;margin-bottom:8px">AI 추출 결과 <span style="font-size:11px;color:#6b7280;font-weight:400">· 확인/수정 후 등록하세요</span></div>'
+    +'<div style="overflow-x:auto;border:1px solid #e5e7eb;border-radius:6px;margin-bottom:10px">'
+    +'<table style="width:100%;border-collapse:collapse;font-size:12px">'
+    +'<thead><tr><th style="'+TH+';width:60px">이미지</th><th style="'+TH+'">인식결과</th><th style="'+TH+'">이름/연락처/생년월일/직업</th><th style="'+TH+'">주소/등록일</th><th style="'+TH+'">메모</th></tr></thead>'
+    +'<tbody>'+rows+'</tbody></table></div>'
+    +'<button onclick="impOcrRegister()" class="btn success" style="width:100%;padding:8px;font-size:13px">추출된 '+ocrResults.length+'건 CRM에 등록</button>';
 }
-
-async function impOcrRegister() {
-  let ok = 0, fail = 0;
-  for (let i = 0; i < ocrResults.length; i++) {
-    const name = document.getElementById('ocr-name-'+i).value.trim();
-    if (!name) { fail++; continue; }
-    const phone = document.getElementById('ocr-phone-'+i).value.trim();
-    const birth = document.getElementById('ocr-birth-'+i).value.trim();
-    const job   = document.getElementById('ocr-job-'+i).value.trim();
-    const addr  = document.getElementById('ocr-addr-'+i).value.trim();
-    const date  = document.getElementById('ocr-date-'+i).value.trim();
-    const memo  = document.getElementById('ocr-memo-'+i).value.trim();
-    try {
-      const obj = {
-        name, phone, birth, idback:'',
-        channel:'외부DB', status:'통화요청',
-        regdate: date || today(),
-        job, homeaddr: addr,
-        homeOwn:'', consultType:'', bizaddr:'',
-        claims:[], insurances:[], modifiedAt:today(), callbackAt:''
-      };
-      const res = await api('POST','customers',obj);
-      if (memo && res.id) {
-        await api('POST','memos',{ custId:res.id, datetime:nowStr(), author:'이미지OCR', text:'[이미지 OCR 추출]\n'+memo });
-      }
+async function impOcrRegister(){
+  var ok=0,fail=0;
+  for(var i=0;i<ocrResults.length;i++){
+    var name=document.getElementById('ocr-name-'+i).value.trim();
+    if(!name){fail++;continue;}
+    var phone=document.getElementById('ocr-phone-'+i).value.trim();
+    var birth=document.getElementById('ocr-birth-'+i).value.trim();
+    var job=document.getElementById('ocr-job-'+i).value.trim();
+    var addr=document.getElementById('ocr-addr-'+i).value.trim();
+    var date=document.getElementById('ocr-date-'+i).value.trim();
+    var memo=document.getElementById('ocr-memo-'+i).value.trim();
+    try{
+      var obj={name:name,phone:phone,birth:birth,idback:'',channel:'외부DB',status:'통화요청',
+        regdate:date||today(),job:job,homeaddr:addr,homeOwn:'',consultType:'',bizaddr:'',
+        claims:[],insurances:[],modifiedAt:today(),callbackAt:''};
+      var res=await api('POST','customers',obj);
+      if(memo&&res.id)await api('POST','memos',{custId:res.id,datetime:nowStr(),author:'이미지OCR',text:'[이미지 OCR 추출]\n'+memo});
       ok++;
-    } catch(e) { fail++; console.error(e); }
+    }catch(e){fail++;console.error(e);}
   }
-  document.getElementById('imp-done-title').textContent = ok+'건 등록 완료';
-  document.getElementById('imp-done-msg').textContent = (fail?fail+'건 실패. ':'')+'고객목록에서 확인하세요.';
-  imgQueue = []; ocrResults = [];
-  impSetStep(3);
-  await loadList();
+  document.getElementById('imp-done-title').textContent=ok+'건 등록 완료';
+  document.getElementById('imp-done-msg').textContent=(fail?fail+'건 실패. ':'')+'고객목록에서 확인하세요.';
+  imgQueue=[];ocrResults=[];
+  impSetStep(3);await loadList();
 }
 
 loadList();
