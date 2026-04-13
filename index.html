@@ -1237,6 +1237,50 @@ function parseVisionText(text){
 }
 
 
+
+function renderOcrResults(){
+  var el=document.getElementById('ocr-result-area');el.style.display='';
+  var TH='padding:5px 8px;border:1px solid #e5e7eb;background:#f9fafb;color:#6b7280;font-weight:500;font-size:11px;text-align:left';
+  var TD='padding:5px 8px;border:1px solid #f3f4f6;font-size:12px;vertical-align:top';
+  var rows=ocrResults.map(function(r,i){
+    var badge=r.isDup?'<span class="dup-badge">중복</span>':'<span class="new-badge">신규</span>';
+    return '<tr>'
+      +'<td style="'+TD+'"><img src="'+r._dataUrl+'" style="width:60px;height:60px;object-fit:cover;border-radius:4px;border:1px solid #e5e7eb"></td>'
+      +'<td style="'+TD+';font-weight:500">'+(r.name||'-')+'&nbsp;'+badge+'</td>'
+      +'<td style="'+TD+'">'
+        +'<input id="ocr-name-'+i+'" style="'+FI+';margin-bottom:3px" value="'+(r.name||'')+'" placeholder="이름"><br>'
+        +'<input id="ocr-phone-'+i+'" style="'+FI+';margin-bottom:3px" value="'+(r.phone||'')+'" placeholder="010-XXXX-XXXX"><br>'
+        +'<input id="ocr-birth-'+i+'" style="'+FI+';width:80px;display:inline-block;margin-bottom:3px" value="'+(r.birth||'')+'" placeholder="생년월일6자리">'
+        +'&nbsp;<select id="ocr-ch-'+i+'" style="'+FI+';display:inline-block"><option value="">유입경로</option><option>퍼미션A</option><option>퍼미션B</option><option>퍼미션C</option><option>외부DB</option><option>인포머셜</option><option>인포머셜실버</option><option>소개</option><option>고객센터</option></select>'
+      +'</td>'
+      +'<td style="'+TD+'">'
+        +'<input id="ocr-addr-'+i+'" style="'+FI+';margin-bottom:3px" value="'+(r.homeaddr||'')+'" placeholder="주소"><br>'
+        +'<input id="ocr-date-'+i+'" style="'+FI+';width:120px" value="'+(r.regdate||today())+'" placeholder="YYYY-MM-DD">'
+      +'</td>'
+      +'<td style="'+TD+'">'
+        +'<textarea id="ocr-memo-'+i+'" style="'+FI+';height:70px;resize:none">'+(r.memo||r._rawText&&r._rawText.slice(0,300)||'')+'</textarea>'
+      +'</td>'
+      +'</tr>';
+  }).join('');
+  el.innerHTML='<div style="font-size:12px;font-weight:500;color:#1a3a5c;margin-bottom:8px">AI 추출 결과 <span style="font-size:11px;color:#6b7280;font-weight:400">· 확인/수정 후 등록하세요</span></div>'
+    +'<div style="overflow-x:auto;border:1px solid #e5e7eb;border-radius:6px;margin-bottom:10px">'
+    +'<table style="width:100%;border-collapse:collapse;font-size:12px">'
+    +'<thead><tr>'
+    +'<th style="'+TH+';width:70px">이미지</th>'
+    +'<th style="'+TH+'">인식결과</th>'
+    +'<th style="'+TH+'">이름/연락처/생년월일/경로</th>'
+    +'<th style="'+TH+'">주소/등록일</th>'
+    +'<th style="'+TH+'">메모(원본텍스트)</th>'
+    +'</tr></thead>'
+    +'<tbody>'+rows+'</tbody></table></div>'
+    +'<button onclick="impOcrRegister()" class="btn success" style="width:100%;padding:8px;font-size:13px">추출된 '+ocrResults.length+'건 CRM에 등록</button>';
+  // 유입경로 select 값 세팅
+  ocrResults.forEach(function(r,i){
+    var sel=document.getElementById('ocr-ch-'+i);
+    if(sel&&r.channel)sel.value=r.channel;
+  });
+}
+
 async function impOcrRegister(){
   var ok=0,fail=0;
   for(var i=0;i<ocrResults.length;i++){
@@ -1249,8 +1293,10 @@ async function impOcrRegister(){
     var date=document.getElementById('ocr-date-'+i).value.trim();
     var memo=document.getElementById('ocr-memo-'+i).value.trim();
     try{
-      var obj={name:name,phone:phone,birth:birth,idback:'',channel:'외부DB',status:'통화요청',
-        regdate:date||today(),job:job,homeaddr:addr,homeOwn:'',consultType:'',bizaddr:'',
+      var ocrCh=document.getElementById('ocr-ch-'+i);
+      var ch=ocrCh&&ocrCh.value?ocrCh.value:'외부DB';
+      var obj={name:name,phone:phone,birth:birth,idback:'',channel:ch,status:'통화요청',
+        regdate:date||today(),job:'',homeaddr:addr,homeOwn:'',consultType:'',bizaddr:'',
         claims:[],insurances:[],modifiedAt:today(),callbackAt:''};
       var res=await api('POST','customers',obj);
       if(memo&&res.id)await api('POST','memos',{custId:res.id,datetime:nowStr(),author:'이미지OCR',text:'[이미지 OCR 추출]\n'+memo});
