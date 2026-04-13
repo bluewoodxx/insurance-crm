@@ -1124,73 +1124,119 @@ async function impRunOcr(){
   document.getElementById('ocr-progress').style.display='';
   document.getElementById('ocr-result-area').style.display='none';
   ocrResults=[];
-  var OCR_PROMPT='이 이미지는 보험 고객 DB 화면입니다. 다음 JSON 형식으로만 출력하세요 (설명 없이 JSON만, 없으면 빈 문자열): {"name":"이름","phone":"연락처(010-XXXX-XXXX형식)","birth":"생년월일6자리(YYMMDD)","job":"직업","homeaddr":"주소","regdate":"등록일(YYYY-MM-DD)","memo":"문의내용 상담유형 추가정보 등 나머지 유용한 정보 모두"}';
   for(var i=0;i<imgQueue.length;i++){
     document.getElementById('ocr-progress-text').textContent=(i+1)+'/'+imgQueue.length+' 이미지 분석 중...';
     var item=imgQueue[i];
     var b64=item.dataUrl.split(',')[1];
     var mediaType=item.file.type||'image/jpeg';
     try{
-      var apiRes=await fetch('https://api.anthropic.com/v1/messages',{
+      // Google Vision API 호출 (/api/ocr 프록시)
+      var apiRes=await fetch('/api/ocr',{
         method:'POST',
         headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({
-          model:'claude-sonnet-4-20250514',
-          max_tokens:1000,
-          messages:[{role:'user',content:[
-            {type:'image',source:{type:'base64',media_type:mediaType,data:b64}},
-            {type:'text',text:OCR_PROMPT}
-          ]}]
-        })
+        body:JSON.stringify({mediaType:mediaType,b64:b64,provider:'google'})
       });
       var data=await apiRes.json();
-      var txt=(data.content||[]).map(function(b){return b.text||'';}).join('');
-      var parsed=null;
-      try{parsed=JSON.parse(txt.replace(/```json|```/g,'').trim());}
-      catch(e){parsed={name:'',phone:'',birth:'',job:'',homeaddr:'',regdate:'',memo:txt.slice(0,200)};}
+      var rawText='';
+      // Google Vision 응답에서 텍스트 추출
+      if(data.responses&&data.responses[0]&&data.responses[0].fullTextAnnotation){
+        rawText=data.responses[0].fullTextAnnotation.text||'';
+      } else if(data.error){
+        toast('Vision API 오류: '+(data.error.message||'알 수 없는 오류'));
+        continue;
+      }
+      if(!rawText){toast('이미지 '+(i+1)+' 텍스트 인식 실패');continue;}
+      // 텍스트에서 고객 정보 파싱
+      var parsed=parseVisionText(rawText);
       if(parsed&&parsed.name){
-        parsed._imgName=item.name;parsed._dataUrl=item.dataUrl;
+        parsed._imgName=item.name;
+        parsed._dataUrl=item.dataUrl;
+        parsed._rawText=rawText;
         parsed.isDup=customers.some(function(c){return c.name===parsed.name&&c.phone===parsed.phone&&parsed.name;});
         ocrResults.push(parsed);
+      } else {
+        // 파싱 실패시 raw 텍스트를 메모로 넣고 수동 입력 유도
+        ocrResults.push({
+          name:'',phone:'',birth:'',job:'',homeaddr:'',regdate:today(),channel:'',
+          memo:rawText.slice(0,500),
+          _imgName:item.name,_dataUrl:item.dataUrl,_rawText:rawText,isDup:false
+        });
       }
-    }catch(e){console.error('OCR 오류:',e);toast('이미지 '+(i+1)+' 분석 실패');}
+    }catch(e){console.error('OCR 오류:',e);toast('이미지 '+(i+1)+' 분석 실패: '+e.message);}
   }
   document.getElementById('ocr-progress').style.display='none';
   document.getElementById('ocr-btn').disabled=false;
-  if(!ocrResults.length){toast('추출된 고객 정보가 없습니다');return;}
+  if(!ocrResults.length){toast('추출된 정보가 없습니다');return;}
   renderOcrResults();
 }
-function renderOcrResults(){
-  var el=document.getElementById('ocr-result-area');el.style.display='';
-  var TH='padding:5px 8px;border:1px solid #e5e7eb;background:#f9fafb;color:#6b7280;font-weight:500;font-size:11px;text-align:left';
-  var TD='padding:5px 8px;border:1px solid #f3f4f6;font-size:12px;vertical-align:top';
-  var rows=ocrResults.map(function(r,i){
-    var badge=r.isDup?'<span class="dup-badge">중복</span>':'<span class="new-badge">신규</span>';
-    return '<tr>'
-      +'<td style="'+TD+'"><img src="'+r._dataUrl+'" style="width:48px;height:48px;object-fit:cover;border-radius:4px;border:1px solid #e5e7eb"></td>'
-      +'<td style="'+TD+';font-weight:500">'+(r.name||'-')+'&nbsp;'+badge+'</td>'
-      +'<td style="'+TD+'">'
-        +'<input id="ocr-name-'+i+'" style="'+FI+';margin-bottom:3px" value="'+(r.name||'')+'" placeholder="이름"><br>'
-        +'<input id="ocr-phone-'+i+'" style="'+FI+';margin-bottom:3px" value="'+(r.phone||'')+'" placeholder="연락처"><br>'
-        +'<input id="ocr-birth-'+i+'" style="'+FI+';margin-bottom:3px;width:80px;display:inline-block" value="'+(r.birth||'')+'" placeholder="생년월일">'
-        +'&nbsp;<input id="ocr-job-'+i+'" style="'+FI+';display:inline-block" value="'+(r.job||'')+'" placeholder="직업">'
-      +'</td>'
-      +'<td style="'+TD+'">'
-        +'<input id="ocr-addr-'+i+'" style="'+FI+';margin-bottom:3px" value="'+(r.homeaddr||'')+'" placeholder="주소"><br>'
-        +'<input id="ocr-date-'+i+'" style="'+FI+';width:120px" value="'+(r.regdate||today())+'" placeholder="YYYY-MM-DD">'
-      +'</td>'
-      +'<td style="'+TD+'">'
-        +'<textarea id="ocr-memo-'+i+'" style="'+FI+';height:60px;resize:none">'+(r.memo||'')+'</textarea>'
-      +'</td>'
-      +'</tr>';
-  }).join('');
-  el.innerHTML='<div style="font-size:12px;font-weight:500;color:#1a3a5c;margin-bottom:8px">AI 추출 결과 <span style="font-size:11px;color:#6b7280;font-weight:400">· 확인/수정 후 등록하세요</span></div>'
-    +'<div style="overflow-x:auto;border:1px solid #e5e7eb;border-radius:6px;margin-bottom:10px">'
-    +'<table style="width:100%;border-collapse:collapse;font-size:12px">'
-    +'<thead><tr><th style="'+TH+';width:60px">이미지</th><th style="'+TH+'">인식결과</th><th style="'+TH+'">이름/연락처/생년월일/직업</th><th style="'+TH+'">주소/등록일</th><th style="'+TH+'">메모</th></tr></thead>'
-    +'<tbody>'+rows+'</tbody></table></div>'
-    +'<button onclick="impOcrRegister()" class="btn success" style="width:100%;padding:8px;font-size:13px">추출된 '+ocrResults.length+'건 CRM에 등록</button>';
+
+// Google Vision 텍스트 → 고객정보 파싱
+function parseVisionText(text){
+  var lines=text.split(String.fromCharCode(10)).map(function(l){return l.trim();}).filter(function(l){return l;});
+  var result={name:'',phone:'',birth:'',channel:'',homeaddr:'',regdate:'',job:'',memo:''};
+
+  // 줄별 파싱
+  lines.forEach(function(line,idx){
+    // 이름: 상담신청자 다음 줄 또는 같은 줄
+    if(line.includes('상담신청자')){
+      var v=line.replace('상담신청자','').replace(/[:·]/g,'').trim();
+      if(v&&v.length>=2&&v.length<=6)result.name=v;
+      else if(lines[idx+1]&&lines[idx+1].length<=6)result.name=lines[idx+1].trim();
+    }
+    // 전화번호
+    var phoneMatch=line.match(/010[-\s]?\d{3,4}[-\s]?\d{4}/);
+    if(phoneMatch&&!result.phone){
+      result.phone=phoneMatch[0].replace(/\s/g,'');
+      if(!result.phone.includes('-'))result.phone='010-'+result.phone.slice(3,7)+'-'+result.phone.slice(7);
+    }
+    // 생년월일
+    if(line.includes('생년월일')||line.includes('생년')){
+      var dateMatch=line.match(/(\d{4})[.\-\/](\d{1,2})[.\-\/](\d{1,2})/);
+      if(dateMatch){
+        var y=dateMatch[1].slice(2),m=dateMatch[2].padStart(2,'0'),d=dateMatch[3].padStart(2,'0');
+        result.birth=y+m+d;
+      }
+    }
+    // 등록일/상담등록일
+    if(line.includes('상담등록일')||line.includes('등록일시')){
+      var regMatch=line.match(/(\d{4})[.\-\/](\d{2})[.\-\/](\d{2})/);
+      if(regMatch)result.regdate=regMatch[1]+'-'+regMatch[2]+'-'+regMatch[3];
+    }
+    // 매체/유입경로
+    if(line.includes('매체')){
+      var v2=line.replace('매체','').replace(/[:·]/g,'').trim();
+      if(!v2&&lines[idx+1])v2=lines[idx+1].trim();
+      if(v2){
+        // 매체값을 channel로 매핑
+        if(v2.includes('인포머셜')&&v2.includes('실버'))result.channel='인포머셜실버';
+        else if(v2.includes('인포머셜'))result.channel='인포머셜';
+        else if(v2.includes('퍼미션'))result.channel=v2.includes('A')?'퍼미션A':v2.includes('B')?'퍼미션B':'퍼미션C';
+        else if(v2.includes('소개'))result.channel='소개';
+        else if(v2.includes('고객센터')||v2.includes('AIA'))result.channel='고객센터';
+        else result.channel=v2;
+      }
+    }
+    // 주소 (추가정보1)
+    if(line.includes('추가정보1')||line.includes('추가정보')){
+      var v3=line.replace(/추가정보\d?/,'').replace(/[:·]/g,'').trim();
+      if(!v3&&lines[idx+1])v3=lines[idx+1].trim();
+      if(v3&&v3.length>5&&(v3.includes('시')||v3.includes('구')||v3.includes('로')||v3.includes('동')))result.homeaddr=v3;
+    }
+  });
+
+  // 메모: 문의내용, 상담유형, 사은품, 추가정보 모두 수집
+  var memoLines=[];
+  lines.forEach(function(line){
+    if(line.includes('문의내용')||line.includes('상담유형')||line.includes('사은품')||line.includes('추가정보2')||line.includes('상품종류')){
+      memoLines.push(line.trim());
+    }
+  });
+  result.memo=memoLines.join(' / ');
+
+  return result;
 }
+
+
 async function impOcrRegister(){
   var ok=0,fail=0;
   for(var i=0;i<ocrResults.length;i++){
