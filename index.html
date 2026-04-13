@@ -1193,9 +1193,22 @@ function parseVisionText(text){
     if(line.includes('생년월일')||line.includes('생년')){
       var dateMatch=line.match(/(\d{4})[.\-\/](\d{1,2})[.\-\/](\d{1,2})/);
       if(dateMatch){
-        var y=dateMatch[1].slice(2),m=dateMatch[2].padStart(2,'0'),d=dateMatch[3].padStart(2,'0');
+        var y=dateMatch[1].slice(2),m=String(dateMatch[2]).padStart(2,'0'),d=String(dateMatch[3]).padStart(2,'0');
         result.birth=y+m+d;
+      } else {
+        // 다음 줄에 날짜가 있을 수 있음
+        var nextLine=lines[idx+1]||'';
+        var dm=nextLine.match(/(\d{4})[.\-\/](\d{1,2})[.\-\/](\d{1,2})/);
+        if(dm){
+          var y2=dm[1].slice(2),m2=String(dm[2]).padStart(2,'0'),d2=String(dm[3]).padStart(2,'0');
+          result.birth=y2+m2+d2;
+        }
       }
+    }
+    // 생년월일이 독립된 줄로 있는 경우 (예: 1957.05.02)
+    if(!result.birth){
+      var bm=line.match(/^(\d{4})[.](\d{2})[.](\d{2})$/);
+      if(bm){var y3=bm[1].slice(2),m3=bm[2],d3=bm[3];result.birth=y3+m3+d3;}
     }
     // 등록일/상담등록일
     if(line.includes('상담등록일')||line.includes('등록일시')){
@@ -1284,14 +1297,19 @@ function renderOcrResults(){
 async function impOcrRegister(){
   var ok=0,fail=0;
   for(var i=0;i<ocrResults.length;i++){
-    var name=document.getElementById('ocr-name-'+i).value.trim();
+    var nameEl=document.getElementById('ocr-name-'+i);
+    var name=nameEl?nameEl.value.trim():'';
     if(!name){fail++;continue;}
-    var phone=document.getElementById('ocr-phone-'+i).value.trim();
-    var birth=document.getElementById('ocr-birth-'+i).value.trim();
-    var job=document.getElementById('ocr-job-'+i).value.trim();
-    var addr=document.getElementById('ocr-addr-'+i).value.trim();
-    var date=document.getElementById('ocr-date-'+i).value.trim();
-    var memo=document.getElementById('ocr-memo-'+i).value.trim();
+    var phoneEl=document.getElementById('ocr-phone-'+i);
+    var phone=phoneEl?phoneEl.value.trim():'';
+    var birthEl=document.getElementById('ocr-birth-'+i);
+    var birth=birthEl?birthEl.value.trim():'';
+    var addrEl=document.getElementById('ocr-addr-'+i);
+    var addr=addrEl?addrEl.value.trim():'';
+    var dateEl=document.getElementById('ocr-date-'+i);
+    var date=dateEl?dateEl.value.trim():'';
+    var memoEl=document.getElementById('ocr-memo-'+i);
+    var memo=memoEl?memoEl.value.trim():'';
     try{
       var ocrCh=document.getElementById('ocr-ch-'+i);
       var ch=ocrCh&&ocrCh.value?ocrCh.value:'외부DB';
