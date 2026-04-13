@@ -4,141 +4,148 @@ export async function onRequest(context) {
   const path = url.pathname.replace('/api/', '');
   const method = request.method;
 
-  const headers = {
-    'Content-Type': 'application/json',
+  const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
   };
 
-  if (method === 'OPTIONS') return new Response(null, { headers });
+  if (method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  // OCR 프록시 - Google Cloud Vision API
+  if (path === 'ocr' && method === 'POST') {
+    try {
+      const body = await request.json();
+      const { b64, mediaType } = body;
+      const apiKey = env.GOOGLE_VISION_KEY;
+
+      if (!apiKey) {
+        return new Response(JSON.stringify({ error: 'GOOGLE_VISION_KEY 환경변수가 설정되지 않았습니다.' }), {
+          status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+
+      const visionRes = await fetch(
+        `https://vision.googleapis.com/v1/images:annotate?key=${apiKey}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            requests: [{
+              image: { content: b64 },
+              features: [
+                { type: 'TEXT_DETECTION', maxResults: 1 },
+                { type: 'DOCUMENT_TEXT_DETECTION', maxResults: 1 }
+              ]
+            }]
+          })
+        }
+      );
+
+      const data = await visionRes.json();
+      return new Response(JSON.stringify(data), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+
+    } catch (e) {
+      return new Response(JSON.stringify({ error: e.message }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+  }
+
+  // D1 CRUD
+  const db = env.DB;
+  if (!db) {
+    return new Response(JSON.stringify({ error: 'DB not configured' }), {
+      status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
 
   try {
-    await env.DB.prepare(`CREATE TABLE IF NOT EXISTS customers (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL, phone TEXT, birth TEXT, idback TEXT,
-      channel TEXT, manager TEXT, status TEXT, regdate TEXT,
-      job TEXT, consult_type TEXT, bizaddr TEXT, homeaddr TEXT,
-      home_own TEXT, claims TEXT DEFAULT '[]', insurances TEXT DEFAULT '[]',
-      modified_at TEXT
-    )`).run();
+    let result;
 
-    await env.DB.prepare(`CREATE TABLE IF NOT EXISTS memos (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      cust_id INTEGER NOT NULL, datetime TEXT NOT NULL,
-      author TEXT, text TEXT NOT NULL, edited_at TEXT
-    )`).run();
-
-    function parseCustomer(r) {
-      let claims = [], insurances = [];
-      try { claims = JSON.parse(r.claims || '[]'); } catch(e) {}
-      try { insurances = JSON.parse(r.insurances || '[]'); } catch(e) {}
-      return {
-        id: r.id, name: r.name, phone: r.phone, birth: r.birth,
-        idback: r.idback, channel: r.channel, manager: r.manager,
-        status: r.status, regdate: r.regdate, job: r.job,
-        consultType: r.consult_type || '', homeOwn: r.home_own || '',
-        bizaddr: r.bizaddr, homeaddr: r.homeaddr,
-        claims, insurances, modifiedAt: r.modified_at
-      };
-    }
-
-    // 고객 목록
-    if (path === 'customers' && method === 'GET') {
-      const { results } = await env.DB.prepare('SELECT * FROM customers ORDER BY regdate DESC, id DESC').all();
-      return new Response(JSON.stringify(results.map(parseCustomer)), { headers });
-    }
-
-    // 고객 단건
-    if (path.startsWith('customers/') && method === 'GET') {
+    if (path === 'customers') {
+      if (method === 'GET') {
+        const { results } = await db.prepare('SELECT * FROM customers ORDER BY regdate DESC').all();
+        result = results;
+      } else if (method === 'POST') {
+        const b = await request.json();
+        const stmt = await db.prepare(
+          `INSERT INTO customers (name,phone,birth,idback,channel,manager,status,regdate,job,consult_type,bizaddr,homeaddr,home_own,claims,insurances,modified_at,callbackAt)
+           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
+        ).bind(
+          b.name||'', b.phone||'', b.birth||'', b.idback||'',
+          b.channel||'', b.manager||'', b.status||'', b.regdate||'',
+          b.job||'', b.consultType||b.consult_type||'',
+          b.bizaddr||'', b.homeaddr||'', b.homeOwn||b.home_own||'',
+          JSON.stringify(b.claims||[]), JSON.stringify(b.insurances||[]),
+          b.modifiedAt||b.modified_at||'', b.callbackAt||b.callback_at||''
+        ).run();
+        result = { id: stmt.meta.last_row_id };
+      }
+    } else if (path.startsWith('customers/')) {
       const id = path.split('/')[1];
-      const r = await env.DB.prepare('SELECT * FROM customers WHERE id=?').bind(id).first();
-      if (!r) return new Response(JSON.stringify({ error: 'Not found' }), { status: 404, headers });
-      return new Response(JSON.stringify(parseCustomer(r)), { headers });
-    }
-
-    // 고객 생성
-    if (path === 'customers' && method === 'POST') {
-      const body = await request.json();
-      const result = await env.DB.prepare(
-        `INSERT INTO customers (name,phone,birth,idback,channel,manager,status,regdate,job,consult_type,bizaddr,homeaddr,home_own,claims,insurances,modified_at)
-         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
-      ).bind(
-        body.name, body.phone||'', body.birth||'', body.idback||'',
-        body.channel||'', body.manager||'', body.status||'',
-        body.regdate||'', body.job||'', body.consultType||'',
-        body.bizaddr||'', body.homeaddr||'', body.homeOwn||'',
-        JSON.stringify(body.claims||[]), JSON.stringify(body.insurances||[]),
-        body.modifiedAt||''
-      ).run();
-      return new Response(JSON.stringify({ id: result.meta.last_row_id }), { headers });
-    }
-
-    // 고객 수정
-    if (path.startsWith('customers/') && method === 'PUT') {
+      if (method === 'PUT') {
+        const b = await request.json();
+        await db.prepare(
+          `UPDATE customers SET name=?,phone=?,birth=?,idback=?,channel=?,status=?,regdate=?,job=?,consult_type=?,bizaddr=?,homeaddr=?,home_own=?,claims=?,insurances=?,modified_at=?,callbackAt=? WHERE id=?`
+        ).bind(
+          b.name||'', b.phone||'', b.birth||'', b.idback||'',
+          b.channel||'', b.status||'', b.regdate||'',
+          b.job||'', b.consultType||b.consult_type||'',
+          b.bizaddr||'', b.homeaddr||'', b.homeOwn||b.home_own||'',
+          JSON.stringify(b.claims||[]), JSON.stringify(b.insurances||[]),
+          b.modifiedAt||b.modified_at||'', b.callbackAt||b.callback_at||'', id
+        ).run();
+        result = { ok: true };
+      } else if (method === 'DELETE') {
+        await db.prepare('DELETE FROM customers WHERE id=?').bind(id).run();
+        await db.prepare('DELETE FROM memos WHERE cust_id=?').bind(id).run();
+        result = { ok: true };
+      }
+    } else if (path === 'memos' || path.startsWith('memos?')) {
+      if (method === 'GET') {
+        const custId = url.searchParams.get('custId');
+        if (custId) {
+          const { results } = await db.prepare('SELECT * FROM memos WHERE cust_id=? ORDER BY datetime DESC').bind(custId).all();
+          result = results;
+        } else {
+          const { results } = await db.prepare('SELECT * FROM memos ORDER BY datetime DESC').all();
+          result = results;
+        }
+      } else if (method === 'POST') {
+        const b = await request.json();
+        const stmt = await db.prepare(
+          'INSERT INTO memos (cust_id, datetime, author, text) VALUES (?,?,?,?)'
+        ).bind(b.custId, b.datetime||'', b.author||'', b.text||'').run();
+        result = { id: stmt.meta.last_row_id };
+      }
+    } else if (path.startsWith('memos/')) {
       const id = path.split('/')[1];
-      const body = await request.json();
-      await env.DB.prepare(
-        `UPDATE customers SET name=?,phone=?,birth=?,idback=?,channel=?,manager=?,status=?,regdate=?,job=?,consult_type=?,bizaddr=?,homeaddr=?,home_own=?,claims=?,insurances=?,modified_at=? WHERE id=?`
-      ).bind(
-        body.name, body.phone||'', body.birth||'', body.idback||'',
-        body.channel||'', body.manager||'', body.status||'',
-        body.regdate||'', body.job||'', body.consultType||'',
-        body.bizaddr||'', body.homeaddr||'', body.homeOwn||'',
-        JSON.stringify(body.claims||[]), JSON.stringify(body.insurances||[]),
-        body.modifiedAt||'', id
-      ).run();
-      return new Response(JSON.stringify({ ok: true }), { headers });
+      if (method === 'PUT') {
+        const b = await request.json();
+        await db.prepare('UPDATE memos SET text=?, edited_at=? WHERE id=?')
+          .bind(b.text||'', b.editedAt||'', id).run();
+        result = { ok: true };
+      } else if (method === 'DELETE') {
+        await db.prepare('DELETE FROM memos WHERE id=?').bind(id).run();
+        result = { ok: true };
+      }
+    } else {
+      result = { error: 'unknown path: ' + path };
     }
 
-    // 고객 삭제
-    if (path.startsWith('customers/') && method === 'DELETE') {
-      const id = path.split('/')[1];
-      await env.DB.prepare('DELETE FROM customers WHERE id=?').bind(id).run();
-      await env.DB.prepare('DELETE FROM memos WHERE cust_id=?').bind(id).run();
-      return new Response(JSON.stringify({ ok: true }), { headers });
-    }
-
-    // 메모 목록
-    if (path.startsWith('memos') && method === 'GET') {
-      const custId = url.searchParams.get('custId');
-      const { results } = custId
-        ? await env.DB.prepare('SELECT * FROM memos WHERE cust_id=? ORDER BY datetime DESC').bind(custId).all()
-        : await env.DB.prepare('SELECT * FROM memos ORDER BY datetime DESC').all();
-      return new Response(JSON.stringify(results.map(r => ({
-        id: r.id, custId: r.cust_id, datetime: r.datetime,
-        author: r.author, text: r.text, editedAt: r.edited_at
-      }))), { headers });
-    }
-
-    // 메모 생성
-    if (path === 'memos' && method === 'POST') {
-      const body = await request.json();
-      const result = await env.DB.prepare(
-        'INSERT INTO memos (cust_id,datetime,author,text) VALUES (?,?,?,?)'
-      ).bind(body.custId, body.datetime, body.author||'', body.text).run();
-      return new Response(JSON.stringify({ id: result.meta.last_row_id }), { headers });
-    }
-
-    // 메모 수정
-    if (path.startsWith('memos/') && method === 'PUT') {
-      const id = path.split('/')[1];
-      const body = await request.json();
-      await env.DB.prepare('UPDATE memos SET text=?,edited_at=? WHERE id=?')
-        .bind(body.text, body.editedAt||'', id).run();
-      return new Response(JSON.stringify({ ok: true }), { headers });
-    }
-
-    // 메모 삭제
-    if (path.startsWith('memos/') && method === 'DELETE') {
-      const id = path.split('/')[1];
-      await env.DB.prepare('DELETE FROM memos WHERE id=?').bind(id).run();
-      return new Response(JSON.stringify({ ok: true }), { headers });
-    }
-
-    return new Response(JSON.stringify({ error: 'Not found' }), { status: 404, headers });
-
+    return new Response(JSON.stringify(result), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
   } catch (e) {
-    return new Response(JSON.stringify({ error: e.message }), { status: 500, headers });
+    return new Response(JSON.stringify({ error: e.message }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
   }
 }
