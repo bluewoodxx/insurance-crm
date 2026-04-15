@@ -492,18 +492,24 @@ function fmtCallback(dt){
 }
 // ── 고객 목록 ──────────────────────────────────
 async function loadList(){
-  var data=await api('GET','customers');
-  customers=(Array.isArray(data)?data:[]).map(function(c){
-    return Object.assign({},c,{
-      insurances:typeof c.insurances==='string'?safeParseJSON(c.insurances,[]):(c.insurances||[]),
-      claims:typeof c.claims==='string'?safeParseJSON(c.claims,[]):(c.claims||[]),
-      consultType:c.consultType||c.consult_type||'',
-      homeOwn:c.homeOwn||c.home_own||'',
-      callbackAt:c.callbackAt||c.callback_at||''
+  try{
+    var data=await api('GET','customers');
+    customers=(Array.isArray(data)?data:[]).map(function(c){
+      return Object.assign({},c,{
+        insurances:typeof c.insurances==='string'?safeParseJSON(c.insurances,[]):(c.insurances||[]),
+        claims:typeof c.claims==='string'?safeParseJSON(c.claims,[]):(c.claims||[]),
+        consultType:c.consultType||c.consult_type||'',
+        homeOwn:c.homeOwn||c.home_own||'',
+        callbackAt:c.callbackAt||c.callback_at||''
+      });
     });
-  });
-  var mdata=await api('GET','memos');
-  memos=Array.isArray(mdata)?mdata:[];
+    var mdata=await api('GET','memos');
+    memos=Array.isArray(mdata)?mdata:[];
+  }catch(e){
+    console.warn('API 연결 실패 (로컬 테스트 환경일 수 있습니다):',e.message);
+    if(!customers.length)customers=[];
+    if(!memos.length)memos=[];
+  }
   renderList();
 }
 function pbtn(disabled,active){return 'border:1px solid '+(active?'#1a3a5c':'#d1d5db')+';background:'+(active?'#1a3a5c':'#fff')+';color:'+(active?'#fff':(disabled?'#d1d5db':'#374151'))+';border-radius:4px;padding:3px 8px;font-size:12px;cursor:'+(disabled?'default':'pointer')+';margin:0 2px;font-family:inherit';}
@@ -935,14 +941,23 @@ function impProcessFile(file){
   reader.onload=function(e){
     try{
       var wb=XLSX.read(e.target.result,{type:'array',cellDates:true});
-      var ws=wb.Sheets[wb.SheetNames[0]];
-      var raw=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
-      var dataRows=raw.filter(function(r){return r.some(function(c){return c!=='';});});
-      if(dataRows.length>0){
-        var first=dataRows[0][0];
-        if(typeof first==='string'&&isNaN(Date.parse(first))&&!first.match(/^\d{4}/))dataRows=dataRows.slice(1);
+      // 모든 시트의 데이터를 합침
+      var allDataRows=[];
+      wb.SheetNames.forEach(function(sheetName){
+        var ws=wb.Sheets[sheetName];
+        var raw=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
+        var dataRows=raw.filter(function(r){return r.some(function(c){return c!=='';});});
+        if(dataRows.length>0){
+          var first=dataRows[0][0];
+          if(typeof first==='string'&&isNaN(Date.parse(first))&&!first.match(/^\d{4}/))dataRows=dataRows.slice(1);
+        }
+        allDataRows=allDataRows.concat(dataRows);
+      });
+      if(wb.SheetNames.length>1){
+        var nonEmpty=wb.SheetNames.filter(function(n){var ws=wb.Sheets[n];var r=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});return r.some(function(row){return row.some(function(c){return c!=='';});});});
+        if(nonEmpty.length>1)toast(nonEmpty.length+'개 시트 통합: '+nonEmpty.join(', '));
       }
-      impRows=dataRows.map(function(r){return impParseRow(r);}).filter(function(r){return r.name;});
+      impRows=allDataRows.map(function(r){return impParseRow(r);}).filter(function(r){return r.name;});
       impSelected=new Set();
       impRows.forEach(function(r,i){if(!r.isDup)impSelected.add(i);});
       impRenderPreview();impSetStep(2);
