@@ -97,7 +97,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 .imp-table tr:hover td{background:#f9fafb}
 .imp-table tr.sel td{background:#f0fdf4}
 .imp-table tr.dup td{background:#fffbeb}
-.imp-scroll{max-height:400px;overflow-y:auto;border:1px solid #e5e7eb;border-radius:6px}
 .dup-badge{display:inline-block;padding:1px 5px;border-radius:4px;font-size:10px;background:#fef3c7;color:#92400e;font-weight:500}
 .new-badge{display:inline-block;padding:1px 5px;border-radius:4px;font-size:10px;background:#d1fae5;color:#065f46;font-weight:500}
 .map-row{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:12px}
@@ -130,7 +129,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
   <div class="nav-right"><span id="save-msg" style="opacity:0;transition:opacity 0.4s"></span></div>
 </div>
 <div class="toast" id="toast"></div>
-
 <!-- LIST -->
 <div class="page on" id="page-list">
   <div class="tbar">
@@ -154,7 +152,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
       <select class="fs" id="sf-ch" onchange="currentPage=1;renderList()">
         <option value="">전체</option>
         <option>퍼미션A</option><option>퍼미션B</option><option>퍼미션C</option>
-        <option>외부DB</option><option>인포머셜</option><option>인포머셜실버</option><option>소개</option><option>고객센터</option>
+        <option>외부DB</option><option>인포머셜</option><option>인포머셜실버</option><option>소개</option><option>고객센터</option><option>상조기계약</option>
       </select>
     </div>
   </div>
@@ -172,7 +170,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
   </div>
   <div id="pagination" style="display:flex;align-items:center;justify-content:center;padding:12px 14px;border-top:1px solid #e5e7eb;flex-wrap:wrap;gap:4px"></div>
 </div>
-
 <!-- REGISTER / DETAIL -->
 <div class="page" id="page-reg">
   <div class="tbar">
@@ -195,7 +192,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
   <table class="ft">
     <tr>
       <td class="lb rq">유입경로</td>
-      <td><select class="fs" id="f-ch" style="width:150px"><option value="">==선택==</option><option>퍼미션A</option><option>퍼미션B</option><option>퍼미션C</option><option>외부DB</option><option>인포머셜</option><option>인포머셜실버</option><option>소개</option><option>고객센터</option></select></td>
+      <td><select class="fs" id="f-ch" style="width:150px"><option value="">==선택==</option><option>퍼미션A</option><option>퍼미션B</option><option>퍼미션C</option><option>외부DB</option><option>인포머셜</option><option>인포머셜실버</option><option>소개</option><option>고객센터</option><option>상조기계약</option></select></td>
       <td class="lb">상태</td>
       <td><select class="fs" id="f-status" style="width:110px"><option value="">* 선택</option><option>통화요청</option><option>부재</option><option>장기부재</option><option>상담거절</option><option>상담중</option><option>방문예정</option><option>1차방문</option><option>2차방문</option><option>계약완료</option><option>AS요청</option></select></td>
       <td class="lb" style="color:#92400E;font-weight:600;white-space:nowrap">📞 재통화예정</td>
@@ -299,13 +296,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
     <button class="btn" onclick="showPage('list')">취소</button>
   </div>
 </div>
-
 <!-- BOARD -->
 <div class="page" id="page-board">
   <div class="tbar"><span style="font-size:12px;color:#6b7280">상태별 현황</span></div>
   <div class="board" id="board-content"></div>
 </div>
-
 <!-- IMPORT -->
 <div class="page" id="page-import">
   <div class="step-indicator">
@@ -324,13 +319,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
       <div class="step-label">등록 완료</div>
     </div>
   </div>
-
   <div class="import-step on" id="imp-step1">
     <div style="display:flex;border-bottom:1px solid #e5e7eb;margin:0 16px">
       <button id="tab-excel" onclick="impSwitchTab('excel')" style="padding:8px 18px;font-size:12px;font-weight:500;border:none;background:none;cursor:pointer;color:#1a3a5c;border-bottom:2px solid #1a3a5c;font-family:inherit">엑셀 파일</button>
       <button id="tab-image" onclick="impSwitchTab('image')" style="padding:8px 18px;font-size:12px;font-weight:500;border:none;background:none;cursor:pointer;color:#9ca3af;border-bottom:2px solid transparent;font-family:inherit">이미지 OCR <span style="font-size:10px;background:#e0e7ff;color:#3730a3;padding:1px 5px;border-radius:4px;margin-left:4px">AI</span></button>
     </div>
-
     <div id="imp-tab-excel">
       <input type="file" id="imp-file" accept=".xlsx,.xls,.csv" onchange="impFileChange(event)" style="display:none">
       <div class="import-zone" id="drop-zone"
@@ -357,7 +350,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
         <div style="margin-top:10px;font-size:11px;color:#9ca3af">유입경로 <strong style="color:#1a3a5c">외부DB</strong> · 상태 <strong style="color:#1a3a5c">통화요청</strong> 자동 설정</div>
       </div>
     </div>
-
     <div id="imp-tab-image" style="display:none">
       <input type="file" id="imp-img-file" accept="image/*" multiple onchange="impImgFileChange(event)" style="display:none">
       <div style="margin:16px">
@@ -383,7 +375,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
       </div>
     </div>
   </div>
-
   <div class="import-step" id="imp-step2">
     <div class="tbar" style="justify-content:space-between">
       <div style="display:flex;gap:6px;align-items:center">
@@ -410,7 +401,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
       </div>
     </div>
   </div>
-
   <div class="import-step" id="imp-step3">
     <div style="text-align:center;padding:60px 20px">
       <div style="width:56px;height:56px;background:#d1fae5;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px">
@@ -425,7 +415,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
     </div>
   </div>
 </div>
-
 <!-- Insurance Modal -->
 <div class="modal-bg" id="modal-ins" onclick="if(event.target===this)closeIns()">
   <div class="modal">
@@ -445,7 +434,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
   </div>
 </div>
 </div>
-
 <script>
 const FI='padding:3px 6px;border:1px solid #1a3a5c;border-radius:4px;font-size:12px;font-family:inherit;color:#1a1a1a;background:#f0f4f8;width:100%';
 const STATUSES=['통화요청','부재','장기부재','상담거절','상담중','방문예정','1차방문','2차방문','계약완료','AS요청'];
@@ -461,7 +449,6 @@ const INS_SC={신규:{bg:'#DBEAFE',c:'#1E40AF'},유지중:{bg:'#D1FAE5',c:'#065F
 let customers=[],memos=[];
 let editId=null,statusFilter='',searchOpen=true,currentPage=1;
 let formIns=[],formClaims=[],homeOwn='';
-
 // ── 유틸 ──────────────────────────────────────
 function setLoading(on){var b=document.getElementById('loading-bar');b.style.width=on?'70%':'100%';if(!on)setTimeout(function(){b.style.width='0%'},400);}
 async function api(method,path,body){
@@ -503,7 +490,6 @@ function fmtCallback(dt){
   try{var d=new Date(dt);if(isNaN(d))return dt;return (d.getMonth()+1)+'월 '+d.getDate()+'일 '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
   catch(e){return dt;}
 }
-
 // ── 고객 목록 ──────────────────────────────────
 async function loadList(){
   var data=await api('GET','customers');
@@ -587,7 +573,6 @@ function renderList(pg){
   });
   tb.innerHTML=rows;
 }
-
 // ── 상세/등록 ──────────────────────────────────
 async function openDetail(id){
   editId=id;
@@ -682,7 +667,6 @@ async function confirmDelete(){
   await api('DELETE','customers/'+editId);
   toast('삭제되었습니다');await loadList();editId=null;showPage('list');
 }
-
 // ── 청구이력 ──────────────────────────────────
 function addClaim(){
   var content=gv('cl-content');
@@ -740,7 +724,6 @@ function saveClaimEdit(i){
   renderClaims();
 }
 function cancelClaimEdit(i){var row=document.getElementById('cedit-'+i);if(row)row.style.display='none';}
-
 // ── 계약 정보 ──────────────────────────────────
 function openInsModal(){
   showErr('err-ins',false);
@@ -820,7 +803,6 @@ function saveInsInline(i){
   renderIns();
 }
 function rmIns(i){formIns.splice(i,1);renderIns();}
-
 // ── 진행과정 ──────────────────────────────────
 async function addProg(){
   var text=gv('f-prog');
@@ -893,7 +875,6 @@ function cancelEdit(id){
   el.querySelector('.tl-text').style.display='';el.querySelector('.tl-edit-area').style.display='none';
 }
 async function delMemo(id){await api('DELETE','memos/'+id);memos=memos.filter(function(m){return m.id!==id;});renderTL(editId);showSave();}
-
 // ── 현황판 ───────────────────────────────────
 function renderBoard(){
   var content='';
@@ -905,9 +886,15 @@ function renderBoard(){
   });
   document.getElementById('board-content').innerHTML=content;
 }
-
 // ── 페이지 전환 ──────────────────────────────
+// [변경2] 임포트 페이지에서 다른 페이지로 이동 시 임포트 상태 초기화
+var _currentPageName='list';
 function showPage(p){
+  // 임포트 페이지에서 나갈 때 초기화 (완료 step3 제외, 등록 중이 아닐 때만)
+  if(_currentPageName==='import'&&p!=='import'){
+    impReset();
+  }
+  _currentPageName=p;
   document.querySelectorAll('.page').forEach(function(x){x.classList.remove('on');});
   document.querySelectorAll('.ntab').forEach(function(x){x.classList.remove('on');});
   document.getElementById('page-'+p).classList.add('on');
@@ -918,7 +905,6 @@ function navToReg(){editId=null;showPage('reg');clearForm();}
 var _rowMDx=0,_rowMDy=0;
 function rowMD(e){_rowMDx=e.clientX;_rowMDy=e.clientY;}
 function rowMU(e,id){if(Math.abs(e.clientX-_rowMDx)<5&&Math.abs(e.clientY-_rowMDy)<5)openDetail(id);}
-
 // ── 외부DB 임포트 (엑셀) ─────────────────────
 var impRows=[],impSelected=new Set();
 function impSetStep(n){
@@ -1071,15 +1057,16 @@ async function impStartImport(){
 }
 function impReset(){
   impRows=[];impSelected=new Set();
-  document.getElementById('imp-file').value='';
-  document.getElementById('imp-filename').textContent='';
+  var impFile=document.getElementById('imp-file');if(impFile)impFile.value='';
+  var impFn=document.getElementById('imp-filename');if(impFn)impFn.textContent='';
   imgQueue=[];ocrResults=[];
   renderImgQueue();
-  document.getElementById('ocr-result-area').style.display='none';
-  document.getElementById('ocr-progress').style.display='none';
+  var ocrArea=document.getElementById('ocr-result-area');if(ocrArea)ocrArea.style.display='none';
+  var ocrProg=document.getElementById('ocr-progress');if(ocrProg)ocrProg.style.display='none';
   impSetStep(1);
+  // 탭도 초기화
+  impSwitchTab('excel');
 }
-
 // ── OCR (이미지 임포트) ──────────────────────
 var imgQueue=[],ocrResults=[];
 function imgDragOver(e){e.preventDefault();var z=document.getElementById('img-drop-zone');z.style.borderColor='#1a3a5c';z.style.background='#f0f4f8';}
@@ -1119,6 +1106,7 @@ function renderImgQueue(){
   }).join('');
 }
 function removeImg(i){imgQueue.splice(i,1);renderImgQueue();}
+// [변경1] impRunOcr: 멀티 고객 지원
 async function impRunOcr(){
   if(!imgQueue.length){toast('이미지를 먼저 추가해주세요');return;}
   document.getElementById('ocr-btn').disabled=true;
@@ -1131,7 +1119,6 @@ async function impRunOcr(){
     var b64=item.dataUrl.split(',')[1];
     var mediaType=item.file.type||'image/jpeg';
     try{
-      // Google Vision API 호출 (/api/ocr 프록시)
       var apiRes=await fetch('/api/ocr',{
         method:'POST',
         headers:{'Content-Type':'application/json'},
@@ -1139,7 +1126,6 @@ async function impRunOcr(){
       });
       var data=await apiRes.json();
       var rawText='';
-      // Google Vision 응답에서 텍스트 추출
       if(data.responses&&data.responses[0]&&data.responses[0].fullTextAnnotation){
         rawText=data.responses[0].fullTextAnnotation.text||'';
       } else if(data.error){
@@ -1147,18 +1133,22 @@ async function impRunOcr(){
         continue;
       }
       if(!rawText){toast('이미지 '+(i+1)+' 텍스트 인식 실패');continue;}
-      // 텍스트에서 고객 정보 파싱
-      var parsed=parseVisionText(rawText);
-      if(parsed&&parsed.name){
-        parsed._imgName=item.name;
-        parsed._dataUrl=item.dataUrl;
-        parsed._rawText=rawText;
-        parsed.isDup=customers.some(function(c){return c.name===parsed.name&&c.phone===parsed.phone&&parsed.name;});
-        ocrResults.push(parsed);
-      } else {
-        // 파싱 실패시 raw 텍스트를 메모로 넣고 수동 입력 유도
+      // 여러 고객 블록 분리
+      var blocks=splitIntoCustomerBlocks(rawText);
+      for(var bi=0;bi<blocks.length;bi++){
+        var parsed=parseCustomerBlock(blocks[bi]);
+        if(parsed&&(parsed.name||parsed.phone)){
+          parsed._imgName=item.name+(blocks.length>1?' ('+(bi+1)+'/'+blocks.length+')':'');
+          parsed._dataUrl=item.dataUrl;
+          parsed._rawText=blocks[bi];
+          parsed.isDup=customers.some(function(c){return c.name===parsed.name&&c.phone===parsed.phone&&parsed.name;});
+          ocrResults.push(parsed);
+        }
+      }
+      // 블록 분리 실패시 전체를 하나로 시도
+      if(blocks.length===0){
         ocrResults.push({
-          name:'',phone:'',birth:'',job:'',homeaddr:'',regdate:today(),channel:'',
+          name:'',phone:'',birth:'',idback:'',job:'',homeaddr:'',regdate:today(),channel:'',
           memo:rawText.slice(0,500),
           _imgName:item.name,_dataUrl:item.dataUrl,_rawText:rawText,isDup:false
         });
@@ -1170,87 +1160,200 @@ async function impRunOcr(){
   if(!ocrResults.length){toast('추출된 정보가 없습니다');return;}
   renderOcrResults();
 }
-
-// Google Vision 텍스트 → 고객정보 파싱
-function parseVisionText(text){
-  var lines=text.split(String.fromCharCode(10)).map(function(l){return l.trim();}).filter(function(l){return l;});
-  var result={name:'',phone:'',birth:'',channel:'',homeaddr:'',regdate:'',job:'',memo:''};
-
-  // 줄별 파싱
-  lines.forEach(function(line,idx){
-    // 이름: 상담신청자 다음 줄 또는 같은 줄
-    if(line.includes('상담신청자')){
-      var v=line.replace('상담신청자','').replace(/[:·]/g,'').trim();
-      if(v&&v.length>=2&&v.length<=6)result.name=v;
-      else if(lines[idx+1]&&lines[idx+1].length<=6)result.name=lines[idx+1].trim();
-    }
-    // 전화번호
-    var phoneMatch=line.match(/010[-\s]?\d{3,4}[-\s]?\d{4}/);
-    if(phoneMatch&&!result.phone){
-      result.phone=phoneMatch[0].replace(/\s/g,'');
-      if(!result.phone.includes('-'))result.phone='010-'+result.phone.slice(3,7)+'-'+result.phone.slice(7);
-    }
-    // 생년월일
-    if(line.includes('생년월일')||line.includes('생년')){
-      var dateMatch=line.match(/(\d{4})[.\-\/](\d{1,2})[.\-\/](\d{1,2})/);
-      if(dateMatch){
-        var y=dateMatch[1].slice(2),m=String(dateMatch[2]).padStart(2,'0'),d=String(dateMatch[3]).padStart(2,'0');
-        result.birth=y+m+d;
-      } else {
-        // 다음 줄에 날짜가 있을 수 있음
-        var nextLine=lines[idx+1]||'';
-        var dm=nextLine.match(/(\d{4})[.\-\/](\d{1,2})[.\-\/](\d{1,2})/);
-        if(dm){
-          var y2=dm[1].slice(2),m2=String(dm[2]).padStart(2,'0'),d2=String(dm[3]).padStart(2,'0');
-          result.birth=y2+m2+d2;
+// [변경1] 완전 재작성된 OCR 파싱 함수들
+function splitIntoCustomerBlocks(text){
+  var lines=text.split(String.fromCharCode(10));
+  var blocks=[],currentBlock=[];
+  var namePattern=/^[가-힣]{2,4}$/;
+  var phoneDigitPattern=/^\d{10,11}$/;
+  
+  for(var i=0;i<lines.length;i++){
+    var line=lines[i].trim();
+    // 빈 줄이고 다음에 이름패턴이 오면 블록 구분
+    if(!line){
+      if(currentBlock.length>0){
+        // 다음 비어있지 않은 줄이 이름 패턴인지 확인
+        var nextNonEmpty='';
+        for(var j=i+1;j<lines.length;j++){
+          if(lines[j].trim()){nextNonEmpty=lines[j].trim();break;}
+        }
+        if(nextNonEmpty&&namePattern.test(nextNonEmpty)){
+          blocks.push(currentBlock.join(String.fromCharCode(10)));
+          currentBlock=[];
+          continue;
         }
       }
+      continue;
     }
-    // 생년월일이 독립된 줄로 있는 경우 (예: 1957.05.02)
+    // 이름 패턴이 나왔는데 이미 블록에 전화번호나 주민번호가 있으면 새 블록
+    if(namePattern.test(line)&&currentBlock.length>0){
+      var hasPhone=currentBlock.some(function(l){return l.replace(/[-\s]/g,'').match(phoneDigitPattern);});
+      var hasJumin=currentBlock.some(function(l){return l.match(/\d{6}\s*-\s*\d{7}/);});
+      if(hasPhone||hasJumin){
+        blocks.push(currentBlock.join(String.fromCharCode(10)));
+        currentBlock=[line];
+        continue;
+      }
+    }
+    currentBlock.push(line);
+  }
+  if(currentBlock.length>0)blocks.push(currentBlock.join(String.fromCharCode(10)));
+  return blocks;
+}
+
+function parseCustomerBlock(text){
+  var lines=text.split(String.fromCharCode(10)).map(function(l){return l.trim();}).filter(function(l){return l;});
+  var result={name:'',phone:'',birth:'',idback:'',channel:'',homeaddr:'',regdate:'',job:'',memo:''};
+  
+  var namePattern=/^[가-힣]{2,4}$/;
+  var juminLoose=/(\d{6})\s*[-]\s*(\d{7})/;
+  var addrKeywords=/[시도구군읍면리로길동번지층호@]/;
+  var specialLabel=/^특이\s*사항\s*[:：]/;
+  
+  var usedLines=new Set();
+  var memoLines=[];
+  
+  // 1차: 확실한 패턴부터 추출
+  for(var i=0;i<lines.length;i++){
+    var line=lines[i];
+    
+    // 주민번호 (6-7 패턴)
     if(!result.birth){
-      var bm=line.match(/^(\d{4})[.](\d{2})[.](\d{2})$/);
-      if(bm){var y3=bm[1].slice(2),m3=bm[2],d3=bm[3];result.birth=y3+m3+d3;}
+      var jm=line.match(juminLoose);
+      if(jm){
+        result.birth=jm[1];
+        result.idback=jm[2];
+        usedLines.add(i);
+        continue;
+      }
     }
-    // 등록일/상담등록일
-    if(line.includes('상담등록일')||line.includes('등록일시')){
-      var regMatch=line.match(/(\d{4})[.\-\/](\d{2})[.\-\/](\d{2})/);
-      if(regMatch)result.regdate=regMatch[1]+'-'+regMatch[2]+'-'+regMatch[3];
+    
+    // 전화번호 (10-11자리 순수 숫자 또는 010-xxxx-xxxx)
+    if(!result.phone){
+      var cleaned=line.replace(/[-\s]/g,'');
+      if(cleaned.match(/^\d{10,11}$/)&&cleaned.match(/^0/)){
+        if(cleaned.length===11&&cleaned.startsWith('010')){
+          result.phone='010-'+cleaned.slice(3,7)+'-'+cleaned.slice(7);
+        }else if(cleaned.length===10&&cleaned.startsWith('010')){
+          result.phone='010-'+cleaned.slice(3,6)+'-'+cleaned.slice(6);
+        }else{
+          result.phone=cleaned;
+        }
+        usedLines.add(i);
+        continue;
+      }
+      var pm=line.match(/010[-\s]?\d{3,4}[-\s]?\d{4}/);
+      if(pm){
+        var pc=pm[0].replace(/\s/g,'');
+        if(!pc.includes('-')){pc='010-'+pc.slice(3,7)+'-'+pc.slice(7);}
+        result.phone=pc;
+        usedLines.add(i);
+        continue;
+      }
     }
-    // 매체/유입경로
-    if(line.includes('매체')){
-      var v2=line.replace('매체','').replace(/[:·]/g,'').trim();
-      if(!v2&&lines[idx+1])v2=lines[idx+1].trim();
+    
+    // 특이사항 라벨
+    if(line.match(specialLabel)){
+      var sv2=line.replace(specialLabel,'').trim();
+      if(sv2)memoLines.push('[특이사항] '+sv2);
+      // 다음 줄들도 특이사항에 속할 수 있음
+      for(var k=i+1;k<lines.length;k++){
+        var nextL=lines[k];
+        if(namePattern.test(nextL))break;
+        if(nextL.match(juminLoose))break;
+        var nc=nextL.replace(/[-\s]/g,'');
+        if(nc.match(/^\d{10,11}$/))break;
+        if(nextL.match(specialLabel))break;
+        memoLines.push(nextL);
+        usedLines.add(k);
+      }
+      usedLines.add(i);
+      continue;
+    }
+  }
+  
+  // 2차: 이름 추출 (한글 2-4자)
+  for(var i2=0;i2<lines.length;i2++){
+    if(usedLines.has(i2))continue;
+    if(!result.name&&namePattern.test(lines[i2])){
+      result.name=lines[i2];
+      usedLines.add(i2);
+      break;
+    }
+  }
+  
+  // 3차: 주소 추출
+  var addrLines=[];
+  for(var i3=0;i3<lines.length;i3++){
+    if(usedLines.has(i3))continue;
+    var line3=lines[i3];
+    if(addrKeywords.test(line3)&&line3.length>3){
+      addrLines.push(line3);
+      usedLines.add(i3);
+    }
+  }
+  if(addrLines.length>0){
+    result.homeaddr=addrLines.join(' ');
+  }
+  
+  // 4차: 등록일 (날짜 패턴)
+  for(var i4=0;i4<lines.length;i4++){
+    if(usedLines.has(i4))continue;
+    var dm=lines[i4].match(/(\d{4})[.\-\/](\d{1,2})[.\-\/](\d{1,2})/);
+    if(dm){
+      result.regdate=dm[1]+'-'+String(dm[2]).padStart(2,'0')+'-'+String(dm[3]).padStart(2,'0');
+      usedLines.add(i4);
+      break;
+    }
+  }
+  
+  // 5차: 기존 라벨 기반 파싱 (상담신청자, 매체, 문의내용 등)
+  for(var i5=0;i5<lines.length;i5++){
+    if(usedLines.has(i5))continue;
+    var line5=lines[i5];
+    if(line5.includes('상담신청자')&&!result.name){
+      var v=line5.replace('상담신청자','').replace(/[:：·]/g,'').trim();
+      if(v&&v.length>=2&&v.length<=6){result.name=v;usedLines.add(i5);}
+    }
+    if(line5.includes('매체')&&!result.channel){
+      var v2=line5.replace('매체','').replace(/[:：·]/g,'').trim();
+      if(!v2&&lines[i5+1])v2=lines[i5+1].trim();
       if(v2){
-        // 매체값을 channel로 매핑
         if(v2.includes('인포머셜')&&v2.includes('실버'))result.channel='인포머셜실버';
         else if(v2.includes('인포머셜'))result.channel='인포머셜';
         else if(v2.includes('퍼미션'))result.channel=v2.includes('A')?'퍼미션A':v2.includes('B')?'퍼미션B':'퍼미션C';
         else if(v2.includes('소개'))result.channel='소개';
+        else if(v2.includes('상조기'))result.channel='상조기계약';
         else if(v2.includes('고객센터')||v2.includes('AIA'))result.channel='고객센터';
         else result.channel=v2;
       }
     }
-    // 주소 (추가정보1)
-    if(line.includes('추가정보1')||line.includes('추가정보')){
-      var v3=line.replace(/추가정보\d?/,'').replace(/[:·]/g,'').trim();
-      if(!v3&&lines[idx+1])v3=lines[idx+1].trim();
-      if(v3&&v3.length>5&&(v3.includes('시')||v3.includes('구')||v3.includes('로')||v3.includes('동')))result.homeaddr=v3;
+    if((line5.includes('문의내용')||line5.includes('상담유형')||line5.includes('사은품')||line5.includes('상품종류'))&&!usedLines.has(i5)){
+      memoLines.push(line5.trim());
+      usedLines.add(i5);
     }
-  });
-
-  // 메모: 문의내용, 상담유형, 사은품, 추가정보 모두 수집
-  var memoLines=[];
-  lines.forEach(function(line){
-    if(line.includes('문의내용')||line.includes('상담유형')||line.includes('사은품')||line.includes('추가정보2')||line.includes('상품종류')){
-      memoLines.push(line.trim());
+    // 생년월일 라벨
+    if((line5.includes('생년월일')||line5.includes('생년'))&&!result.birth){
+      var dateMatch=line5.match(/(\d{4})[.\-\/](\d{1,2})[.\-\/](\d{1,2})/);
+      if(dateMatch){
+        var y=dateMatch[1].slice(2),m=String(dateMatch[2]).padStart(2,'0'),d=String(dateMatch[3]).padStart(2,'0');
+        result.birth=y+m+d;
+        usedLines.add(i5);
+      }
     }
-  });
-  result.memo=memoLines.join(' / ');
-
+    // 추가정보1 → 주소
+    if((line5.includes('추가정보1')||line5.includes('추가정보'))&&!result.homeaddr){
+      var v3=line5.replace(/추가정보\d?/,'').replace(/[:：·]/g,'').trim();
+      if(!v3&&lines[i5+1])v3=lines[i5+1].trim();
+      if(v3&&v3.length>5&&addrKeywords.test(v3)){result.homeaddr=v3;usedLines.add(i5);}
+    }
+  }
+  
+  // 메모 조합
+  result.memo=memoLines.join(String.fromCharCode(10));
+  
   return result;
 }
-
-
 
 function renderOcrResults(){
   var el=document.getElementById('ocr-result-area');el.style.display='';
@@ -1258,33 +1361,50 @@ function renderOcrResults(){
   var TD='padding:5px 8px;border:1px solid #f3f4f6;font-size:12px;vertical-align:top';
   var rows=ocrResults.map(function(r,i){
     var badge=r.isDup?'<span class="dup-badge">중복</span>':'<span class="new-badge">신규</span>';
+    var chFields='';
+    chFields+='<div style="display:flex;gap:4px;margin-bottom:3px;align-items:center">'
+      +'<span style="font-size:10px;color:#6b7280;width:32px;flex-shrink:0">이름</span>'
+      +'<input id="ocr-name-'+i+'" style="'+FI+'" value="'+(r.name||'')+'" placeholder="이름">'
+      +'</div>';
+    chFields+='<div style="display:flex;gap:4px;margin-bottom:3px;align-items:center">'
+      +'<span style="font-size:10px;color:#6b7280;width:32px;flex-shrink:0">연락처</span>'
+      +'<input id="ocr-phone-'+i+'" style="'+FI+'" value="'+(r.phone||'')+'" placeholder="010-XXXX-XXXX">'
+      +'</div>';
+    chFields+='<div style="display:flex;gap:4px;margin-bottom:3px;align-items:center">'
+      +'<span style="font-size:10px;color:#6b7280;width:32px;flex-shrink:0">생년</span>'
+      +'<input id="ocr-birth-'+i+'" style="'+FI+';width:70px" value="'+(r.birth||'')+'" placeholder="6자리">'
+      +'<span style="color:#9ca3af">-</span>'
+      +'<input id="ocr-idback-'+i+'" style="'+FI+';width:80px" value="'+(r.idback||'')+'" placeholder="뒷7자리">'
+      +'</div>';
+    chFields+='<div style="display:flex;gap:4px;align-items:center">'
+      +'<span style="font-size:10px;color:#6b7280;width:32px;flex-shrink:0">경로</span>'
+      +'<select id="ocr-ch-'+i+'" style="'+FI+';width:auto"><option value="">선택</option><option>퍼미션A</option><option>퍼미션B</option><option>퍼미션C</option><option>외부DB</option><option>인포머셜</option><option>인포머셜실버</option><option>소개</option><option>고객센터</option><option>상조기계약</option></select>'
+      +'</div>';
     return '<tr>'
-      +'<td style="'+TD+'"><img src="'+r._dataUrl+'" style="width:60px;height:60px;object-fit:cover;border-radius:4px;border:1px solid #e5e7eb"></td>'
-      +'<td style="'+TD+';font-weight:500">'+(r.name||'-')+'&nbsp;'+badge+'</td>'
-      +'<td style="'+TD+'">'
-        +'<input id="ocr-name-'+i+'" style="'+FI+';margin-bottom:3px" value="'+(r.name||'')+'" placeholder="이름"><br>'
-        +'<input id="ocr-phone-'+i+'" style="'+FI+';margin-bottom:3px" value="'+(r.phone||'')+'" placeholder="010-XXXX-XXXX"><br>'
-        +'<input id="ocr-birth-'+i+'" style="'+FI+';width:80px;display:inline-block;margin-bottom:3px" value="'+(r.birth||'')+'" placeholder="생년월일6자리">'
-        +'&nbsp;<select id="ocr-ch-'+i+'" style="'+FI+';display:inline-block"><option value="">유입경로</option><option>퍼미션A</option><option>퍼미션B</option><option>퍼미션C</option><option>외부DB</option><option>인포머셜</option><option>인포머셜실버</option><option>소개</option><option>고객센터</option></select>'
+      +'<td style="'+TD+'"><img src="'+r._dataUrl+'" style="width:60px;height:60px;object-fit:cover;border-radius:4px;border:1px solid #e5e7eb"><div style="font-size:9px;color:#9ca3af;margin-top:2px;max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+r._imgName+'</div></td>'
+      +'<td style="'+TD+';font-weight:500">'+(r.name||'(미인식)')+'<br>'+badge
+        +(r.phone?'<div style="font-size:11px;color:#6b7280;font-weight:400;margin-top:2px">'+r.phone+'</div>':'')
+        +(r.birth?'<div style="font-size:11px;color:#6b7280;font-weight:400">'+r.birth+(r.idback?'-'+r.idback.slice(0,1)+'******':'')+'</div>':'')
       +'</td>'
+      +'<td style="'+TD+'">'+chFields+'</td>'
       +'<td style="'+TD+'">'
         +'<input id="ocr-addr-'+i+'" style="'+FI+';margin-bottom:3px" value="'+(r.homeaddr||'')+'" placeholder="주소"><br>'
         +'<input id="ocr-date-'+i+'" style="'+FI+';width:120px" value="'+(r.regdate||today())+'" placeholder="YYYY-MM-DD">'
       +'</td>'
       +'<td style="'+TD+'">'
-        +'<textarea id="ocr-memo-'+i+'" style="'+FI+';height:70px;resize:none">'+(r.memo||r._rawText&&r._rawText.slice(0,300)||'')+'</textarea>'
+        +'<textarea id="ocr-memo-'+i+'" style="'+FI+';height:70px;resize:none">'+(r.memo||'')+'</textarea>'
       +'</td>'
       +'</tr>';
   }).join('');
-  el.innerHTML='<div style="font-size:12px;font-weight:500;color:#1a3a5c;margin-bottom:8px">AI 추출 결과 <span style="font-size:11px;color:#6b7280;font-weight:400">· 확인/수정 후 등록하세요</span></div>'
+  el.innerHTML='<div style="font-size:12px;font-weight:500;color:#1a3a5c;margin-bottom:8px">AI 추출 결과 <span style="font-size:11px;color:#6b7280;font-weight:400">· '+ocrResults.length+'명 인식 · 확인/수정 후 등록하세요</span></div>'
     +'<div style="overflow-x:auto;border:1px solid #e5e7eb;border-radius:6px;margin-bottom:10px">'
     +'<table style="width:100%;border-collapse:collapse;font-size:12px">'
     +'<thead><tr>'
     +'<th style="'+TH+';width:70px">이미지</th>'
-    +'<th style="'+TH+'">인식결과</th>'
-    +'<th style="'+TH+'">이름/연락처/생년월일/경로</th>'
+    +'<th style="'+TH+';width:100px">인식결과</th>'
+    +'<th style="'+TH+'">정보 수정</th>'
     +'<th style="'+TH+'">주소/등록일</th>'
-    +'<th style="'+TH+'">메모(원본텍스트)</th>'
+    +'<th style="'+TH+'">메모</th>'
     +'</tr></thead>'
     +'<tbody>'+rows+'</tbody></table></div>'
     +'<button onclick="impOcrRegister()" class="btn success" style="width:100%;padding:8px;font-size:13px">추출된 '+ocrResults.length+'건 CRM에 등록</button>';
@@ -1294,7 +1414,6 @@ function renderOcrResults(){
     if(sel&&r.channel)sel.value=r.channel;
   });
 }
-
 async function impOcrRegister(){
   var ok=0,fail=0;
   for(var i=0;i<ocrResults.length;i++){
@@ -1305,6 +1424,8 @@ async function impOcrRegister(){
     var phone=phoneEl?phoneEl.value.trim():'';
     var birthEl=document.getElementById('ocr-birth-'+i);
     var birth=birthEl?birthEl.value.trim():'';
+    var idbackEl=document.getElementById('ocr-idback-'+i);
+    var idback=idbackEl?idbackEl.value.trim():'';
     var addrEl=document.getElementById('ocr-addr-'+i);
     var addr=addrEl?addrEl.value.trim():'';
     var dateEl=document.getElementById('ocr-date-'+i);
@@ -1314,7 +1435,7 @@ async function impOcrRegister(){
     try{
       var ocrCh=document.getElementById('ocr-ch-'+i);
       var ch=ocrCh&&ocrCh.value?ocrCh.value:'외부DB';
-      var obj={name:name,phone:phone,birth:birth,idback:'',channel:ch,status:'통화요청',
+      var obj={name:name,phone:phone,birth:birth,idback:idback,channel:ch,status:'통화요청',
         regdate:date||today(),job:'',homeaddr:addr,homeOwn:'',consultType:'',bizaddr:'',
         claims:[],insurances:[],modifiedAt:today(),callbackAt:''};
       var res=await api('POST','customers',obj);
@@ -1327,7 +1448,6 @@ async function impOcrRegister(){
   imgQueue=[];ocrResults=[];
   impSetStep(3);await loadList();
 }
-
 loadList();
 </script>
 </body>
