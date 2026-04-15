@@ -1165,7 +1165,7 @@ function splitIntoCustomerBlocks(text){
   var lines=text.split(String.fromCharCode(10));
   var blocks=[],currentBlock=[];
   var namePattern=/^[가-힣]{2,4}$/;
-  var phoneDigitPattern=/^\d{10,11}$/;
+  var phoneDigitPattern=/^(0\d{9,10}|10\d{8,9})$/;
   
   for(var i=0;i<lines.length;i++){
     var line=lines[i].trim();
@@ -1228,27 +1228,41 @@ function parseCustomerBlock(text){
       }
     }
     
-    // 전화번호 (10-11자리 순수 숫자 또는 010-xxxx-xxxx)
+    // 전화번호 (10-11자리 숫자, 010- 형식, 또는 앞0이 잘린 10자리)
     if(!result.phone){
       var cleaned=line.replace(/[-\s]/g,'');
-      if(cleaned.match(/^\d{10,11}$/)&&cleaned.match(/^0/)){
-        if(cleaned.length===11&&cleaned.startsWith('010')){
-          result.phone='010-'+cleaned.slice(3,7)+'-'+cleaned.slice(7);
-        }else if(cleaned.length===10&&cleaned.startsWith('010')){
-          result.phone='010-'+cleaned.slice(3,6)+'-'+cleaned.slice(6);
-        }else{
-          result.phone=cleaned;
-        }
-        usedLines.add(i);
-        continue;
+      // 정상: 010으로 시작하는 11자리
+      if(cleaned.match(/^010\d{8}$/)){
+        result.phone='010-'+cleaned.slice(3,7)+'-'+cleaned.slice(7);
+        usedLines.add(i);continue;
       }
+      // 정상: 010으로 시작하는 10자리 (구형번호)
+      if(cleaned.match(/^010\d{7}$/)){
+        result.phone='010-'+cleaned.slice(3,6)+'-'+cleaned.slice(6);
+        usedLines.add(i);continue;
+      }
+      // OCR에서 앞 0이 잘린 경우: 10으로 시작하는 10자리 → 010+뒤9자리
+      if(cleaned.match(/^10\d{8}$/)){
+        result.phone='010-'+cleaned.slice(2,6)+'-'+cleaned.slice(6);
+        usedLines.add(i);continue;
+      }
+      // OCR에서 앞 0이 잘린 경우: 10으로 시작하는 9자리 → 010+뒤8자리(구형)
+      if(cleaned.match(/^10\d{7}$/)){
+        result.phone='010-'+cleaned.slice(2,5)+'-'+cleaned.slice(5);
+        usedLines.add(i);continue;
+      }
+      // 기타 0으로 시작하는 10-11자리 (다른 번호)
+      if(cleaned.match(/^\d{10,11}$/)&&cleaned.match(/^0/)){
+        result.phone=cleaned;
+        usedLines.add(i);continue;
+      }
+      // 하이픈 포함 010-xxxx-xxxx
       var pm=line.match(/010[-\s]?\d{3,4}[-\s]?\d{4}/);
       if(pm){
         var pc=pm[0].replace(/\s/g,'');
         if(!pc.includes('-')){pc='010-'+pc.slice(3,7)+'-'+pc.slice(7);}
         result.phone=pc;
-        usedLines.add(i);
-        continue;
+        usedLines.add(i);continue;
       }
     }
     
