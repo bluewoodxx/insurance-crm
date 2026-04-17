@@ -1148,12 +1148,16 @@ async function impRunOcr(){
         continue;
       }
       if(!rawText){toast('이미지 '+(i+1)+' 텍스트 인식 실패');continue;}
-      // 여러 블록 시도 → 이름 있는 것만 수집
+      // 여러 블록 시도 → 이름 있는 것만 수집 (품질 필터 적용)
       var blocks=splitIntoCustomerBlocks(rawText);
       var namedResults=[];
       for(var bi=0;bi<blocks.length;bi++){
         var parsed=parseCustomerBlock(blocks[bi]);
+        // 품질 필터: 이름만 있고 전화번호+생년월일+주소 모두 없으면 제외
+        // (OCR이 라벨이나 UI 텍스트를 이름으로 잘못 잡은 경우 방지)
         if(parsed&&parsed.name){
+          var hasData=parsed.phone||parsed.birth||parsed.homeaddr||parsed.regdate;
+          if(!hasData)continue; // 이름만 있는 빈 레코드 제외
           parsed._imgName=item.name+(blocks.length>1?' ('+(bi+1)+'/'+blocks.length+')':'');
           parsed._dataUrl=item.dataUrl;
           parsed._rawText=blocks[bi];
@@ -1163,13 +1167,16 @@ async function impRunOcr(){
       }
       if(namedResults.length===0){
         var wholeParsed=parseCustomerBlock(rawText);
-        if(wholeParsed&&(wholeParsed.name||wholeParsed.phone)){
+        // 동일한 품질 필터 적용
+        var wholeHasData=wholeParsed&&(wholeParsed.phone||wholeParsed.birth||wholeParsed.homeaddr);
+        if(wholeParsed&&(wholeParsed.name&&wholeHasData||wholeParsed.phone)){
           wholeParsed._imgName=item.name;
           wholeParsed._dataUrl=item.dataUrl;
           wholeParsed._rawText=rawText;
           wholeParsed.isDup=customers.some(function(c){return c.name===wholeParsed.name&&c.phone===wholeParsed.phone&&wholeParsed.name;});
           ocrResults.push(wholeParsed);
         }else{
+          // 아무것도 못 찾으면 수동 입력용으로 빈 행 (rawText를 메모로)
           ocrResults.push({
             name:'',phone:'',birth:'',idback:'',job:'',homeaddr:'',regdate:today(),channel:'',
             memo:rawText.slice(0,500),
