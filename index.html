@@ -1192,7 +1192,9 @@ async function impRunOcr(){
 var KR_SURNAMES=['김','이','박','최','정','강','조','윤','장','임','한','오','서','신','권','황','안','송','전','홍','류','남','심','노','허','하','문','곽','양','구','배','백','성','현','방','엄','유','채','원','천','경','민','지','변','손','석','설','마','길','주','위','표','명','기','라','나','국','어','간','갈','감','견','계','고','공','곡','관','광','기','길','나','노','누','다','단','당','도','두','등','라','량','려','로','뢰','마','망','맹','묵','반','방','번','범','봉','부','비','사','사','삼','상','선','소','수','순','승','시','신','심','쌍','아','악','어','연','열','염','예','오','옥','온','왕','요','우','운','원','위','유','육','음','이','인','임','자','장','재','전','절','점','정','제','조','종','좌','주','죽','준','진','채','천','초','추','탁','태','판','팽','편','평','포','표','피','하','한','함','해','허','현','형','호','홍','화','환','황'];
 var NAME_BLACKLIST=['전체','선택','이름','연락처','주소','직업','상태','경로','메모','등록','수정','삭제','저장','취소','확인','검색','이전','다음','이메일','주민','사업자','담당자','담당','생년','생년월일','성별','남자','여자','남','여','지역','매체','문의','문의내용','상담','상담유형','상담상태','상담전','상담중','상담신청자','신청자','신청','상품','상품종류','사은품','사은품정보','추가','추가정보','추가번호','기타','그룹','보장','보장분석','방문','안내','연결','전화','문자','통화','가능','오후','오전','주말','평일','자택','직장','공휴일','본인','보험료','이상','정보','고객','고객정보','고객등록','고객등록일시','등록일시','배정일','예약','이력','메모이력','변경','변경이력','계약','청약','자동','발송','첨부','파일','필기','녹취','비교','견적','접수','가족','그외','이후','개인정보','동의일','동의기간','동의유형','보험나이','중복여부','메인','배정완료','배정대기','미배정','보험사','계약여부','계약목록','DB유형','DB번호','퍼미션DB','인포머셜DB','전화부재','장기부재','상담거절','방문예정','계약완료','사이트','사이트인증','서울','경기','인천','부산','대구','광주','대전','울산','세종','강원','충북','충남','전북','전남','경북','경남','제주',
   // CRM UI 텍스트
-  '관리','고객관리','신규등록','현황판','임포트','미리보기','뒷자리','앞자리','연월일','등록일','선택가능','동시선택','지원','붙여넣기','추출결과','추출된','정보수정','인식결과','선택된','이미지','이미지를','정보를','입력해','주세요','추가해','추가하','분석중','처리중','완료됨'];
+  '관리','고객관리','신규등록','현황판','임포트','미리보기','뒷자리','앞자리','연월일','등록일','선택가능','동시선택','지원','붙여넣기','추출결과','추출된','정보수정','인식결과','선택된','이미지','이미지를','정보를','입력해','주세요','추가해','추가하','분석중','처리중','완료됨',
+  // 업무 라벨 추가
+  '문의사항','문의내용','상담가능','상담가능시간','계약목록','DB사용','미배정','미배정사유','보험사명','보험사'];
 function isLikelyName(s){
   if(!s)return false;
   s=s.trim();
@@ -1421,13 +1423,30 @@ function parseCustomerBlock(text){
       }
     }
   }
-  // 등록일 (DB배정일/상담등록일 우선)
+  // 등록일 — 배정일시/등록일시 라벨 이후의 날짜 우선 (같은 줄 앞 날짜 제외)
   for(var ir=0;ir<lines.length&&!result.regdate;ir++){
     var lir=lines[ir];
-    if(lir.includes('DB배정')||lir.includes('DB등록')||lir.includes('상담등록')){
-      var dmR=lir.match(/(\d{4})[.\-\/](\d{1,2})[.\-\/](\d{1,2})/);
-      if(dmR){
-        result.regdate=dmR[1]+'-'+String(dmR[2]).padStart(2,'0')+'-'+String(dmR[3]).padStart(2,'0');
+    // 가장 구체적인 라벨부터 순서대로 시도
+    var regLabelOrder=['배정일시','등록일시','배정일','DB배정일','DB등록일','상담등록일'];
+    for(var rlo=0;rlo<regLabelOrder.length&&!result.regdate;rlo++){
+      var rlbl=regLabelOrder[rlo];
+      if(lir.indexOf(rlbl)<0)continue;
+      // 라벨 이후 텍스트에서만 날짜 추출
+      var afterLabel=lir.substring(lir.indexOf(rlbl)+rlbl.length);
+      var dm2=afterLabel.match(/(\d{4})[.\-\/](\d{1,2})[.\-\/](\d{1,2})/);
+      if(dm2&&parseInt(dm2[1])>=2020){
+        result.regdate=dm2[1]+'-'+String(dm2[2]).padStart(2,'0')+'-'+String(dm2[3]).padStart(2,'0');
+      }
+    }
+  }
+  // 라벨 없는 경우 — 2020년 이후 날짜 중 생년월일/동의일이 아닌 첫 번째
+  if(!result.regdate){
+    for(var ir2=0;ir2<lines.length;ir2++){
+      var lir2=lines[ir2];
+      if(lir2.includes('생년월일')||lir2.includes('생년')||lir2.includes('보험나이')||lir2.includes('동의'))continue;
+      var dm3=lir2.match(/(\d{4})[.\-\/](\d{1,2})[.\-\/](\d{1,2})/);
+      if(dm3&&parseInt(dm3[1])>=2020){
+        result.regdate=dm3[1]+'-'+String(dm3[2]).padStart(2,'0')+'-'+String(dm3[3]).padStart(2,'0');
         break;
       }
     }
@@ -1450,38 +1469,55 @@ function parseCustomerBlock(text){
     }
   }
   
-  // 3차: 주소 추출 — 라벨이 있는 줄은 제외, 단 추가정보1은 주소로 사용
+  // 3차: 주소 추출 — 추가정보1(+2) 최우선, 그 다음 주소 라벨, 일반 패턴
   var LABEL_INDICATORS=['휴대폰','담당자','추가번호','생년월일','이메일','보험나이','마케팅','상담신청자','상담유형','상담상태','지역','매체','사은품','문의내용','문의사항','고객등록','DB배정','DB등록','상담등록','등록일','상품종류','주민','사업자','성별','이름','고객명','연락처','방문','계약여부','계약목록','중복여부','DB번호','DB유형','상태','담당자','사은품','유입일시','등록일시','배정일시','DB사용신청','미배정사유'];
   var addrLines=[];
-  // 추가정보1 → 주소 (최우선)
+  // 추가정보1/2 순차 탐색 — 같은 줄 또는 다음 줄 모두 대응
   for(var ia=0;ia<lines.length;ia++){
     var la=lines[ia];
-    var ap1Match=la.match(/^추가정보\s*1\s*(.+)/);
+    // "추가정보1 서울 도봉구 쌍문동" (같은 줄)
+    var ap1Match=la.match(/^추가정보\s*1\s+(.+)/);
     if(ap1Match){
       var ap1val=ap1Match[1].trim();
-      if(ap1val&&ap1val!=='-'&&ap1val!=='0'&&addrKeywords.test(ap1val)){
+      if(ap1val&&ap1val!=='-'&&ap1val!=='0'){
         addrLines.push(ap1val);
-        // 추가정보2도 주소 일부로 추가
-        if(lines[ia+1]){
-          var ap2Match=lines[ia+1].match(/^추가정보\s*2\s*(.+)/);
-          if(ap2Match){
-            var ap2val=ap2Match[1].trim();
-            if(ap2val&&ap2val!=='-'&&ap2val!=='0')addrLines.push(ap2val);
-          }
+      }
+      // 추가정보2 탐색 (바로 다음 줄)
+      for(var ia2=ia+1;ia2<Math.min(ia+4,lines.length);ia2++){
+        var la2=lines[ia2];
+        var ap2Match=la2.match(/^추가정보\s*2\s+(.+)/);
+        if(ap2Match){
+          var ap2val=ap2Match[1].trim();
+          if(ap2val&&ap2val!=='-'&&ap2val!=='0')addrLines.push(ap2val);
+          break;
+        }
+        if(la2.match(/^추가정보\s*[3-9]/))break;
+      }
+      break;
+    }
+    // "추가정보1" 독립 줄, 다음 줄에 값
+    if(la.match(/^추가정보\s*1$/)&&lines[ia+1]){
+      var ap1next=lines[ia+1].trim();
+      if(ap1next&&ap1next!=='-'&&ap1next!=='0'){
+        addrLines.push(ap1next);
+      }
+      // 추가정보2 탐색
+      if(lines[ia+2]&&lines[ia+2].match(/^추가정보\s*2/)){
+        var ap2line=lines[ia+2];
+        var ap2m=ap2line.match(/^추가정보\s*2\s+(.+)/);
+        var ap2v=ap2m?ap2m[1].trim():(lines[ia+3]||'').trim();
+        if(ap2v&&ap2v!=='-'&&ap2v!=='0')addrLines.push(ap2v);
+      }else if(lines[ia+2]&&!lines[ia+2].match(/^추가정보/)){
+        // 다음다음 줄이 추가정보 라벨이 아닌 경우도 추가정보2 값일 수 있음
+        var maybeAddr=lines[ia+2].trim();
+        if(maybeAddr&&maybeAddr!=='-'&&maybeAddr!=='0'&&!/^[0-9]$/.test(maybeAddr)&&addrKeywords.test(maybeAddr)){
+          addrLines.push(maybeAddr);
         }
       }
       break;
     }
-    // "추가정보1" 라벨이 독립 행이고 다음 줄에 값이 있는 경우
-    if(la==='추가정보1'&&lines[ia+1]){
-      var ap1next=lines[ia+1].trim();
-      if(ap1next&&ap1next!=='-'&&ap1next!=='0'&&addrKeywords.test(ap1next)){
-        addrLines.push(ap1next);
-      }
-      break;
-    }
   }
-  // 주소 라벨 또는 일반 주소 패턴
+  // 주소 라벨 또는 일반 주소 패턴 (추가정보1 없을 때)
   if(addrLines.length===0){
     for(var i3=0;i3<lines.length;i3++){
       if(usedLines.has(i3))continue;
@@ -1528,12 +1564,28 @@ function parseCustomerBlock(text){
     }
   }
   
-  // 5차: 메모에 담을 라인 수집 (문의내용, 문의사항, 상담유형 등)
+  // 5차: 메모에 담을 라인 수집 — 문의사항 내용 우선 수집
   for(var i5=0;i5<lines.length;i5++){
     if(usedLines.has(i5))continue;
     var line5=lines[i5];
-    if((line5.includes('문의내용')||line5.includes('문의사항')||line5.includes('상담유형')||line5.includes('사은품')||line5.includes('상품종류'))&&!usedLines.has(i5)){
-      memoLines.push(line5.trim());
+    // 문의사항 라벨 — 값을 메모로
+    if(line5.indexOf('문의사항')===0||line5.indexOf('문의내용')===0){
+      var mqVal=line5.replace(/^문의\s*(사항|내용)\s*[:：·]*/,'').trim();
+      if(mqVal&&mqVal!=='-')memoLines.push('[문의] '+mqVal);
+      // 다음 줄도 문의사항 연속일 수 있음
+      for(var mk=i5+1;mk<lines.length;mk++){
+        var mknext=lines[mk];
+        if(mknext.match(/^(추가정보|유입일시|등록일시|배정일시|DB사용|미배정)/))break;
+        if(isLikelyName(mknext)||mknext.match(/\d{6}\s*-\s*\d{7}/))break;
+        if(mknext&&mknext!=='-')memoLines.push(mknext);
+        usedLines.add(mk);
+      }
+      usedLines.add(i5);
+      continue;
+    }
+    if((line5.includes('상담유형')||line5.includes('사은품')||line5.includes('상품종류'))&&!usedLines.has(i5)){
+      // 상품종류는 인포머셜/인포머셜실버 DB에만 메모에 추가 (일반적으로 생략)
+      if(!line5.includes('상품종류'))memoLines.push(line5.trim());
       usedLines.add(i5);
     }
     if((line5.includes('추가정보1')||line5.match(/^추가정보/))&&!result.homeaddr){
