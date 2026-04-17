@@ -152,7 +152,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
       <select class="fs" id="sf-ch" onchange="currentPage=1;renderList()">
         <option value="">전체</option>
         <option>퍼미션A</option><option>퍼미션B</option><option>퍼미션C</option>
-        <option>외부DB</option><option>인포머셜</option><option>인포머셜실버</option><option>소개</option><option>고객센터</option><option>상조기계약</option>
+        <option>외부DB</option><option>인포머셜</option><option>인포머셜실버</option><option>소개</option><option>고객센터</option><option>상조DB</option>
       </select>
     </div>
   </div>
@@ -192,7 +192,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
   <table class="ft">
     <tr>
       <td class="lb rq">유입경로</td>
-      <td><select class="fs" id="f-ch" style="width:150px"><option value="">==선택==</option><option>퍼미션A</option><option>퍼미션B</option><option>퍼미션C</option><option>외부DB</option><option>인포머셜</option><option>인포머셜실버</option><option>소개</option><option>고객센터</option><option>상조기계약</option></select></td>
+      <td><select class="fs" id="f-ch" style="width:150px"><option value="">==선택==</option><option>퍼미션A</option><option>퍼미션B</option><option>퍼미션C</option><option>외부DB</option><option>인포머셜</option><option>인포머셜실버</option><option>소개</option><option>고객센터</option><option>상조DB</option></select></td>
       <td class="lb">상태</td>
       <td><select class="fs" id="f-status" style="width:110px"><option value="">* 선택</option><option>통화요청</option><option>부재</option><option>장기부재</option><option>상담거절</option><option>상담중</option><option>방문예정</option><option>1차방문</option><option>2차방문</option><option>계약완료</option><option>AS요청</option></select></td>
       <td class="lb" style="color:#92400E;font-weight:600;white-space:nowrap">📞 재통화예정</td>
@@ -1148,25 +1148,39 @@ async function impRunOcr(){
         continue;
       }
       if(!rawText){toast('이미지 '+(i+1)+' 텍스트 인식 실패');continue;}
-      // 여러 고객 블록 분리
+      // 여러 블록 시도 → 이름 있는 것만 수집
       var blocks=splitIntoCustomerBlocks(rawText);
+      var namedResults=[];
       for(var bi=0;bi<blocks.length;bi++){
         var parsed=parseCustomerBlock(blocks[bi]);
-        if(parsed&&(parsed.name||parsed.phone)){
+        if(parsed&&parsed.name){
           parsed._imgName=item.name+(blocks.length>1?' ('+(bi+1)+'/'+blocks.length+')':'');
           parsed._dataUrl=item.dataUrl;
           parsed._rawText=blocks[bi];
           parsed.isDup=customers.some(function(c){return c.name===parsed.name&&c.phone===parsed.phone&&parsed.name;});
-          ocrResults.push(parsed);
+          namedResults.push(parsed);
         }
       }
-      // 블록 분리 실패시 전체를 하나로 시도
-      if(blocks.length===0){
-        ocrResults.push({
-          name:'',phone:'',birth:'',idback:'',job:'',homeaddr:'',regdate:today(),channel:'',
-          memo:rawText.slice(0,500),
-          _imgName:item.name,_dataUrl:item.dataUrl,_rawText:rawText,isDup:false
-        });
+      // 블록별로 이름을 못 찾으면 전체 텍스트를 하나의 블록으로 다시 시도
+      if(namedResults.length===0){
+        var wholeParsed=parseCustomerBlock(rawText);
+        if(wholeParsed&&(wholeParsed.name||wholeParsed.phone)){
+          wholeParsed._imgName=item.name;
+          wholeParsed._dataUrl=item.dataUrl;
+          wholeParsed._rawText=rawText;
+          wholeParsed.isDup=customers.some(function(c){return c.name===wholeParsed.name&&c.phone===wholeParsed.phone&&wholeParsed.name;});
+          ocrResults.push(wholeParsed);
+        }else{
+          // 아무것도 못 찾으면 수동 입력용으로 빈 행 추가
+          ocrResults.push({
+            name:'',phone:'',birth:'',idback:'',job:'',homeaddr:'',regdate:today(),channel:'',
+            memo:rawText.slice(0,500),
+            _imgName:item.name,_dataUrl:item.dataUrl,_rawText:rawText,isDup:false
+          });
+        }
+      }else{
+        // 블록별 결과를 추가
+        namedResults.forEach(function(nr){ocrResults.push(nr);});
       }
     }catch(e){console.error('OCR 오류:',e);toast('이미지 '+(i+1)+' 분석 실패: '+e.message);}
   }
@@ -1176,10 +1190,18 @@ async function impRunOcr(){
   renderOcrResults();
 }
 // [변경1] 완전 재작성된 OCR 파싱 함수들
+// 이름으로 오인되기 쉬운 라벨/UI 텍스트 블랙리스트
+var NAME_BLACKLIST=['전체','선택','이름','연락처','주소','직업','상태','경로','메모','등록','수정','삭제','저장','취소','확인','검색','이전','다음','이메일','주민','사업자','담당자','담당','생년','생년월일','성별','남자','여자','남','여','지역','매체','문의','문의내용','상담','상담유형','상담상태','상담전','상담중','상담신청자','신청자','신청','상품','상품종류','사은품','사은품정보','추가','추가정보','추가번호','기타','그룹','보장','보장분석','방문','안내','연결','전화','문자','통화','가능','오후','오전','주말','평일','자택','직장','공휴일','본인','보험료','이상','정보','고객','고객정보','고객등록','고객등록일시','등록일시','배정일','예약','이력','메모이력','변경','변경이력','계약','청약','자동','발송','첨부','파일','필기','녹취','비교','견적','접수','가족','그외','이후'];
+function isLikelyName(s){
+  if(!s)return false;
+  s=s.trim();
+  if(!/^[가-힣]{2,4}$/.test(s))return false;
+  if(NAME_BLACKLIST.indexOf(s)>=0)return false;
+  return true;
+}
 function splitIntoCustomerBlocks(text){
   var lines=text.split(String.fromCharCode(10));
   var blocks=[],currentBlock=[];
-  var namePattern=/^[가-힣]{2,4}$/;
   var phoneDigitPattern=/^(0\d{9,10}|10\d{8,9})$/;
   
   for(var i=0;i<lines.length;i++){
@@ -1187,21 +1209,28 @@ function splitIntoCustomerBlocks(text){
     // 빈 줄이고 다음에 이름패턴이 오면 블록 구분
     if(!line){
       if(currentBlock.length>0){
-        // 다음 비어있지 않은 줄이 이름 패턴인지 확인
         var nextNonEmpty='';
         for(var j=i+1;j<lines.length;j++){
           if(lines[j].trim()){nextNonEmpty=lines[j].trim();break;}
         }
-        if(nextNonEmpty&&namePattern.test(nextNonEmpty)){
-          blocks.push(currentBlock.join(String.fromCharCode(10)));
-          currentBlock=[];
-          continue;
+        // 블랙리스트 단어는 블록 분리 트리거에서 제외
+        if(nextNonEmpty&&isLikelyName(nextNonEmpty)){
+          // 현재 블록에 전화/주민번호가 있어야만 분리 (데이터 완성된 블록)
+          var hasPhoneOrJumin=currentBlock.some(function(l){
+            var c=l.replace(/[-\s]/g,'');
+            return c.match(phoneDigitPattern)||l.match(/\d{6}\s*-\s*\d{7}/);
+          });
+          if(hasPhoneOrJumin){
+            blocks.push(currentBlock.join(String.fromCharCode(10)));
+            currentBlock=[];
+            continue;
+          }
         }
       }
       continue;
     }
-    // 이름 패턴이 나왔는데 이미 블록에 전화번호나 주민번호가 있으면 새 블록
-    if(namePattern.test(line)&&currentBlock.length>0){
+    // 이름 패턴(블랙리스트 제외)이 나왔는데 이미 블록에 전화번호나 주민번호가 있으면 새 블록
+    if(isLikelyName(line)&&currentBlock.length>0){
       var hasPhone=currentBlock.some(function(l){return l.replace(/[-\s]/g,'').match(phoneDigitPattern);});
       var hasJumin=currentBlock.some(function(l){return l.match(/\d{6}\s*-\s*\d{7}/);});
       if(hasPhone||hasJumin){
@@ -1220,75 +1249,94 @@ function parseCustomerBlock(text){
   var lines=text.split(String.fromCharCode(10)).map(function(l){return l.trim();}).filter(function(l){return l;});
   var result={name:'',phone:'',birth:'',idback:'',channel:'',homeaddr:'',regdate:'',job:'',memo:''};
   
-  var namePattern=/^[가-힣]{2,4}$/;
   var juminLoose=/(\d{6})\s*[-]\s*(\d{7})/;
   var addrKeywords=/[시도구군읍면리로길동번지층호@]/;
   var specialLabel=/^특이\s*사항\s*[:：]/;
+  // 이름 라벨들 — 신뢰도 순
+  var NAME_LABELS=['상담신청자','신청자명','고객명/성별','고객명','신청자','고객','성명','이름'];
   
   var usedLines=new Set();
   var memoLines=[];
   
-  // 1차: 확실한 패턴부터 추출
+  // 0차 (최우선): 라벨 기반 이름 추출 — 가장 신뢰도 높음
+  // 주의: 같은 줄에 다른 정보(전화번호 등)가 있을 수 있으므로 usedLines에 추가하지 않음
+  for(var i0=0;i0<lines.length&&!result.name;i0++){
+    var line0=lines[i0];
+    for(var li=0;li<NAME_LABELS.length;li++){
+      var lbl=NAME_LABELS[li];
+      if(line0.indexOf(lbl)===-1)continue;
+      // 같은 줄에 이름이 있는 경우: "상담신청자 이현진", "고객명/성별 이현진(남자)"
+      var rest=line0.substring(line0.indexOf(lbl)+lbl.length).replace(/[:：·]/g,'').trim();
+      // 괄호 안의 내용(성별 등) 제거
+      rest=rest.replace(/\([^)]*\)/g,'').trim();
+      // 첫 한글 2-4자 토큰 추출
+      var nameMatch=rest.match(/[가-힣]{2,4}/);
+      if(nameMatch&&isLikelyName(nameMatch[0])){
+        result.name=nameMatch[0];
+        // 같은 줄에 다른 라벨/정보가 있을 수 있으므로 usedLines 추가 안 함
+        break;
+      }
+      // 같은 줄에 없으면 다음 줄 시도 — 다음 줄은 이름만 있을 가능성 높으므로 used 처리
+      if(!rest&&lines[i0+1]){
+        var nextT=lines[i0+1].replace(/\([^)]*\)/g,'').trim();
+        var nm2=nextT.match(/^[가-힣]{2,4}/);
+        if(nm2&&isLikelyName(nm2[0])){
+          result.name=nm2[0];
+          usedLines.add(i0+1);
+          break;
+        }
+      }
+    }
+  }
+  
+  // 1차: 확실한 패턴 추출 (주민번호, 전화번호, 특이사항)
+  // 주의: 한 줄에 여러 정보가 섞여있을 수 있어 usedLines는 특이사항에만 적용
   for(var i=0;i<lines.length;i++){
+    if(usedLines.has(i))continue;
     var line=lines[i];
     
-    // 주민번호 (6-7 패턴)
+    // 주민번호 (6-7 패턴) — 줄 전체가 아닌 매칭 부분만 추출
     if(!result.birth){
       var jm=line.match(juminLoose);
       if(jm){
         result.birth=jm[1];
         result.idback=jm[2];
-        usedLines.add(i);
-        continue;
+        // usedLines 추가 안 함 (같은 줄에 다른 정보 있을 수 있음)
       }
     }
     
-    // 전화번호 (10-11자리 숫자, 010- 형식, 또는 앞0이 잘린 10자리)
+    // 전화번호 — 한 줄 내 어디에 있어도 추출
     if(!result.phone){
-      var cleaned=line.replace(/[-\s]/g,'');
-      // 정상: 010으로 시작하는 11자리
-      if(cleaned.match(/^010\d{8}$/)){
-        result.phone='010-'+cleaned.slice(3,7)+'-'+cleaned.slice(7);
-        usedLines.add(i);continue;
-      }
-      // 정상: 010으로 시작하는 10자리 (구형번호)
-      if(cleaned.match(/^010\d{7}$/)){
-        result.phone='010-'+cleaned.slice(3,6)+'-'+cleaned.slice(6);
-        usedLines.add(i);continue;
-      }
-      // OCR에서 앞 0이 잘린 경우: 10으로 시작하는 10자리 → 010+뒤9자리
-      if(cleaned.match(/^10\d{8}$/)){
-        result.phone='010-'+cleaned.slice(2,6)+'-'+cleaned.slice(6);
-        usedLines.add(i);continue;
-      }
-      // OCR에서 앞 0이 잘린 경우: 10으로 시작하는 9자리 → 010+뒤8자리(구형)
-      if(cleaned.match(/^10\d{7}$/)){
-        result.phone='010-'+cleaned.slice(2,5)+'-'+cleaned.slice(5);
-        usedLines.add(i);continue;
-      }
-      // 기타 0으로 시작하는 10-11자리 (다른 번호)
-      if(cleaned.match(/^\d{10,11}$/)&&cleaned.match(/^0/)){
-        result.phone=cleaned;
-        usedLines.add(i);continue;
-      }
-      // 하이픈 포함 010-xxxx-xxxx
-      var pm=line.match(/010[-\s]?\d{3,4}[-\s]?\d{4}/);
+      // 하이픈 형식 우선 (가장 신뢰도 높음)
+      var pm=line.match(/01[016789][-\s]?\d{3,4}[-\s]?\d{4}/);
       if(pm){
-        var pc=pm[0].replace(/\s/g,'');
-        if(!pc.includes('-')){pc='010-'+pc.slice(3,7)+'-'+pc.slice(7);}
-        result.phone=pc;
-        usedLines.add(i);continue;
+        var pc=pm[0].replace(/[\s]/g,'').replace(/-/g,'');
+        if(pc.length===11){
+          result.phone='010-'+pc.slice(3,7)+'-'+pc.slice(7);
+        }else if(pc.length===10){
+          result.phone='010-'+pc.slice(3,6)+'-'+pc.slice(6);
+        }
+      }
+      // 하이픈 없는 형식 — 줄 전체가 순수 숫자여야만
+      if(!result.phone){
+        var cleanedFull=line.replace(/[-\s]/g,'');
+        if(cleanedFull.match(/^010\d{8}$/)){
+          result.phone='010-'+cleanedFull.slice(3,7)+'-'+cleanedFull.slice(7);
+        }else if(cleanedFull.match(/^10\d{8}$/)){
+          result.phone='010-'+cleanedFull.slice(2,6)+'-'+cleanedFull.slice(6);
+        }else if(cleanedFull.match(/^010\d{7}$/)){
+          result.phone='010-'+cleanedFull.slice(3,6)+'-'+cleanedFull.slice(6);
+        }
       }
     }
     
-    // 특이사항 라벨
+    // 특이사항 라벨 — 이건 확실한 섹션 시작이므로 usedLines 적용
     if(line.match(specialLabel)){
       var sv2=line.replace(specialLabel,'').trim();
       if(sv2)memoLines.push('[특이사항] '+sv2);
-      // 다음 줄들도 특이사항에 속할 수 있음
       for(var k=i+1;k<lines.length;k++){
         var nextL=lines[k];
-        if(namePattern.test(nextL))break;
+        if(isLikelyName(nextL))break;
         if(nextL.match(juminLoose))break;
         var nc=nextL.replace(/[-\s]/g,'');
         if(nc.match(/^\d{10,11}$/))break;
@@ -1301,77 +1349,136 @@ function parseCustomerBlock(text){
     }
   }
   
-  // 2차: 이름 추출 (한글 2-4자)
-  for(var i2=0;i2<lines.length;i2++){
-    if(usedLines.has(i2))continue;
-    if(!result.name&&namePattern.test(lines[i2])){
-      result.name=lines[i2];
-      usedLines.add(i2);
-      break;
+  // 2차: 라벨 없이 이름 패턴 추출 (블랙리스트 제외) — 카카오톡 스크린샷 스타일
+  if(!result.name){
+    for(var i2=0;i2<lines.length;i2++){
+      if(usedLines.has(i2))continue;
+      if(isLikelyName(lines[i2])){
+        result.name=lines[i2];
+        usedLines.add(i2);
+        break;
+      }
     }
   }
   
-  // 3차: 주소 추출
+  // 2.5차: 라벨 기반 날짜/채널 추출 — 주소 추출 전에 실행 (라벨 줄이 주소로 잡히는 것 방지)
+  // 생년월일
+  if(!result.birth){
+    for(var ib=0;ib<lines.length;ib++){
+      var lib=lines[ib];
+      if(lib.includes('생년월일')||lib.match(/생년\s/)){
+        var afterB=lib.substring(lib.indexOf('생년')+2);
+        var dmB=afterB.match(/(\d{4})[.\-\/](\d{1,2})[.\-\/](\d{1,2})/);
+        if(!dmB&&lines[ib+1])dmB=lines[ib+1].match(/(\d{4})[.\-\/](\d{1,2})[.\-\/](\d{1,2})/);
+        if(dmB){
+          result.birth=dmB[1].slice(2)+String(dmB[2]).padStart(2,'0')+String(dmB[3]).padStart(2,'0');
+          break;
+        }
+      }
+    }
+  }
+  // 등록일 (DB배정일/상담등록일 우선)
+  for(var ir=0;ir<lines.length&&!result.regdate;ir++){
+    var lir=lines[ir];
+    if(lir.includes('DB배정')||lir.includes('DB등록')||lir.includes('상담등록')){
+      var dmR=lir.match(/(\d{4})[.\-\/](\d{1,2})[.\-\/](\d{1,2})/);
+      if(dmR){
+        result.regdate=dmR[1]+'-'+String(dmR[2]).padStart(2,'0')+'-'+String(dmR[3]).padStart(2,'0');
+        break;
+      }
+    }
+  }
+  // 매체(유입경로)
+  if(!result.channel){
+    for(var ic=0;ic<lines.length;ic++){
+      var lic=lines[ic];
+      if(lic.indexOf('매체')<0)continue;
+      var v2=lic.substring(lic.indexOf('매체')+2).replace(/[:：·]/g,'').trim();
+      var otherLabels=['사은품','상품','문의','DB','상담','지역','고객'];
+      for(var ol=0;ol<otherLabels.length;ol++){
+        var idx=v2.indexOf(otherLabels[ol]);
+        if(idx>0)v2=v2.substring(0,idx).trim();
+      }
+      if(!v2&&lines[ic+1])v2=lines[ic+1].trim();
+      if(v2){
+        if(v2.includes('인포머셜')&&v2.includes('실버'))result.channel='인포머셜실버';
+        else if(v2.includes('인포머셜'))result.channel='인포머셜';
+        else if(v2.includes('퍼미션')){
+          if(v2.includes('A'))result.channel='퍼미션A';
+          else if(v2.includes('B'))result.channel='퍼미션B';
+          else if(v2.includes('C'))result.channel='퍼미션C';
+          else result.channel='퍼미션B';
+        }
+        else if(v2.includes('소개'))result.channel='소개';
+        else if(v2.includes('상조'))result.channel='상조DB';
+        else if(v2.includes('고객센터')||v2.includes('AIA'))result.channel='고객센터';
+        else result.channel=v2.slice(0,20);
+        break;
+      }
+    }
+  }
+  
+  // 3차: 주소 추출 — 라벨이 있는 줄은 제외
+  var LABEL_INDICATORS=['휴대폰','담당자','추가번호','생년월일','이메일','보험나이','마케팅','상담신청자','상담유형','상담상태','지역','매체','사은품','문의내용','고객등록','추가정보','DB배정','DB등록','상담등록','등록일','상품종류','주민','사업자','성별','이름','고객명','연락처','방문'];
   var addrLines=[];
   for(var i3=0;i3<lines.length;i3++){
     if(usedLines.has(i3))continue;
     var line3=lines[i3];
-    if(addrKeywords.test(line3)&&line3.length>3){
-      addrLines.push(line3);
+    // 명시적 주소 라벨이 있는 경우
+    if(line3.indexOf('주소')===0||line3.indexOf('직장주소')===0||line3.indexOf('자택주소')===0){
+      var ar=line3.replace(/^(직장|자택)?주소[:：·]*/,'').trim();
+      // "-" 만 있거나 라벨성 텍스트가 포함되면 스킵
+      var arHasLabel=false;
+      for(var lx2=0;lx2<LABEL_INDICATORS.length;lx2++){
+        if(ar.indexOf(LABEL_INDICATORS[lx2])>=0){arHasLabel=true;break;}
+      }
+      if(ar&&ar.length>3&&ar!=='-'&&!arHasLabel&&addrKeywords.test(ar)){
+        addrLines.push(ar);
+      }
       usedLines.add(i3);
+      continue;
+    }
+    // 라벨성 텍스트가 포함된 줄은 제외
+    var hasLabel=false;
+    for(var lx=0;lx<LABEL_INDICATORS.length;lx++){
+      if(line3.indexOf(LABEL_INDICATORS[lx])>=0){hasLabel=true;break;}
+    }
+    if(hasLabel)continue;
+    // 주소 키워드 + 한글 2자 이상
+    if(addrKeywords.test(line3)&&line3.length>3){
+      var hanCount=(line3.match(/[가-힣]/g)||[]).length;
+      if(hanCount>=2){addrLines.push(line3);usedLines.add(i3);}
     }
   }
   if(addrLines.length>0){
     result.homeaddr=addrLines.join(' ');
   }
   
-  // 4차: 등록일 (날짜 패턴)
-  for(var i4=0;i4<lines.length;i4++){
-    if(usedLines.has(i4))continue;
-    var dm=lines[i4].match(/(\d{4})[.\-\/](\d{1,2})[.\-\/](\d{1,2})/);
-    if(dm){
-      result.regdate=dm[1]+'-'+String(dm[2]).padStart(2,'0')+'-'+String(dm[3]).padStart(2,'0');
-      usedLines.add(i4);
-      break;
+  // 4차: 라벨 없는 첫 날짜 — regdate 아직 비어있으면
+  if(!result.regdate){
+    for(var i4b=0;i4b<lines.length;i4b++){
+      if(usedLines.has(i4b))continue;
+      var line4b=lines[i4b];
+      if(line4b.includes('생년월일')||line4b.includes('생년'))continue;
+      if(line4b.includes('보험나이'))continue; // (D-65) 같은 숫자 피하기
+      var dm2=line4b.match(/(\d{4})[.\-\/](\d{1,2})[.\-\/](\d{1,2})/);
+      if(dm2){
+        result.regdate=dm2[1]+'-'+String(dm2[2]).padStart(2,'0')+'-'+String(dm2[3]).padStart(2,'0');
+        break;
+      }
     }
   }
   
-  // 5차: 기존 라벨 기반 파싱 (상담신청자, 매체, 문의내용 등)
+  // 5차: 메모에 담을 라인 수집 (문의내용, 상담유형 등)
   for(var i5=0;i5<lines.length;i5++){
     if(usedLines.has(i5))continue;
     var line5=lines[i5];
-    if(line5.includes('상담신청자')&&!result.name){
-      var v=line5.replace('상담신청자','').replace(/[:：·]/g,'').trim();
-      if(v&&v.length>=2&&v.length<=6){result.name=v;usedLines.add(i5);}
-    }
-    if(line5.includes('매체')&&!result.channel){
-      var v2=line5.replace('매체','').replace(/[:：·]/g,'').trim();
-      if(!v2&&lines[i5+1])v2=lines[i5+1].trim();
-      if(v2){
-        if(v2.includes('인포머셜')&&v2.includes('실버'))result.channel='인포머셜실버';
-        else if(v2.includes('인포머셜'))result.channel='인포머셜';
-        else if(v2.includes('퍼미션'))result.channel=v2.includes('A')?'퍼미션A':v2.includes('B')?'퍼미션B':'퍼미션C';
-        else if(v2.includes('소개'))result.channel='소개';
-        else if(v2.includes('상조기'))result.channel='상조기계약';
-        else if(v2.includes('고객센터')||v2.includes('AIA'))result.channel='고객센터';
-        else result.channel=v2;
-      }
-    }
     if((line5.includes('문의내용')||line5.includes('상담유형')||line5.includes('사은품')||line5.includes('상품종류'))&&!usedLines.has(i5)){
       memoLines.push(line5.trim());
       usedLines.add(i5);
     }
-    // 생년월일 라벨
-    if((line5.includes('생년월일')||line5.includes('생년'))&&!result.birth){
-      var dateMatch=line5.match(/(\d{4})[.\-\/](\d{1,2})[.\-\/](\d{1,2})/);
-      if(dateMatch){
-        var y=dateMatch[1].slice(2),m=String(dateMatch[2]).padStart(2,'0'),d=String(dateMatch[3]).padStart(2,'0');
-        result.birth=y+m+d;
-        usedLines.add(i5);
-      }
-    }
-    // 추가정보1 → 주소
-    if((line5.includes('추가정보1')||line5.includes('추가정보'))&&!result.homeaddr){
+    // 추가정보 — 주소로 쓸만한지 확인 (이미 주소가 있으면 스킵)
+    if((line5.includes('추가정보1')||line5.match(/^추가정보/))&&!result.homeaddr){
       var v3=line5.replace(/추가정보\d?/,'').replace(/[:：·]/g,'').trim();
       if(!v3&&lines[i5+1])v3=lines[i5+1].trim();
       if(v3&&v3.length>5&&addrKeywords.test(v3)){result.homeaddr=v3;usedLines.add(i5);}
@@ -1407,7 +1514,7 @@ function renderOcrResults(){
       +'</div>';
     chFields+='<div style="display:flex;gap:4px;align-items:center">'
       +'<span style="font-size:10px;color:#6b7280;width:32px;flex-shrink:0">경로</span>'
-      +'<select id="ocr-ch-'+i+'" style="'+FI+';width:auto"><option value="">선택</option><option>퍼미션A</option><option>퍼미션B</option><option>퍼미션C</option><option>외부DB</option><option>인포머셜</option><option>인포머셜실버</option><option>소개</option><option>고객센터</option><option>상조기계약</option></select>'
+      +'<select id="ocr-ch-'+i+'" style="'+FI+';width:auto"><option value="">선택</option><option>퍼미션A</option><option>퍼미션B</option><option>퍼미션C</option><option>외부DB</option><option>인포머셜</option><option>인포머셜실버</option><option>소개</option><option>고객센터</option><option>상조DB</option></select>'
       +'</div>';
     return '<tr>'
       +'<td style="'+TD+'"><img src="'+r._dataUrl+'" style="width:60px;height:60px;object-fit:cover;border-radius:4px;border:1px solid #e5e7eb"><div style="font-size:9px;color:#9ca3af;margin-top:2px;max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+r._imgName+'</div></td>'
