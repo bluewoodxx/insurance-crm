@@ -1257,26 +1257,65 @@ function parseCustomerBlock(text){
   
   var usedLines=new Set();
   var memoLines=[];
+
+  // -1차 (최최우선): 헤더줄에서 채널 추출 ("퍼미션DB | NGMP_퍼미션A | 배정완료" 형식)
+  function parseChannel(s){
+    if(!s)return '';
+    if(s.includes('인포머셜')&&s.includes('실버'))return '인포머셜실버';
+    if(s.includes('인포머셜'))return '인포머셜';
+    if(s.includes('퍼미션')){
+      // '퍼미션A', '퍼미션B', '퍼미션C' — 단 '퍼미션DB'의 B는 제외 (DB는 유형이지 경로가 아님)
+      var cleaned=s.replace(/퍼미션DB/gi,'').replace(/퍼미션db/gi,'');
+      if(cleaned.includes('A')||s.match(/퍼미션\s*A/))return '퍼미션A';
+      if(cleaned.includes('B')||s.match(/퍼미션\s*B/))return '퍼미션B';
+      if(cleaned.includes('C')||s.match(/퍼미션\s*C/))return '퍼미션C';
+      return ''; // A/B/C 없으면 패스
+    }
+    if(s.includes('소개'))return '소개';
+    if(s.includes('상조'))return '상조DB';
+    if(s.includes('고객센터')||s.includes('AIA'))return '고객센터';
+    if(s.includes('외부DB')||s.includes('외부 DB'))return '외부DB';
+    return '';
+  }
+  // 헤더줄 패턴: "퍼미션DB | NGMP_퍼미션A | 배정완료"
+  for(var ih=0;ih<Math.min(3,lines.length);ih++){
+    var lh=lines[ih];
+    if(lh.includes('|')){
+      var parts=lh.split('|');
+      // 모든 파트를 확인하여 가장 구체적인 채널(A/B/C) 우선
+      var chFound='';
+      for(var ph=0;ph<parts.length;ph++){
+        var ch=parseChannel(parts[ph].trim());
+        if(ch){
+          chFound=ch;
+          // A/B/C가 명확하면 즉시 확정
+          if(ch==='퍼미션A'||ch==='퍼미션B'||ch==='퍼미션C'||ch==='인포머셜'||ch==='인포머셜실버')break;
+        }
+      }
+      if(chFound){result.channel=chFound;break;}
+    }
+  }
   
-  // 0차 (최우선): 라벨 기반 이름 추출 — 가장 신뢰도 높음
-  // 주의: 같은 줄에 다른 정보(전화번호 등)가 있을 수 있으므로 usedLines에 추가하지 않음
+  // 0차 (최우선): 라벨 기반 이름 추출
   for(var i0=0;i0<lines.length&&!result.name;i0++){
     var line0=lines[i0];
     for(var li=0;li<NAME_LABELS.length;li++){
       var lbl=NAME_LABELS[li];
       if(line0.indexOf(lbl)===-1)continue;
-      // 같은 줄에 이름이 있는 경우: "상담신청자 이현진", "고객명/성별 이현진(남자)"
       var rest=line0.substring(line0.indexOf(lbl)+lbl.length).replace(/[:：·]/g,'').trim();
-      // 괄호 안의 내용(성별 등) 제거
       rest=rest.replace(/\([^)]*\)/g,'').trim();
-      // 첫 한글 2-4자 토큰 추출
-      var nameMatch=rest.match(/[가-힣]{2,4}/);
+      // 첫 한글 토큰 — 단 다음 라벨 키워드 이전까지만
+      var nameMatch=rest.match(/^[가-힣]{2,4}/);
       if(nameMatch&&isLikelyName(nameMatch[0])){
         result.name=nameMatch[0];
-        // 같은 줄에 다른 라벨/정보가 있을 수 있으므로 usedLines 추가 안 함
         break;
       }
-      // 같은 줄에 없으면 다음 줄 시도 — 다음 줄은 이름만 있을 가능성 높으므로 used 처리
+      // 한글 2-4자가 중간에 있어도 추출 시도
+      var nameMatch2=rest.match(/[가-힣]{2,4}/);
+      if(nameMatch2&&isLikelyName(nameMatch2[0])){
+        result.name=nameMatch2[0];
+        break;
+      }
       if(!rest&&lines[i0+1]){
         var nextT=lines[i0+1].replace(/\([^)]*\)/g,'').trim();
         var nm2=nextT.match(/^[가-힣]{2,4}/);
@@ -1388,66 +1427,81 @@ function parseCustomerBlock(text){
       }
     }
   }
-  // 매체(유입경로)
+  // 매체(유입경로) — 아직 헤더에서 못 찾은 경우
   if(!result.channel){
     for(var ic=0;ic<lines.length;ic++){
       var lic=lines[ic];
       if(lic.indexOf('매체')<0)continue;
       var v2=lic.substring(lic.indexOf('매체')+2).replace(/[:：·]/g,'').trim();
+      // 같은 줄의 다른 라벨 이전까지만 자르기
       var otherLabels=['사은품','상품','문의','DB','상담','지역','고객'];
       for(var ol=0;ol<otherLabels.length;ol++){
         var idx=v2.indexOf(otherLabels[ol]);
         if(idx>0)v2=v2.substring(0,idx).trim();
       }
       if(!v2&&lines[ic+1])v2=lines[ic+1].trim();
-      if(v2){
-        if(v2.includes('인포머셜')&&v2.includes('실버'))result.channel='인포머셜실버';
-        else if(v2.includes('인포머셜'))result.channel='인포머셜';
-        else if(v2.includes('퍼미션')){
-          if(v2.includes('A'))result.channel='퍼미션A';
-          else if(v2.includes('B'))result.channel='퍼미션B';
-          else if(v2.includes('C'))result.channel='퍼미션C';
-          else result.channel='퍼미션B';
-        }
-        else if(v2.includes('소개'))result.channel='소개';
-        else if(v2.includes('상조'))result.channel='상조DB';
-        else if(v2.includes('고객센터')||v2.includes('AIA'))result.channel='고객센터';
-        else result.channel=v2.slice(0,20);
-        break;
-      }
+      var ch2=parseChannel(v2);
+      if(ch2){result.channel=ch2;break;}
     }
   }
   
-  // 3차: 주소 추출 — 라벨이 있는 줄은 제외
-  var LABEL_INDICATORS=['휴대폰','담당자','추가번호','생년월일','이메일','보험나이','마케팅','상담신청자','상담유형','상담상태','지역','매체','사은품','문의내용','고객등록','추가정보','DB배정','DB등록','상담등록','등록일','상품종류','주민','사업자','성별','이름','고객명','연락처','방문'];
+  // 3차: 주소 추출 — 라벨이 있는 줄은 제외, 단 추가정보1은 주소로 사용
+  var LABEL_INDICATORS=['휴대폰','담당자','추가번호','생년월일','이메일','보험나이','마케팅','상담신청자','상담유형','상담상태','지역','매체','사은품','문의내용','문의사항','고객등록','DB배정','DB등록','상담등록','등록일','상품종류','주민','사업자','성별','이름','고객명','연락처','방문','계약여부','계약목록','중복여부','DB번호','DB유형','상태','담당자','사은품','유입일시','등록일시','배정일시','DB사용신청','미배정사유'];
   var addrLines=[];
-  for(var i3=0;i3<lines.length;i3++){
-    if(usedLines.has(i3))continue;
-    var line3=lines[i3];
-    // 명시적 주소 라벨이 있는 경우
-    if(line3.indexOf('주소')===0||line3.indexOf('직장주소')===0||line3.indexOf('자택주소')===0){
-      var ar=line3.replace(/^(직장|자택)?주소[:：·]*/,'').trim();
-      // "-" 만 있거나 라벨성 텍스트가 포함되면 스킵
-      var arHasLabel=false;
-      for(var lx2=0;lx2<LABEL_INDICATORS.length;lx2++){
-        if(ar.indexOf(LABEL_INDICATORS[lx2])>=0){arHasLabel=true;break;}
+  // 추가정보1 → 주소 (최우선)
+  for(var ia=0;ia<lines.length;ia++){
+    var la=lines[ia];
+    var ap1Match=la.match(/^추가정보\s*1\s*(.+)/);
+    if(ap1Match){
+      var ap1val=ap1Match[1].trim();
+      if(ap1val&&ap1val!=='-'&&ap1val!=='0'&&addrKeywords.test(ap1val)){
+        addrLines.push(ap1val);
+        // 추가정보2도 주소 일부로 추가
+        if(lines[ia+1]){
+          var ap2Match=lines[ia+1].match(/^추가정보\s*2\s*(.+)/);
+          if(ap2Match){
+            var ap2val=ap2Match[1].trim();
+            if(ap2val&&ap2val!=='-'&&ap2val!=='0')addrLines.push(ap2val);
+          }
+        }
       }
-      if(ar&&ar.length>3&&ar!=='-'&&!arHasLabel&&addrKeywords.test(ar)){
-        addrLines.push(ar);
+      break;
+    }
+    // "추가정보1" 라벨이 독립 행이고 다음 줄에 값이 있는 경우
+    if(la==='추가정보1'&&lines[ia+1]){
+      var ap1next=lines[ia+1].trim();
+      if(ap1next&&ap1next!=='-'&&ap1next!=='0'&&addrKeywords.test(ap1next)){
+        addrLines.push(ap1next);
       }
-      usedLines.add(i3);
-      continue;
+      break;
     }
-    // 라벨성 텍스트가 포함된 줄은 제외
-    var hasLabel=false;
-    for(var lx=0;lx<LABEL_INDICATORS.length;lx++){
-      if(line3.indexOf(LABEL_INDICATORS[lx])>=0){hasLabel=true;break;}
-    }
-    if(hasLabel)continue;
-    // 주소 키워드 + 한글 2자 이상
-    if(addrKeywords.test(line3)&&line3.length>3){
-      var hanCount=(line3.match(/[가-힣]/g)||[]).length;
-      if(hanCount>=2){addrLines.push(line3);usedLines.add(i3);}
+  }
+  // 주소 라벨 또는 일반 주소 패턴
+  if(addrLines.length===0){
+    for(var i3=0;i3<lines.length;i3++){
+      if(usedLines.has(i3))continue;
+      var line3=lines[i3];
+      if(line3.indexOf('주소')===0||line3.indexOf('직장주소')===0||line3.indexOf('자택주소')===0){
+        var ar=line3.replace(/^(직장|자택)?주소[:：·]*/,'').trim();
+        var arHasLabel=false;
+        for(var lx2=0;lx2<LABEL_INDICATORS.length;lx2++){
+          if(ar.indexOf(LABEL_INDICATORS[lx2])>=0){arHasLabel=true;break;}
+        }
+        if(ar&&ar.length>3&&ar!=='-'&&!arHasLabel&&addrKeywords.test(ar)){
+          addrLines.push(ar);
+        }
+        usedLines.add(i3);
+        continue;
+      }
+      var hasLabel=false;
+      for(var lx=0;lx<LABEL_INDICATORS.length;lx++){
+        if(line3.indexOf(LABEL_INDICATORS[lx])>=0){hasLabel=true;break;}
+      }
+      if(hasLabel)continue;
+      if(addrKeywords.test(line3)&&line3.length>3){
+        var hanCount=(line3.match(/[가-힣]/g)||[]).length;
+        if(hanCount>=2){addrLines.push(line3);usedLines.add(i3);}
+      }
     }
   }
   if(addrLines.length>0){
@@ -1469,15 +1523,14 @@ function parseCustomerBlock(text){
     }
   }
   
-  // 5차: 메모에 담을 라인 수집 (문의내용, 상담유형 등)
+  // 5차: 메모에 담을 라인 수집 (문의내용, 문의사항, 상담유형 등)
   for(var i5=0;i5<lines.length;i5++){
     if(usedLines.has(i5))continue;
     var line5=lines[i5];
-    if((line5.includes('문의내용')||line5.includes('상담유형')||line5.includes('사은품')||line5.includes('상품종류'))&&!usedLines.has(i5)){
+    if((line5.includes('문의내용')||line5.includes('문의사항')||line5.includes('상담유형')||line5.includes('사은품')||line5.includes('상품종류'))&&!usedLines.has(i5)){
       memoLines.push(line5.trim());
       usedLines.add(i5);
     }
-    // 추가정보 — 주소로 쓸만한지 확인 (이미 주소가 있으면 스킵)
     if((line5.includes('추가정보1')||line5.match(/^추가정보/))&&!result.homeaddr){
       var v3=line5.replace(/추가정보\d?/,'').replace(/[:：·]/g,'').trim();
       if(!v3&&lines[i5+1])v3=lines[i5+1].trim();
