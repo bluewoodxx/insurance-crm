@@ -1121,7 +1121,7 @@ function renderImgQueue(){
   }).join('');
 }
 function removeImg(i){imgQueue.splice(i,1);renderImgQueue();}
-// [변경1] impRunOcr: 멀티 고객 지원
+// impRunOcr: Google Vision API 프록시 사용 (배포 환경에서만 동작)
 async function impRunOcr(){
   if(!imgQueue.length){toast('이미지를 먼저 추가해주세요');return;}
   document.getElementById('ocr-btn').disabled=true;
@@ -1161,7 +1161,6 @@ async function impRunOcr(){
           namedResults.push(parsed);
         }
       }
-      // 블록별로 이름을 못 찾으면 전체 텍스트를 하나의 블록으로 다시 시도
       if(namedResults.length===0){
         var wholeParsed=parseCustomerBlock(rawText);
         if(wholeParsed&&(wholeParsed.name||wholeParsed.phone)){
@@ -1171,7 +1170,6 @@ async function impRunOcr(){
           wholeParsed.isDup=customers.some(function(c){return c.name===wholeParsed.name&&c.phone===wholeParsed.phone&&wholeParsed.name;});
           ocrResults.push(wholeParsed);
         }else{
-          // 아무것도 못 찾으면 수동 입력용으로 빈 행 추가
           ocrResults.push({
             name:'',phone:'',birth:'',idback:'',job:'',homeaddr:'',regdate:today(),channel:'',
             memo:rawText.slice(0,500),
@@ -1179,7 +1177,6 @@ async function impRunOcr(){
           });
         }
       }else{
-        // 블록별 결과를 추가
         namedResults.forEach(function(nr){ocrResults.push(nr);});
       }
     }catch(e){console.error('OCR 오류:',e);toast('이미지 '+(i+1)+' 분석 실패: '+e.message);}
@@ -1191,7 +1188,9 @@ async function impRunOcr(){
 }
 // [변경1] 완전 재작성된 OCR 파싱 함수들
 // 이름으로 오인되기 쉬운 라벨/UI 텍스트 블랙리스트
-var NAME_BLACKLIST=['전체','선택','이름','연락처','주소','직업','상태','경로','메모','등록','수정','삭제','저장','취소','확인','검색','이전','다음','이메일','주민','사업자','담당자','담당','생년','생년월일','성별','남자','여자','남','여','지역','매체','문의','문의내용','상담','상담유형','상담상태','상담전','상담중','상담신청자','신청자','신청','상품','상품종류','사은품','사은품정보','추가','추가정보','추가번호','기타','그룹','보장','보장분석','방문','안내','연결','전화','문자','통화','가능','오후','오전','주말','평일','자택','직장','공휴일','본인','보험료','이상','정보','고객','고객정보','고객등록','고객등록일시','등록일시','배정일','예약','이력','메모이력','변경','변경이력','계약','청약','자동','발송','첨부','파일','필기','녹취','비교','견적','접수','가족','그외','이후'];
+var NAME_BLACKLIST=['전체','선택','이름','연락처','주소','직업','상태','경로','메모','등록','수정','삭제','저장','취소','확인','검색','이전','다음','이메일','주민','사업자','담당자','담당','생년','생년월일','성별','남자','여자','남','여','지역','매체','문의','문의내용','상담','상담유형','상담상태','상담전','상담중','상담신청자','신청자','신청','상품','상품종류','사은품','사은품정보','추가','추가정보','추가번호','기타','그룹','보장','보장분석','방문','안내','연결','전화','문자','통화','가능','오후','오전','주말','평일','자택','직장','공휴일','본인','보험료','이상','정보','고객','고객정보','고객등록','고객등록일시','등록일시','배정일','예약','이력','메모이력','변경','변경이력','계약','청약','자동','발송','첨부','파일','필기','녹취','비교','견적','접수','가족','그외','이후',
+  // 추가: AIA/보험사 화면 라벨
+  '개인정보','동의일','동의기간','동의유형','보험나이','중복여부','메인','배정완료','배정대기','미배정','보험사','계약여부','계약목록','DB유형','DB번호','DB번호','퍼미션DB','인포머셜DB','상담중','전화부재','장기부재','상담거절','방문예정','차방문','계약완료','AS요청','사이트','사이트인증','보장','서울','경기','인천','부산','대구','광주','대전','울산','세종','강원','충북','충남','전북','전남','경북','경남','제주'];
 function isLikelyName(s){
   if(!s)return false;
   s=s.trim();
