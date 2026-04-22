@@ -1217,6 +1217,49 @@ function splitIntoCustomerBlocks(text){
   var lines=text.split(String.fromCharCode(10));
   var blocks=[],currentBlock=[];
   var phoneDigitPattern=/^(0\d{9,10}|10\d{8,9})$/;
+  var juminPattern=/\d{6}\s*-\s*\d{7}/g;
+  
+  // 엑셀 표 캡처 감지: 전체 텍스트에 주민번호가 2개 이상 있고, 각 주민번호가 서로 다른 줄에 있으면 표로 간주
+  var allJuminMatches=text.match(juminPattern)||[];
+  if(allJuminMatches.length>=2){
+    // 표 형식으로 가정: 주민번호가 있는 각 줄을 별도 블록으로
+    var tableBlocks=[];
+    var currentTable=[];
+    var seenJumins=new Set();
+    for(var ti=0;ti<lines.length;ti++){
+      var tline=lines[ti].trim();
+      if(!tline){
+        if(currentTable.length>0){
+          // 주민번호가 있는지 체크
+          var blockJ=currentTable.join(' ').match(/\d{6}\s*-\s*\d{7}/);
+          if(blockJ){
+            tableBlocks.push(currentTable.join(String.fromCharCode(10)));
+            currentTable=[];
+          }
+        }
+        continue;
+      }
+      var jm=tline.match(/\d{6}\s*-\s*\d{7}/);
+      if(jm){
+        var jkey=jm[0].replace(/\s/g,'');
+        // 이미 현재 블록에 다른 주민번호가 있으면 새 블록 시작
+        var existingJ=currentTable.join(' ').match(/\d{6}\s*-\s*\d{7}/);
+        if(existingJ&&existingJ[0].replace(/\s/g,'')!==jkey){
+          tableBlocks.push(currentTable.join(String.fromCharCode(10)));
+          currentTable=[tline];
+          continue;
+        }
+        seenJumins.add(jkey);
+      }
+      currentTable.push(tline);
+    }
+    if(currentTable.length>0){
+      var hasJ=currentTable.join(' ').match(/\d{6}\s*-\s*\d{7}/);
+      if(hasJ)tableBlocks.push(currentTable.join(String.fromCharCode(10)));
+    }
+    // 주민번호가 있는 블록이 2개 이상이면 표로 판정
+    if(tableBlocks.length>=2)return tableBlocks;
+  }
   
   for(var i=0;i<lines.length;i++){
     var line=lines[i].trim();
@@ -1227,9 +1270,7 @@ function splitIntoCustomerBlocks(text){
         for(var j=i+1;j<lines.length;j++){
           if(lines[j].trim()){nextNonEmpty=lines[j].trim();break;}
         }
-        // 블랙리스트 단어는 블록 분리 트리거에서 제외
         if(nextNonEmpty&&isLikelyName(nextNonEmpty)){
-          // 현재 블록에 전화번호 AND 주민번호 모두 있어야만 분리
           var blockHasPhone=currentBlock.some(function(l){
             return l.replace(/[-\s]/g,'').match(phoneDigitPattern);
           });
@@ -1245,8 +1286,6 @@ function splitIntoCustomerBlocks(text){
       }
       continue;
     }
-    // 이름 패턴(블랙리스트 제외)이 나왔는데 이미 블록에 전화번호 AND 주민번호 모두 있을 때만 새 블록
-    // (한 명의 완성된 데이터가 있을 때만 분리 — AIA 단일 화면이 잘못 분리되는 것 방지)
     if(isLikelyName(line)&&currentBlock.length>0){
       var hasPhone=currentBlock.some(function(l){return l.replace(/[-\s]/g,'').match(phoneDigitPattern);});
       var hasJumin=currentBlock.some(function(l){return l.match(/\d{6}\s*-\s*\d{7}/);});
@@ -1409,11 +1448,45 @@ function parseCustomerBlock(text){
   if(!result.name){
     for(var i2=0;i2<lines.length;i2++){
       if(usedLines.has(i2))continue;
+      // 2a: 줄 전체가 이름 형태 (카카오톡)
       if(isLikelyName(lines[i2])){
         result.name=lines[i2];
         usedLines.add(i2);
         break;
       }
+    }
+  }
+  // 2b: 줄 중간에 이름 토큰이 있는 경우 (엑셀 표 캡처) — 주민번호가 같은 줄에 있을 때 우선
+  if(!result.name){
+    for(var i2b=0;i2b<lines.length;i2b++){
+      var lb=lines[i2b];
+      var hasDataSignal=lb.match(/\d{6}\s*-\s*\d{7}/)||lb.match(/01[016789][-\s]?\d{3,4}[-\s]?\d{4}/);
+      if(!hasDataSignal)continue;
+      var tokens=lb.match(/[가-힣]{2,4}/g)||[];
+      for(var tk=0;tk<tokens.length;tk++){
+        if(isLikelyName(tokens[tk])){
+          result.name=tokens[tk];
+          break;
+        }
+      }
+      if(result.name)break;
+    }
+  }
+  // 2c: 여전히 이름 없으면 모든 줄에서 성씨로 시작하는 한글 토큰 탐색 (엑셀 표의 첫 줄 케이스)
+  if(!result.name){
+    for(var i2c=0;i2c<lines.length;i2c++){
+      if(usedLines.has(i2c))continue;
+      var lc=lines[i2c];
+      // 라벨성 줄 제외
+      if(lc.includes('매체')||lc.includes('담당자')||lc.includes('사은품'))continue;
+      var tokens2=lc.match(/[가-힣]{2,4}/g)||[];
+      for(var tk2=0;tk2<tokens2.length;tk2++){
+        if(isLikelyName(tokens2[tk2])){
+          result.name=tokens2[tk2];
+          break;
+        }
+      }
+      if(result.name)break;
     }
   }
   
