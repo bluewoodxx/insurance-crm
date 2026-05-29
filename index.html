@@ -114,6 +114,35 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 .step-label{font-size:10px;color:#6b7280;margin-top:3px;text-align:center;white-space:nowrap}
 .ocr-zone{border:2px dashed #d1d5db;border-radius:12px;padding:32px 20px;text-align:center;cursor:pointer;background:#fafafa;transition:all 0.2s;margin-bottom:12px}
 .ocr-zone:hover{border-color:#1a3a5c;background:#f0f4f8}
+/* 캘린더 */
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);background:#e5e7eb;gap:1px}
+.cal-head{background:#f9fafb;padding:6px 4px;text-align:center;font-size:11px;font-weight:500;color:#6b7280}
+.cal-head.sun{color:#dc2626}.cal-head.sat{color:#1d4ed8}
+.cal-cell{background:#fff;min-height:80px;padding:4px;cursor:pointer;position:relative;display:flex;flex-direction:column;gap:2px}
+.cal-cell:hover{background:#f9fafb}
+.cal-cell.other-month{background:#fafafa;color:#cbd5e1}
+.cal-cell.today{background:#fffbeb;border:2px solid #f59e0b;padding:2px}
+.cal-cell.selected{background:#eff6ff;border:2px solid #1a3a5c;padding:2px}
+.cal-day{font-size:11px;font-weight:500;color:#374151}
+.cal-day.sun{color:#dc2626}.cal-day.sat{color:#1d4ed8}
+.cal-evt{font-size:10px;padding:1px 4px;border-radius:3px;color:#fff;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.cal-evt.visit{background:#3B82F6}
+.cal-evt.company{background:#10B981}
+.cal-evt.personal{background:#F59E0B}
+.cal-evt.cancel{background:#EF4444}
+.sch-item{padding:10px 14px;border-bottom:1px solid #e5e7eb;cursor:pointer;background:#fff;transition:background 0.15s}
+.sch-item:hover{background:#f9fafb}
+.sch-item-head{display:flex;align-items:center;gap:6px;margin-bottom:3px}
+.sch-item-tag{font-size:10px;padding:1px 6px;border-radius:3px;color:#fff;font-weight:500}
+.sch-item-tag.visit{background:#3B82F6}
+.sch-item-tag.company{background:#10B981}
+.sch-item-tag.personal{background:#F59E0B}
+.sch-item-tag.cancel{background:#EF4444}
+.sch-item-title{font-size:13px;font-weight:500;color:#1a1a1a;flex:1}
+.sch-item-time{font-size:11px;color:#6b7280}
+.sch-item-meta{font-size:11px;color:#9ca3af;margin-top:2px}
+.cust-result-item{padding:6px 10px;font-size:12px;cursor:pointer;border-bottom:1px solid #f3f4f6}
+.cust-result-item:hover{background:#f0f4f8}
 @media(max-width:600px){.board{grid-template-columns:repeat(2,1fr)}.claim-input-row{grid-template-columns:1fr 1fr}}
 </style>
 </head>
@@ -124,6 +153,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
   <span class="brand">보험 CRM</span>
   <span class="ntab on" id="nav-list" onclick="showPage('list')">고객관리</span>
   <span class="ntab" id="nav-reg" onclick="navToReg()">신규등록</span>
+  <span class="ntab" id="nav-schedule" onclick="showPage('schedule')">일정관리</span>
   <span class="ntab" id="nav-import" onclick="showPage('import')">외부DB 임포트</span>
   <span class="ntab" id="nav-board" onclick="showPage('board')">현황판</span>
   <div class="nav-right"><span id="save-msg" style="opacity:0;transition:opacity 0.4s"></span></div>
@@ -301,6 +331,80 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
   <div class="tbar"><span style="font-size:12px;color:#6b7280">상태별 현황</span></div>
   <div class="board" id="board-content"></div>
 </div>
+<!-- SCHEDULE -->
+<div class="page" id="page-schedule">
+  <div class="tbar">
+    <button class="btn p" onclick="openSchModal()">+ 새 일정</button>
+    <button class="btn" onclick="schPrevMonth()">←</button>
+    <span id="sch-month-label" style="font-size:14px;font-weight:600;color:#1a1a1a;min-width:100px;text-align:center"></span>
+    <button class="btn" onclick="schNextMonth()">→</button>
+    <button class="btn" onclick="schGoToday()">오늘</button>
+    <span style="margin-left:auto;display:flex;align-items:center;gap:6px;font-size:11px;color:#6b7280">
+      <span style="display:inline-block;width:10px;height:10px;background:#3B82F6;border-radius:2px"></span>방문/상담
+      <span style="display:inline-block;width:10px;height:10px;background:#10B981;border-radius:2px;margin-left:4px"></span>회사
+      <span style="display:inline-block;width:10px;height:10px;background:#F59E0B;border-radius:2px;margin-left:4px"></span>개인
+      <span style="display:inline-block;width:10px;height:10px;background:#EF4444;border-radius:2px;margin-left:4px"></span>해지일
+    </span>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 320px;gap:0;border-top:1px solid #e5e7eb">
+    <!-- 캘린더 -->
+    <div id="sch-calendar" style="border-right:1px solid #e5e7eb"></div>
+    <!-- 목록 -->
+    <div style="background:#f9fafb">
+      <div style="padding:10px 14px;border-bottom:1px solid #e5e7eb;font-size:12px;font-weight:500;color:#1a3a5c" id="sch-list-title">다가오는 일정</div>
+      <div id="sch-list" style="max-height:600px;overflow-y:auto"></div>
+    </div>
+  </div>
+</div>
+<!-- SCHEDULE MODAL -->
+<div class="modal-bg" id="modal-sch" onclick="if(event.target===this)closeSchModal()">
+  <div class="modal" style="width:380px">
+    <div class="modal-title" id="sch-modal-title">일정 추가</div>
+    <input type="hidden" id="sch-edit-id" value="">
+    <div class="mf">
+      <div class="mlb">유형 *</div>
+      <select class="fs" id="sch-type" style="width:100%">
+        <option value="visit">고객 방문/상담</option>
+        <option value="company">회사 내부 (교육/회의)</option>
+        <option value="personal">개인 업무 (출장/휴가)</option>
+        <option value="cancel">자동이체 해지일</option>
+      </select>
+    </div>
+    <div class="mf">
+      <div class="mlb">제목 *</div>
+      <input class="fi" id="sch-title-i" placeholder="일정 제목">
+    </div>
+    <div class="mf" id="sch-cust-row">
+      <div class="mlb">고객 (선택)</div>
+      <input class="fi" id="sch-cust-search" placeholder="고객 이름 검색..." oninput="schSearchCust()">
+      <div id="sch-cust-results" style="max-height:120px;overflow-y:auto;border:1px solid #e5e7eb;border-radius:4px;margin-top:3px;display:none"></div>
+      <div id="sch-cust-selected" style="font-size:11px;color:#1a3a5c;margin-top:3px;display:none"></div>
+    </div>
+    <div class="mf" style="display:flex;gap:6px">
+      <div style="flex:1"><div class="mlb">날짜 *</div><input class="fi" id="sch-date" type="date"></div>
+      <div style="flex:1"><div class="mlb">시간</div><input class="fi" id="sch-time" type="time"></div>
+    </div>
+    <div class="mf">
+      <div class="mlb">장소</div>
+      <input class="fi" id="sch-loc" placeholder="장소 (선택)">
+    </div>
+    <div class="mf">
+      <div class="mlb">메모</div>
+      <textarea class="fi" id="sch-memo" style="min-height:60px;resize:none"></textarea>
+    </div>
+    <div class="mf">
+      <label style="font-size:11px;color:#6b7280;cursor:pointer;display:flex;align-items:center;gap:4px">
+        <input type="checkbox" id="sch-notify"> 시작 30분 전 알림
+      </label>
+    </div>
+    <div class="errmsg" id="err-sch">제목과 날짜를 입력해주세요</div>
+    <div class="modal-foot">
+      <button class="btn danger" id="sch-del-btn" type="button" onclick="deleteSchedule()" style="display:none;margin-right:auto">삭제</button>
+      <button class="btn" type="button" onclick="closeSchModal()">취소</button>
+      <button class="btn p" type="button" onclick="saveSchedule()">저장</button>
+    </div>
+  </div>
+</div>
 <!-- IMPORT -->
 <div class="page" id="page-import">
   <div class="step-indicator">
@@ -457,8 +561,18 @@ async function api(method,path,body){
     var res=await fetch('/api/'+path,{method:method,headers:{'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});
     var text=await res.text();
     if(!text||text.trim()==='')return{};
-    try{return JSON.parse(text);}
-    catch(e){console.error('API err',text.slice(0,100));throw new Error('서버 응답 오류');}
+    var json;
+    try{json=JSON.parse(text);}
+    catch(e){console.error('API parse err',text.slice(0,100));throw new Error('서버 응답 오류');}
+    if(!res.ok){
+      var msg=(json&&json.error)?json.error:('HTTP '+res.status);
+      throw new Error(msg);
+    }
+    return json;
+  }catch(e){
+    // file:// 로컬 환경에서는 CORS 오류가 정상 — 그 외 오류는 toast로 알림
+    if(e.message&&!e.message.includes('fetch')){toast('오류: '+e.message);}
+    throw e;
   }finally{setLoading(false);}
 }
 function gv(id){var e=document.getElementById(id);return e?e.value.trim():'';}
@@ -503,12 +617,10 @@ async function loadList(){
         callbackAt:c.callbackAt||c.callback_at||''
       });
     });
-    var mdata=await api('GET','memos');
-    memos=Array.isArray(mdata)?mdata:[];
+    // 메모는 전체 로드 제거 — openDetail 시 해당 고객 메모만 로드
   }catch(e){
     console.warn('API 연결 실패 (로컬 테스트 환경일 수 있습니다):',e.message);
     if(!customers.length)customers=[];
-    if(!memos.length)memos=[];
   }
   renderList();
 }
@@ -603,8 +715,10 @@ async function openDetail(id){
   formIns=safeParseJSON(typeof c.insurances==='string'?c.insurances:JSON.stringify(c.insurances||[]),[]).slice();
   renderIns();
   sv('f-prog','');
+  // 해당 고객 메모만 로드 (전체 memos 배열 불필요)
+  memos=[];
   var mdata=await api('GET','memos?custId='+id);
-  memos=memos.filter(function(m){return Number(m.custId||m.cust_id)!==Number(id);}).concat(Array.isArray(mdata)?mdata:[]);
+  memos=Array.isArray(mdata)?mdata:[];
   renderTL(id);
 }
 function clearForm(){
@@ -906,11 +1020,281 @@ function showPage(p){
   document.getElementById('page-'+p).classList.add('on');
   document.getElementById('nav-'+p).classList.add('on');
   if(p==='board')renderBoard();
+  if(p==='schedule')renderSchedule();
 }
 function navToReg(){editId=null;showPage('reg');clearForm();}
 var _rowMDx=0,_rowMDy=0;
 function rowMD(e){_rowMDx=e.clientX;_rowMDy=e.clientY;}
 function rowMU(e,id){if(Math.abs(e.clientX-_rowMDx)<5&&Math.abs(e.clientY-_rowMDy)<5)openDetail(id);}
+
+// ── 일정관리 ──────────────────────────────
+var schedules=[];
+var schCurrentYear=new Date().getFullYear();
+var schCurrentMonth=new Date().getMonth();
+var schSelectedDate=null;
+var schSelectedCustId=null;
+var SCH_TYPES={visit:'방문/상담',company:'회사',personal:'개인',cancel:'해지일'};
+var schNotifiedIds=new Set();
+var _schLastLoaded=0; // 마지막 로드 타임스탬프
+
+async function loadSchedules(force){
+  // 30초 이내 재로드 방지 (force=true 이면 항상 새로 로드)
+  var now=Date.now();
+  if(!force&&schedules.length>0&&(now-_schLastLoaded)<30000)return;
+  try{
+    var data=await api('GET','schedules');
+    schedules=Array.isArray(data)?data:[];
+    _schLastLoaded=Date.now();
+  }catch(e){
+    if(!schedules.length)schedules=[];
+  }
+}
+function renderSchedule(){
+  loadSchedules().then(function(){
+    renderCalendar();
+    renderScheduleList();
+  });
+}
+// 저장/삭제 후 강제 새로고침
+function refreshSchedule(){
+  loadSchedules(true).then(function(){
+    renderCalendar();
+    renderScheduleList();
+  });
+}
+function renderCalendar(){
+  var year=schCurrentYear,month=schCurrentMonth;
+  var firstDay=new Date(year,month,1).getDay();
+  var lastDate=new Date(year,month+1,0).getDate();
+  var prevLastDate=new Date(year,month,0).getDate();
+  document.getElementById('sch-month-label').textContent=year+'년 '+(month+1)+'월';
+  var html='<div class="cal-grid">';
+  ['일','월','화','수','목','금','토'].forEach(function(d,i){
+    var cls=i===0?'sun':(i===6?'sat':'');
+    html+='<div class="cal-head '+cls+'">'+d+'</div>';
+  });
+  var today=new Date(),todayStr=today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');
+  // 이전달 채우기
+  for(var p=firstDay-1;p>=0;p--){
+    html+='<div class="cal-cell other-month"><div class="cal-day">'+(prevLastDate-p)+'</div></div>';
+  }
+  // 이번달
+  for(var d=1;d<=lastDate;d++){
+    var dateStr=year+'-'+String(month+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    var dow=new Date(year,month,d).getDay();
+    var dayCls=dow===0?'sun':(dow===6?'sat':'');
+    var cellCls=dateStr===todayStr?'today':(dateStr===schSelectedDate?'selected':'');
+    var dayEvts=schedules.filter(function(s){return s.date===dateStr;});
+    var evtsHtml='';
+    dayEvts.slice(0,3).forEach(function(s){
+      var t=s.title||'(제목없음)';
+      evtsHtml+='<div class="cal-evt '+s.type+'" onclick="event.stopPropagation();editSchedule('+s.id+')" title="'+t.replace(/"/g,'&quot;')+'">'+(s.time?s.time.slice(0,5)+' ':'')+t+'</div>';
+    });
+    if(dayEvts.length>3)evtsHtml+='<div style="font-size:9px;color:#9ca3af">+'+(dayEvts.length-3)+'</div>';
+    html+='<div class="cal-cell '+cellCls+'" onclick="schSelectDate(\''+dateStr+'\')"><div class="cal-day '+dayCls+'">'+d+'</div>'+evtsHtml+'</div>';
+  }
+  // 다음달 채우기
+  var totalCells=firstDay+lastDate,trailing=(7-totalCells%7)%7;
+  for(var n=1;n<=trailing;n++){
+    html+='<div class="cal-cell other-month"><div class="cal-day">'+n+'</div></div>';
+  }
+  html+='</div>';
+  document.getElementById('sch-calendar').innerHTML=html;
+}
+function renderScheduleList(){
+  var listEl=document.getElementById('sch-list');
+  var titleEl=document.getElementById('sch-list-title');
+  var list,title;
+  if(schSelectedDate){
+    var d=new Date(schSelectedDate);
+    list=schedules.filter(function(s){return s.date===schSelectedDate;}).sort(function(a,b){return(a.time||'').localeCompare(b.time||'');});
+    title=(d.getMonth()+1)+'월 '+d.getDate()+'일 일정 ('+list.length+')';
+  }else{
+    var today=new Date(),todayStr=today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');
+    list=schedules.filter(function(s){return s.date>=todayStr;}).sort(function(a,b){return(a.date+' '+(a.time||'')).localeCompare(b.date+' '+(b.time||''));}).slice(0,30);
+    title='다가오는 일정 ('+list.length+')';
+  }
+  titleEl.textContent=title;
+  if(!list.length){listEl.innerHTML='<div class="empty" style="padding:30px 14px">일정이 없습니다</div>';return;}
+  var html='';
+  list.forEach(function(s){
+    var custName='';
+    if(s.cust_id||s.custId){
+      var cid=Number(s.cust_id||s.custId);
+      var c=customers.find(function(x){return x.id===cid;});
+      if(c)custName=c.name;
+    }
+    var dateLabel='';
+    if(!schSelectedDate){var sd=new Date(s.date);dateLabel=(sd.getMonth()+1)+'/'+sd.getDate()+' ';}
+    html+='<div class="sch-item" onclick="editSchedule('+s.id+')">'
+      +'<div class="sch-item-head">'
+        +'<span class="sch-item-tag '+s.type+'">'+(SCH_TYPES[s.type]||'')+'</span>'
+        +'<span class="sch-item-title">'+(s.title||'(제목없음)')+'</span>'
+        +'<span class="sch-item-time">'+dateLabel+(s.time?s.time.slice(0,5):'종일')+'</span>'
+      +'</div>';
+    if(custName||s.location){
+      html+='<div class="sch-item-meta">';
+      if(custName)html+='👤 '+custName;
+      if(custName&&s.location)html+=' · ';
+      if(s.location)html+='📍 '+s.location;
+      html+='</div>';
+    }
+    html+='</div>';
+  });
+  listEl.innerHTML=html;
+}
+function schSelectDate(dateStr){
+  schSelectedDate=schSelectedDate===dateStr?null:dateStr;
+  renderCalendar();
+  renderScheduleList();
+}
+function schPrevMonth(){
+  schCurrentMonth--;
+  if(schCurrentMonth<0){schCurrentMonth=11;schCurrentYear--;}
+  schSelectedDate=null;renderCalendar();renderScheduleList();
+}
+function schNextMonth(){
+  schCurrentMonth++;
+  if(schCurrentMonth>11){schCurrentMonth=0;schCurrentYear++;}
+  schSelectedDate=null;renderCalendar();renderScheduleList();
+}
+function schGoToday(){
+  var t=new Date();
+  schCurrentYear=t.getFullYear();schCurrentMonth=t.getMonth();
+  schSelectedDate=t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0');
+  renderCalendar();renderScheduleList();
+}
+function openSchModal(){
+  document.getElementById('sch-edit-id').value='';
+  document.getElementById('sch-modal-title').textContent='일정 추가';
+  document.getElementById('sch-del-btn').style.display='none';
+  sv('sch-type','visit');sv('sch-title-i','');sv('sch-loc','');sv('sch-memo','');
+  sv('sch-date',schSelectedDate||today());sv('sch-time','');
+  document.getElementById('sch-notify').checked=true;
+  document.getElementById('sch-cust-search').value='';
+  document.getElementById('sch-cust-results').style.display='none';
+  document.getElementById('sch-cust-selected').style.display='none';
+  schSelectedCustId=null;
+  showErr('err-sch',false);
+  document.getElementById('modal-sch').classList.add('on');
+}
+function closeSchModal(){document.getElementById('modal-sch').classList.remove('on');}
+function editSchedule(id){
+  var s=schedules.find(function(x){return x.id===id;});if(!s)return;
+  openSchModal();
+  document.getElementById('sch-edit-id').value=id;
+  document.getElementById('sch-modal-title').textContent='일정 수정';
+  document.getElementById('sch-del-btn').style.display='';
+  sv('sch-type',s.type||'visit');
+  sv('sch-title-i',s.title||'');
+  sv('sch-date',s.date||'');
+  sv('sch-time',s.time||'');
+  sv('sch-loc',s.location||'');
+  sv('sch-memo',s.memo||'');
+  document.getElementById('sch-notify').checked=!!s.notify;
+  var cid=s.cust_id||s.custId;
+  if(cid){
+    var c=customers.find(function(x){return x.id===Number(cid);});
+    if(c){
+      schSelectedCustId=c.id;
+      var sel=document.getElementById('sch-cust-selected');
+      sel.style.display='';
+      sel.innerHTML='✓ '+c.name+(c.phone?' ('+c.phone+')':'')+' <a onclick="schClearCust()" style="color:#dc2626;cursor:pointer;margin-left:6px">✕</a>';
+    }
+  }
+}
+function schSearchCust(){
+  var q=gv('sch-cust-search');
+  var resEl=document.getElementById('sch-cust-results');
+  if(!q||q.length<1){resEl.style.display='none';return;}
+  var matches=customers.filter(function(c){return c.name&&c.name.includes(q);}).slice(0,8);
+  if(!matches.length){resEl.style.display='none';return;}
+  resEl.style.display='';
+  resEl.innerHTML=matches.map(function(c){
+    return '<div class="cust-result-item" onclick="schPickCust('+c.id+',\''+c.name.replace(/'/g,"\\'")+'\',\''+(c.phone||'')+'\')">'+c.name+' <span style="color:#9ca3af">'+(c.phone||'')+'</span></div>';
+  }).join('');
+}
+function schPickCust(id,name,phone){
+  schSelectedCustId=id;
+  var sel=document.getElementById('sch-cust-selected');
+  sel.style.display='';
+  sel.innerHTML='✓ '+name+(phone?' ('+phone+')':'')+' <a onclick="schClearCust()" style="color:#dc2626;cursor:pointer;margin-left:6px">✕</a>';
+  document.getElementById('sch-cust-search').value='';
+  document.getElementById('sch-cust-results').style.display='none';
+}
+function schClearCust(){
+  schSelectedCustId=null;
+  document.getElementById('sch-cust-selected').style.display='none';
+}
+async function saveSchedule(){
+  var title=gv('sch-title-i'),date=gv('sch-date');
+  if(!title||!date){showErr('err-sch',true);return;}
+  showErr('err-sch',false);
+  var obj={
+    type:gv('sch-type'),title:title,date:date,time:gv('sch-time'),
+    location:gv('sch-loc'),memo:gv('sch-memo'),
+    custId:schSelectedCustId,
+    notify:document.getElementById('sch-notify').checked?1:0
+  };
+  var editId=document.getElementById('sch-edit-id').value;
+  try{
+    if(editId){
+      await api('PUT','schedules/'+editId,obj);
+      var idx=schedules.findIndex(function(s){return s.id===Number(editId);});
+      if(idx>=0)schedules[idx]=Object.assign({},schedules[idx],obj,{id:Number(editId)});
+    }else{
+      var r=await api('POST','schedules',obj);
+      schedules.push(Object.assign({},obj,{id:r.id}));
+    }
+    toast('일정이 저장되었습니다');
+    closeSchModal();refreshSchedule();
+  }catch(e){toast('저장 실패: '+e.message);}
+}
+async function deleteSchedule(){
+  var id=document.getElementById('sch-edit-id').value;
+  if(!id||!confirm('이 일정을 삭제할까요?'))return;
+  try{
+    await api('DELETE','schedules/'+id);
+    schedules=schedules.filter(function(s){return s.id!==Number(id);});
+    toast('일정이 삭제되었습니다');
+    closeSchModal();refreshSchedule();
+  }catch(e){toast('삭제 실패: '+e.message);}
+}
+
+// ── 브라우저 알림 ──────────────────────────
+function requestNotifyPermission(){
+  if('Notification' in window&&Notification.permission==='default'){
+    Notification.requestPermission();
+  }
+}
+function checkNotifications(){
+  if(!('Notification' in window)||Notification.permission!=='granted')return;
+  var now=new Date();
+  schedules.forEach(function(s){
+    if(!s.notify||schNotifiedIds.has(s.id))return;
+    if(!s.date||!s.time)return;
+    var schTime=new Date(s.date+'T'+s.time);
+    var diffMin=(schTime-now)/60000;
+    if(diffMin>0&&diffMin<=30){
+      new Notification('일정 알림: '+(s.title||'일정'),{
+        body:(SCH_TYPES[s.type]||'')+' · '+s.time.slice(0,5)+(s.location?' · '+s.location:''),
+        tag:'sch-'+s.id
+      });
+      schNotifiedIds.add(s.id);
+    }
+  });
+}
+// 초기 로드 — 고객목록 + 일정 병렬 로드
+Promise.all([loadList(), loadSchedules()]).then(function(){
+  checkNotifications();
+  var todayStr=today();
+  var todayEvts=schedules.filter(function(s){return s.date===todayStr;});
+  if(todayEvts.length>0){
+    var titles=todayEvts.map(function(s){return(s.time?s.time.slice(0,5)+' ':'')+s.title;}).join(', ');
+    setTimeout(function(){toast('오늘 일정 '+todayEvts.length+'건: '+titles.slice(0,60));},800);
+  }
+  requestNotifyPermission();
+});
 // ── 외부DB 임포트 (엑셀) ─────────────────────
 var impRows=[],impSelected=new Set();
 function impSetStep(n){
@@ -1777,7 +2161,8 @@ async function impOcrRegister(){
   imgQueue=[];ocrResults=[];
   impSetStep(3);await loadList();
 }
-loadList();
+// 알림 체크 인터벌 (1분마다)
+setInterval(checkNotifications,60000);
 </script>
 </body>
 </html>
