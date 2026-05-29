@@ -581,7 +581,7 @@ function showErr(id,show){var e=document.getElementById(id);if(e)e.className='er
 function markErr(id,has){var e=document.getElementById(id);if(e)e.className='fi'+(has?' err':'');}
 function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.className='toast show';setTimeout(function(){t.className='toast'},2500);}
 function showSave(){var el=document.getElementById('save-msg');el.textContent='저장됨 '+new Date().toLocaleTimeString('ko',{hour:'2-digit',minute:'2-digit'});el.style.opacity=1;setTimeout(function(){el.style.opacity=0},2200);}
-function today(){return new Date().toISOString().slice(0,10);}
+function today(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function nowStr(){var d=new Date();return[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')+' '+[d.getHours(),d.getMinutes(),d.getSeconds()].map(function(n){return String(n).padStart(2,'0')}).join(':');}
 function safeParseJSON(str,def){try{return JSON.parse(str);}catch(e){return def;}}
 function calcInsAge(b){
@@ -650,6 +650,26 @@ function buildSpills(){
 }
 function sfilt(v){statusFilter=v;currentPage=1;buildSpills();renderList();}
 function toggleSearch(){searchOpen=!searchOpen;document.getElementById('search-box').style.display=searchOpen?'block':'none';}
+// 화면 높이에 맞춰 페이지당 행 수를 계산해 리스트가 화면을 꽉 채우도록 한다.
+function calcPageSize(){
+  var tb=document.getElementById('list-body');
+  if(!tb)return 15;
+  var top=tb.getBoundingClientRect().top;
+  if(!top||top<0)top=240;
+  var avail=window.innerHeight-top-72; // 72 = 페이지네이션 + 여백
+  var n=Math.floor(avail/32);          // 행 높이 약 32px
+  if(!isFinite(n)||n<12)n=12;
+  if(n>60)n=60;
+  return n;
+}
+var _rsTimer;
+window.addEventListener('resize',function(){
+  clearTimeout(_rsTimer);
+  _rsTimer=setTimeout(function(){
+    var pg=document.getElementById('page-list');
+    if(pg&&pg.classList.contains('on'))renderList();
+  },180);
+});
 function renderList(pg){
   buildSpills();
   var list=customers.slice().sort(function(a,b){return(b.regdate||'').localeCompare(a.regdate||'');});
@@ -659,7 +679,7 @@ function renderList(pg){
   if(ph)list=list.filter(function(c){return(c.phone||'').includes(ph);});
   if(st)list=list.filter(function(c){return c.status===st;});
   if(ch)list=list.filter(function(c){return c.channel===ch;});
-  var PAGE_SIZE=15,totalPages=Math.ceil(list.length/PAGE_SIZE)||1;
+  var PAGE_SIZE=calcPageSize(),totalPages=Math.ceil(list.length/PAGE_SIZE)||1;
   if(pg!==undefined)currentPage=pg;
   if(currentPage>totalPages)currentPage=totalPages;
   if(currentPage<1)currentPage=1;
@@ -1324,7 +1344,7 @@ function impProcessFile(file){
   var reader=new FileReader();
   reader.onload=function(e){
     try{
-      var wb=XLSX.read(e.target.result,{type:'array',cellDates:true});
+      var wb=XLSX.read(e.target.result,{type:'array'});
       // 모든 시트의 데이터를 합침
       var allDataRows=[];
       wb.SheetNames.forEach(function(sheetName){
@@ -1349,19 +1369,29 @@ function impProcessFile(file){
   };
   reader.readAsArrayBuffer(file);
 }
+// 엑셀 날짜 → 'YYYY-MM-DD' (타임존 안전). 시리얼 숫자는 parse_date_code로 직접 변환하므로
+// KST(UTC+9)에서도 하루 밀리지 않고, 표시서식에 연도가 없어도 연도까지 복원된다.
+function impExcelDate(rawDate,strFallback){
+  if(rawDate===undefined||rawDate===null||rawDate==='')rawDate=strFallback;
+  if(typeof rawDate==='number'){
+    var d=XLSX.SSF.parse_date_code(rawDate);
+    if(d&&d.y)return [d.y,String(d.m).padStart(2,'0'),String(d.d).padStart(2,'0')].join('-');
+    return '';
+  }
+  if(rawDate instanceof Date){
+    var t=new Date(rawDate.getTime()-rawDate.getTimezoneOffset()*60000);
+    t=new Date(Math.round(t.getTime()/86400000)*86400000);
+    return t.toISOString().slice(0,10);
+  }
+  var ds=String(rawDate==null?'':rawDate).trim();
+  if(ds.match(/^\d{4}-\d{2}-\d{2}/))return ds.slice(0,10);
+  if(ds.match(/^\d{4}\/\d{2}\/\d{2}/))return ds.slice(0,10).replace(/\//g,'-');
+  if(ds.match(/^\d{4}\.\d{2}\.\d{2}/))return ds.slice(0,10).replace(/\./g,'-');
+  return '';
+}
 function impParseRow(r){
   function cell(i){return r[i]!==undefined&&r[i]!==null?String(r[i]).trim():'';}
-  var rawDate=r[0],regdate='';
-  if(rawDate instanceof Date){
-    regdate=[rawDate.getFullYear(),String(rawDate.getMonth()+1).padStart(2,'0'),String(rawDate.getDate()).padStart(2,'0')].join('-');
-  }else if(typeof rawDate==='number'){
-    var d=XLSX.SSF.parse_date_code(rawDate);
-    if(d)regdate=[d.y,String(d.m).padStart(2,'0'),String(d.d).padStart(2,'0')].join('-');
-  }else{
-    var ds=cell(0);
-    if(ds.match(/^\d{4}-\d{2}-\d{2}/))regdate=ds.slice(0,10);
-    else if(ds.match(/^\d{4}\/\d{2}\/\d{2}/))regdate=ds.slice(0,10).replace(/\//g,'-');
-  }
+  var regdate=impExcelDate(r[0],cell(0));
   var name=cell(1);
   var idraw=cell(2).replace(/[^0-9]/g,''),birth='',idback='';
   if(idraw.length>=13){birth=idraw.slice(0,6);idback=idraw.slice(6,13);}
