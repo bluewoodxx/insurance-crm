@@ -550,7 +550,7 @@ const SC={
   'AS요청':{bg:'#FFF7ED',c:'#C2410C'}
 };
 const INS_SC={신규:{bg:'#DBEAFE',c:'#1E40AF'},유지중:{bg:'#D1FAE5',c:'#065F46'},갱신필요:{bg:'#FEF3C7',c:'#92400E'},해지:{bg:'#FEE2E2',c:'#991B1B'}};
-let customers=[],memos=[];
+let customers=[],memos=[],listMemos=[];
 let editId=null,statusFilter='',searchOpen=true,currentPage=1;
 let formIns=[],formClaims=[],homeOwn='';
 // ── 유틸 ──────────────────────────────────────
@@ -581,7 +581,7 @@ function showErr(id,show){var e=document.getElementById(id);if(e)e.className='er
 function markErr(id,has){var e=document.getElementById(id);if(e)e.className='fi'+(has?' err':'');}
 function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.className='toast show';setTimeout(function(){t.className='toast'},2500);}
 function showSave(){var el=document.getElementById('save-msg');el.textContent='저장됨 '+new Date().toLocaleTimeString('ko',{hour:'2-digit',minute:'2-digit'});el.style.opacity=1;setTimeout(function(){el.style.opacity=0},2200);}
-function today(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function today(){return new Date().toISOString().slice(0,10);}
 function nowStr(){var d=new Date();return[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')+' '+[d.getHours(),d.getMinutes(),d.getSeconds()].map(function(n){return String(n).padStart(2,'0')}).join(':');}
 function safeParseJSON(str,def){try{return JSON.parse(str);}catch(e){return def;}}
 function calcInsAge(b){
@@ -623,6 +623,17 @@ async function loadList(){
     if(!customers.length)customers=[];
   }
   renderList();
+  loadListMemos();
+}
+// 목록 표시용 — 전체 메모를 백그라운드로 받아 목록 갱신 (초기 렌더는 막지 않음)
+async function loadListMemos(){
+  try{
+    var data=await api('GET','memos');
+    listMemos=Array.isArray(data)?data:[];
+    renderList();
+  }catch(e){
+    console.warn('목록 메모 로드 실패:',e.message);
+  }
 }
 function pbtn(disabled,active){return 'border:1px solid '+(active?'#1a3a5c':'#d1d5db')+';background:'+(active?'#1a3a5c':'#fff')+';color:'+(active?'#fff':(disabled?'#d1d5db':'#374151'))+';border-radius:4px;padding:3px 8px;font-size:12px;cursor:'+(disabled?'default':'pointer')+';margin:0 2px;font-family:inherit';}
 function renderPagination(totalPages,total,start){
@@ -650,26 +661,6 @@ function buildSpills(){
 }
 function sfilt(v){statusFilter=v;currentPage=1;buildSpills();renderList();}
 function toggleSearch(){searchOpen=!searchOpen;document.getElementById('search-box').style.display=searchOpen?'block':'none';}
-// 화면 높이에 맞춰 페이지당 행 수를 계산해 리스트가 화면을 꽉 채우도록 한다.
-function calcPageSize(){
-  var tb=document.getElementById('list-body');
-  if(!tb)return 15;
-  var top=tb.getBoundingClientRect().top;
-  if(!top||top<0)top=240;
-  var avail=window.innerHeight-top-72; // 72 = 페이지네이션 + 여백
-  var n=Math.floor(avail/32);          // 행 높이 약 32px
-  if(!isFinite(n)||n<12)n=12;
-  if(n>60)n=60;
-  return n;
-}
-var _rsTimer;
-window.addEventListener('resize',function(){
-  clearTimeout(_rsTimer);
-  _rsTimer=setTimeout(function(){
-    var pg=document.getElementById('page-list');
-    if(pg&&pg.classList.contains('on'))renderList();
-  },180);
-});
 function renderList(pg){
   buildSpills();
   var list=customers.slice().sort(function(a,b){return(b.regdate||'').localeCompare(a.regdate||'');});
@@ -679,7 +670,7 @@ function renderList(pg){
   if(ph)list=list.filter(function(c){return(c.phone||'').includes(ph);});
   if(st)list=list.filter(function(c){return c.status===st;});
   if(ch)list=list.filter(function(c){return c.channel===ch;});
-  var PAGE_SIZE=calcPageSize(),totalPages=Math.ceil(list.length/PAGE_SIZE)||1;
+  var PAGE_SIZE=15,totalPages=Math.ceil(list.length/PAGE_SIZE)||1;
   if(pg!==undefined)currentPage=pg;
   if(currentPage>totalPages)currentPage=totalPages;
   if(currentPage<1)currentPage=1;
@@ -691,7 +682,7 @@ function renderList(pg){
   var rows='';
   pageList.forEach(function(c,i){
     var sc=SC[c.status]||{bg:'#F3F4F6',c:'#374151'};
-    var ms=memos.filter(function(m){return Number(m.custId||m.cust_id)===Number(c.id);}).sort(function(a,b){return b.datetime.localeCompare(a.datetime);});
+    var ms=listMemos.filter(function(m){return Number(m.custId||m.cust_id)===Number(c.id);}).sort(function(a,b){return b.datetime.localeCompare(a.datetime);});
     var rm=ms[0],age=calcInsAge(c.birth||''),cbAt=c.callbackAt||'';
     var cbRow=cbAt?'<tr onmousedown="rowMD(event)" onmouseup="rowMU(event,'+c.id+')" style="cursor:pointer"><td colspan="10" style="padding:2px 7px 5px 36px;border-bottom:none;background:#fffbeb"><span class="callback-badge">&#128222; 재통화 예정: '+fmtCallback(cbAt)+'</span></td></tr>':'';
     var memoRow=rm?'<tr onmousedown="rowMD(event)" onmouseup="rowMU(event,'+c.id+')" style="cursor:pointer"><td colspan="10" style="padding:2px 7px 7px 36px;border-bottom:1px solid #e5e7eb;background:#fafafa"><span style="font-size:11px;color:#6b7280">['+rm.datetime.slice(0,16)+']&nbsp;&nbsp;'+rm.text+'</span></td></tr>':'';
@@ -953,7 +944,8 @@ async function addProg(){
   }
   var entry2={custId:editId,datetime:nowStr(),author:'',text:text};
   var res=await api('POST','memos',entry2);
-  memos.push(Object.assign({},entry2,{id:res.id}));renderTL(editId);showSave();sv('f-prog','');
+  var saved=Object.assign({},entry2,{id:res.id});
+  memos.push(saved);listMemos.push(saved);renderTL(editId);showSave();sv('f-prog','');
 }
 function renderTempTL(){
   var temps=memos.filter(function(m){return m._temp;});
@@ -1008,13 +1000,14 @@ async function saveEdit(id){
   var editedAt=nowStr();
   await api('PUT','memos/'+id,{text:newText,editedAt:editedAt});
   var m=memos.find(function(x){return x.id===id;});if(m){m.text=newText;m.editedAt=editedAt;}
+  var lm=listMemos.find(function(x){return x.id===id;});if(lm){lm.text=newText;lm.editedAt=editedAt;}
   renderTL(editId);showSave();
 }
 function cancelEdit(id){
   var el=document.getElementById('tl-'+id);if(!el)return;
   el.querySelector('.tl-text').style.display='';el.querySelector('.tl-edit-area').style.display='none';
 }
-async function delMemo(id){await api('DELETE','memos/'+id);memos=memos.filter(function(m){return m.id!==id;});renderTL(editId);showSave();}
+async function delMemo(id){await api('DELETE','memos/'+id);memos=memos.filter(function(m){return m.id!==id;});listMemos=listMemos.filter(function(m){return m.id!==id;});renderTL(editId);showSave();}
 // ── 현황판 ───────────────────────────────────
 function renderBoard(){
   var content='';
@@ -1344,7 +1337,7 @@ function impProcessFile(file){
   var reader=new FileReader();
   reader.onload=function(e){
     try{
-      var wb=XLSX.read(e.target.result,{type:'array'});
+      var wb=XLSX.read(e.target.result,{type:'array',cellDates:true});
       // 모든 시트의 데이터를 합침
       var allDataRows=[];
       wb.SheetNames.forEach(function(sheetName){
@@ -1369,29 +1362,19 @@ function impProcessFile(file){
   };
   reader.readAsArrayBuffer(file);
 }
-// 엑셀 날짜 → 'YYYY-MM-DD' (타임존 안전). 시리얼 숫자는 parse_date_code로 직접 변환하므로
-// KST(UTC+9)에서도 하루 밀리지 않고, 표시서식에 연도가 없어도 연도까지 복원된다.
-function impExcelDate(rawDate,strFallback){
-  if(rawDate===undefined||rawDate===null||rawDate==='')rawDate=strFallback;
-  if(typeof rawDate==='number'){
-    var d=XLSX.SSF.parse_date_code(rawDate);
-    if(d&&d.y)return [d.y,String(d.m).padStart(2,'0'),String(d.d).padStart(2,'0')].join('-');
-    return '';
-  }
-  if(rawDate instanceof Date){
-    var t=new Date(rawDate.getTime()-rawDate.getTimezoneOffset()*60000);
-    t=new Date(Math.round(t.getTime()/86400000)*86400000);
-    return t.toISOString().slice(0,10);
-  }
-  var ds=String(rawDate==null?'':rawDate).trim();
-  if(ds.match(/^\d{4}-\d{2}-\d{2}/))return ds.slice(0,10);
-  if(ds.match(/^\d{4}\/\d{2}\/\d{2}/))return ds.slice(0,10).replace(/\//g,'-');
-  if(ds.match(/^\d{4}\.\d{2}\.\d{2}/))return ds.slice(0,10).replace(/\./g,'-');
-  return '';
-}
 function impParseRow(r){
   function cell(i){return r[i]!==undefined&&r[i]!==null?String(r[i]).trim():'';}
-  var regdate=impExcelDate(r[0],cell(0));
+  var rawDate=r[0],regdate='';
+  if(rawDate instanceof Date){
+    regdate=[rawDate.getFullYear(),String(rawDate.getMonth()+1).padStart(2,'0'),String(rawDate.getDate()).padStart(2,'0')].join('-');
+  }else if(typeof rawDate==='number'){
+    var d=XLSX.SSF.parse_date_code(rawDate);
+    if(d)regdate=[d.y,String(d.m).padStart(2,'0'),String(d.d).padStart(2,'0')].join('-');
+  }else{
+    var ds=cell(0);
+    if(ds.match(/^\d{4}-\d{2}-\d{2}/))regdate=ds.slice(0,10);
+    else if(ds.match(/^\d{4}\/\d{2}\/\d{2}/))regdate=ds.slice(0,10).replace(/\//g,'-');
+  }
   var name=cell(1);
   var idraw=cell(2).replace(/[^0-9]/g,''),birth='',idback='';
   if(idraw.length>=13){birth=idraw.slice(0,6);idback=idraw.slice(6,13);}
